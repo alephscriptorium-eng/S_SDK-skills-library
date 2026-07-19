@@ -1,0 +1,59 @@
+# Publish @alephscript/skills-scriptorium → Verdaccio (WP-I26 / DE-I12).
+# Auth canónica zeus/Verdaccio: username + _password (base64) + email +
+# always-auth. NO _authToken / JWT.
+# Secrets del repo (custodio): npm_user, npm_password
+#   npm_password = valor de _password ya en base64 (como zeus NPM_PASSWORD /
+#   .npmrc.example); sin comillas.
+name: Publish package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require publish credentials
+        env:
+          NPM_USERNAME: ${{ secrets.npm_user }}
+          NPM_PASSWORD: ${{ secrets.npm_password }}
+        run: |
+          if [ -z "${NPM_USERNAME}" ] || [ -z "${NPM_PASSWORD}" ]; then
+            echo "::error::secrets npm_user / npm_password required (DE-I12)"
+            exit 1
+          fi
+      - name: Configure registry basic-auth (_password)
+        env:
+          NPM_USERNAME: ${{ secrets.npm_user }}
+          NPM_PASSWORD: ${{ secrets.npm_password }}
+        run: |
+          HOST='npm.scriptorium.escrivivir.co'
+          {
+            echo "@alephscript:registry=https://${HOST}"
+            echo "//${HOST}/:username=${NPM_USERNAME}"
+            echo "//${HOST}/:_password=${NPM_PASSWORD}"
+            echo "//${HOST}/:email=ci@scriptorium.escrivivir.co"
+            echo "//${HOST}/:always-auth=true"
+          } >> ~/.npmrc
+      - name: Pack (smoke)
+        run: npm pack
+      - name: Publish
+        run: |
+          REG='https://npm.scriptorium.escrivivir.co'
+          NAME=$(node -p "require('./package.json').name")
+          VER=$(node -p "require('./package.json').version")
+          if npm view "${NAME}@${VER}" version --registry "$REG" >/dev/null 2>&1; then
+            echo "Already on registry: ${NAME}@${VER} — skip publish"
+          else
+            npm publish --registry "$REG"
+          fi
+      - name: Verify (npm view canal real)
+        run: |
+          npm view @alephscript/skills-scriptorium --registry https://npm.scriptorium.escrivivir.co

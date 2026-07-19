@@ -10,7 +10,8 @@
   "files": [
     "skills/",
     "README.md",
-    "LICENSE.md"
+    "LICENSE.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "docs:dev": "vitepress dev docs",
@@ -19,6 +20,13 @@
   "devDependencies": {
     "vitepress": "^1.6.4"
   },
+  "author": "alephscriptorium-eng",
+  "maintainers": [
+    {
+      "name": "alephscriptorium-eng",
+      "email": "ops@escrivivir.co"
+    }
+  ],
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -26,6 +34,7 @@
   },
   "homepage": "https://skills.s-sdk.escrivivir.co",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.scriptorium.escrivivir.co"
   }
 }
