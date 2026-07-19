@@ -1,0 +1,10 @@
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+*.tgz
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example

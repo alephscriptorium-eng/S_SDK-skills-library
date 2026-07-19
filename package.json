@@ -1,0 +1,31 @@
+{
+  "name": "@alephscript/skills-scriptorium",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Skills library — método marco-agnóstico en formato skill estándar (SKILL.md + recursos)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "skills/",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alephscriptorium-eng/S_SDK-skills-library.git"
+  },
+  "homepage": "https://skills.s-sdk.escrivivir.co",
+  "publishConfig": {
+    "access": "public"
+  }
+}
