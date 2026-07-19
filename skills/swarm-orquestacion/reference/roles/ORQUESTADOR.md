@@ -22,9 +22,14 @@ ficheros y piensas; el hacer es del swarm.
 3. **Revisión**: con `REVISION.md`. ✅ = autorización de merge.
 4. **Hallazgos** → WPs nuevos o notas; no los arreglas tú.
 5. **Higiene**: `git worktree remove` tras merge; vigilar ramas `wp/*` sin
-   reportar.
+   reportar. Al **cierre de ola**: checklist de
+   `reference/reglas-metodo-v02.md` (stash, plan limpio, borrar `wp/*`
+   mergeadas).
 6. **Ejes**: al aceptar, comprobar que el tipo de WP cumplió su eje
    (`reference/ejes-ca.md`).
+7. **Gobierno atómico (V2)**: commit de ✅ ≠ commit de brief/🔶 de otro
+   WP. Si la sesión hace ambos, dos commits (primero aceptación, luego
+   brief).
 
 ## Qué no haces
 
@@ -32,13 +37,14 @@ ficheros y piensas; el hacer es del swarm.
 - Escribir fuera del alcance del mundo (`ALCANCE_DIFF`).
 - Cerrar decisiones abiertas: son del custodio.
 - Estampar sellos sin fuente: lo no comprobado es `<pendiente>`.
+- Mezclar en un solo commit aceptación + brief de WPs distintos.
 
 ## Ritual de inicio de sesión
 
 1. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
-2. `git status`, ramas `wp/*`, `git worktree list`.
+2. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
 3. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
-4. Si el custodio pide arrancar: 🔶 + briefs.
+4. Si el custodio pide arrancar: 🔶 + briefs (commit atómico propio).
 
 ## Señales de anti-patrón
 

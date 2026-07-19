@@ -64,6 +64,16 @@ ejemplo: `examples/`.
 4. Evidencia literal; lo no comprobado se marca `<pendiente>`.
 5. Los cinco ejes son CA obligatorios **por tipo de WP** (no opcionales).
 6. Cara pública del skill: prueba de ceguera del paquete (ver README).
+7. Gobierno atómico (v0.2): un commit no mezcla aceptación (✅) con brief
+   (🔶) de otro WP — ver `reference/reglas-metodo-v02.md` §V2.
+8. Cierre de ola: checklist de higiene obligatorio
+   (`reference/reglas-metodo-v02.md`).
+
+## Método v0.2 (costuras)
+
+Doce reglas de borde + práctica V2 + checklist de cierre:
+`reference/reglas-metodo-v02.md`. Resumen operativo en `reference/ciclo.md`
+y ritual del orquestador.
 
 ## Recursos
 
@@ -73,6 +83,7 @@ ejemplo: `examples/`.
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
+| `reference/reglas-metodo-v02.md` | 12 reglas + V2 commits gobierno + checklist ola |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |

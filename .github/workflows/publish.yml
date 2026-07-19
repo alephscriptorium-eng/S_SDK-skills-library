@@ -1,9 +1,9 @@
-# Publish @alephscript/skills-scriptorium → Verdaccio (WP-I26 / DE-I12).
-# Auth canónica zeus/Verdaccio: username + _password (base64) + email +
-# always-auth. NO _authToken / JWT.
+# Publish @alephscript/skills-scriptorium → Verdaccio canónico (WP-I26 /
+# DE-I12). Auth: username + _password (base64) + email + always-auth.
+# NO _authToken / JWT.
 # Secrets del repo (custodio): NPM_USERNAME, NPM_PASSWORD
-#   NPM_PASSWORD = valor de _password ya en base64 (como zeus release.yml /
-#   .npmrc.example); sin comillas. NO _authToken.
+#   NPM_PASSWORD = valor de _password ya en base64 (como release.yml /
+#   .npmrc.example del ops Verdaccio canónico); sin comillas. NO _authToken.
 name: Publish package
 
 on:
