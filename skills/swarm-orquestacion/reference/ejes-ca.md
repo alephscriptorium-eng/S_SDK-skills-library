@@ -68,6 +68,10 @@ está probado.
 - No se cierra sin un **segundo cliente independiente** que ejercite la
   capa.
 - Ese segundo cliente se programa como **gate**, no como feature tardía.
+- **Activación de mundo con el skill (regla 13):** la ejecuta un agente
+  **fresco** que solo conoce el skill — jamás uno con contexto del marco.
+  Pareja de la regla 12 (entregas sin rutas): 12 protege el canal; 13
+  protege el acto de activación. Ver `reglas-metodo-v03.md`.
 
 **Regla:** un solo cliente prueba que compila; el segundo prueba que es
 contrato.
@@ -91,6 +95,25 @@ imposición de capa (el swarm ajeno ve el marco contenedor).
 
 ---
 
+## Ceguera (CA transversal · reglas 13–14)
+
+Aplica a WPs de **publicación de skill**, **activación de mundo** y
+cualquier entrega cuya cara pública deba ser marco-agnóstica.
+
+**CA obligatorio:**
+- Árbol: `scripts/comprobar-ceguera.sh` (o equivalente) → `ceguera: 0`.
+- **Historial alcanzable (regla 14):** además de `git grep` / working
+  tree, verificar `git log -p` (o equivalente) sobre el historial
+  reachable del skill/paquete — 0 hits de tokens de marco. Fuga en
+  commit intermedio = **squash antes del merge** (no fix-encima).
+- **Medida canónica:** validar el exit de `grep -c` / `grep -q`, nunca
+  `grep | head && echo OK` (exit de `head` = siempre 0).
+
+**Regla:** la ceguera del árbol no basta si el historial sigue sirviendo
+el marco.
+
+---
+
 ## Tabla rápida (para PRACTICAS del mundo)
 
 | Tipo de WP | Eje | CA mínimo |
@@ -99,6 +122,8 @@ imposición de capa (el swarm ajeno ve el marco contenedor).
 | demolición / extracción con lógica viva | II | destino canónico; grep = 1 def. |
 | auditoría / layout | III | gate dedup de código vivo |
 | contrato / capa compartida | IV | segundo cliente independiente |
+| activación de mundo con skill | IV + 13 | agente fresco (solo skill) |
+| publish / cara pública skill | ceguera + 14 | árbol + `git log -p` = 0 |
 | relación con swarms ajenos | V | mediación transparente |
 
 Un WP puede activar **varios** ejes; el BRIEF los lista todos.

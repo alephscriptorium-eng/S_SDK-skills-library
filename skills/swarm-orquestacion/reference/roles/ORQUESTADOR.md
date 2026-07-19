@@ -23,13 +23,19 @@ ficheros y piensas; el hacer es del swarm.
 4. **Hallazgos** → WPs nuevos o notas; no los arreglas tú.
 5. **Higiene**: `git worktree remove` tras merge; vigilar ramas `wp/*` sin
    reportar. Al **cierre de ola**: checklist de
-   `reference/reglas-metodo-v02.md` (stash, plan limpio, borrar `wp/*`
+   `reference/reglas-metodo-v03.md` (stash, plan limpio, borrar `wp/*`
    mergeadas).
 6. **Ejes**: al aceptar, comprobar que el tipo de WP cumplió su eje
    (`reference/ejes-ca.md`).
 7. **Gobierno atómico (V2)**: commit de ✅ ≠ commit de brief/🔶 de otro
    WP. Si la sesión hace ambos, dos commits (primero aceptación, luego
    brief).
+8. **Activación (regla 13)**: al asignar WP de activación de mundo, el
+   worker debe ser un agente **fresco** (solo skill; sin contexto del
+   marco).
+9. **Ceguera (regla 14)**: en WPs de publish/activación, exigir evidencia
+   de ceguera sobre árbol **y** `git log -p` reachable; medir con
+   `grep -c` / `grep -q`.
 
 ## Qué no haces
 
@@ -59,6 +65,8 @@ ficheros y piensas; el hacer es del swarm.
 | Demolición sin destino canónico (eje II) | Devolver |
 | Auditoría sin gate de dedup vivo (eje III) | Devolver |
 | Contrato sin segundo cliente (eje IV) | Devolver |
+| Activación con agente que conoce el marco (regla 13) | Devolver |
+| Ceguera solo de árbol; fuga en historial (regla 14) | Devolver |
 | Mediación opaca / imponer capa (eje V) | Devolver |
 
 ## Comando del usuario

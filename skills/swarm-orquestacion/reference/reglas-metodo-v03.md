@@ -1,12 +1,14 @@
-# Reglas de método v0.2 — costuras del swarm
+# Reglas de método v0.3 — costuras del swarm
 
-Doce reglas cosidas al skill tras las primeras olas reales. El aislamiento
-(worktree + rama por WP) funciona; estas reglas cierran los **bordes**.
+Catorce reglas cosidas al skill tras las primeras olas reales y la
+segunda activación (F8). El aislamiento (worktree + rama por WP)
+funciona; estas reglas cierran los **bordes** — incluidas la activación
+y la ceguera sobre historial.
 
-> **Contrato vigente:** v0.3 — ver `reglas-metodo-v03.md` (catorce reglas:
-> 1–12 + 13 activación fresco + 14 ceguera sobre historial).
+Las reglas 1–12 son las de v0.2; 13–14 nacen del addendum de activación
+(ceguera rota en historial + ejecutor con contexto del marco).
 
-## Las 12 reglas
+## Las 14 reglas
 
 1. **El gobierno va a git antes que la obra.** El orquestador commitea
    `plan/` a la rama principal **antes** de abrir el primer brief de una
@@ -43,6 +45,26 @@ Doce reglas cosidas al skill tras las primeras olas reales. El aislamiento
     CONTENIDO (pegado o adjunto neutro); la cita de procedencia
     permitida es «nota externa recibida (canal, fecha)» — jamás una
     ruta de disco del emisor.
+13. **La activación la ejecuta un agente fresco.** Un mundo se activa
+    con el skill mediante un agente que **solo conoce el skill**, jamás
+    uno con contexto del marco. Un ejecutor que conoce el marco no puede
+    *no* filtrarlo (lo lleva en el prompt); la única garantía es la
+    ignorancia del ejecutor. Pareja de la regla 12: 12 protege el canal
+    entre mundos; 13 protege el acto de activación.
+14. **La ceguera se verifica sobre el historial alcanzable, no solo el
+    árbol.** El CA de ceguera corre `git log -p` (historia completa
+    reachable), no solo `git grep` / árbol de trabajo. Fuga en commit
+    intermedio = **squash antes del merge** (nunca un fix-encima que
+    deja el original en la historia). En remoto público ya empujado:
+    rewrite + force-push solo mientras el repo sea joven y sin forks.
+
+## Práctica de la regla 14 (medida canónica)
+
+Los pipelines de evidencia validan el **exit del comando de medida, no
+del filtro** — `grep | head && echo OK` evalúa el exit de `head`
+(siempre 0) y canta falsos veredictos en ambos sentidos. Forma canónica:
+`grep -c` y leer el conteo, o `grep -q`. Nunca `grep … | head && echo
+OK`.
 
 ## V2 · Commits de gobierno atómicos
 
@@ -72,5 +94,8 @@ reporte de cierre (o en el último commit de gobierno de la ola):
 [ ] worktrees huérfanos     → removidos
 ```
 
-Este checklist **se estrena** con el WP que versiona el skill a v0.2
-(cierre residual de la ola que lo produce).
+## Relación con v0.2
+
+`reference/reglas-metodo-v02.md` conserva las 12 reglas originales.
+Este fichero (v0.3) es el contrato vigente: 1–12 + 13–14 + práctica de
+medida.

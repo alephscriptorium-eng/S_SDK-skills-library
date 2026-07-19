@@ -64,26 +64,33 @@ ejemplo: `examples/`.
 4. Evidencia literal; lo no comprobado se marca `<pendiente>`.
 5. Los cinco ejes son CA obligatorios **por tipo de WP** (no opcionales).
 6. Cara pública del skill: prueba de ceguera del paquete (ver README).
-7. Gobierno atómico (v0.2): un commit no mezcla aceptación (✅) con brief
-   (🔶) de otro WP — ver `reference/reglas-metodo-v02.md` §V2.
+7. Gobierno atómico (V2): un commit no mezcla aceptación (✅) con brief
+   (🔶) de otro WP — ver `reference/reglas-metodo-v03.md` §V2.
 8. Cierre de ola: checklist de higiene obligatorio
-   (`reference/reglas-metodo-v02.md`).
+   (`reference/reglas-metodo-v03.md`).
+9. Activación de mundo (regla 13): la ejecuta un agente **fresco** que
+   solo conoce el skill — jamás uno con contexto del marco.
+10. Ceguera (regla 14): además del árbol, verificar historial reachable
+    (`git log -p`); fuga intermedia = squash antes del merge.
 
-## Método v0.2 (costuras)
+## Método v0.3 (costuras)
 
-Doce reglas de borde + práctica V2 + checklist de cierre:
-`reference/reglas-metodo-v02.md`. Resumen operativo en `reference/ciclo.md`
-y ritual del orquestador.
+Catorce reglas de borde + práctica V2 + checklist de cierre + práctica
+de medida (`grep -c` / `grep -q`, nunca `grep | head && echo OK`):
+`reference/reglas-metodo-v03.md`. Resumen operativo en
+`reference/ciclo.md` y ritual del orquestador. (v0.2 queda como
+histórico en `reglas-metodo-v02.md`.)
 
 ## Recursos
 
 | ruta | contenido |
 | ---- | --------- |
 | `reference/roles/` | ORQUESTADOR, WORKER, REVISION, CORRECCION, BRIEF, README |
-| `reference/ejes-ca.md` | cinco ejes → CA por tipo |
+| `reference/ejes-ca.md` | cinco ejes → CA por tipo (+ ceguera 13/14) |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
-| `reference/reglas-metodo-v02.md` | 12 reglas + V2 commits gobierno + checklist ola |
+| `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola |
+| `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |

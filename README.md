@@ -30,7 +30,7 @@ posteriores del paquete.
 npm install @alephscript/skills-scriptorium --registry https://npm.scriptorium.escrivivir.co
 ```
 
-Release notes: ver `CHANGELOG.md` (actual `0.2.0`).
+Release notes: ver `CHANGELOG.md` (actual `0.3.0`).
 
 Luego apuntá el runtime de skills del mundo al path instalado, p. ej.:
 
@@ -51,12 +51,12 @@ npm install /ruta/absoluta/al/repo-skills-library
 ```bash
 cd /ruta/al/repo-skills-library
 npm pack
-# → alephscript-skills-scriptorium-0.2.0.tgz
+# → alephscript-skills-scriptorium-0.3.0.tgz
 
 TMP=$(mktemp -d)
 cd "$TMP"
 npm init -y
-npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.2.0.tgz
+npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.0.tgz
 ls node_modules/@alephscript/skills-scriptorium/skills/
 ```
 

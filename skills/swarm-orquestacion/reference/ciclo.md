@@ -25,7 +25,7 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
 2. Verificar CA y eje(s).
 3. ✅ → BACKLOG ✅ + merge + limpiar worktree.
    **Commit de aceptación solo:** no abrir brief/🔶 de otro WP en el
-   mismo commit (V2 — `reference/reglas-metodo-v02.md`).
+   mismo commit (V2 — `reference/reglas-metodo-v03.md`).
 4. Devuelto → comentarios numerados; mismo worker con `CORRECCION.md`.
 
 ## 4. Corrección
@@ -35,9 +35,20 @@ Misma rama; solo lo pedido; actualizar reporte a `devuelto-corregido`.
 ## 5. Cierre de ola (orquestador)
 
 Antes de declarar la ola cerrada, ejecutar el checklist de
-`reference/reglas-metodo-v02.md`: stash vacío · `plan/` limpio · ramas
+`reference/reglas-metodo-v03.md`: stash vacío · `plan/` limpio · ramas
 `wp/*` mergeadas borradas o justificadas · `git status` explicado ·
 worktrees huérfanos removidos.
+
+## 6. Activación de mundo (regla 13)
+
+La activación la ejecuta un agente **fresco** (solo conoce el skill).
+No reutilizar un agente con contexto del marco.
+
+## 7. Ceguera (regla 14)
+
+Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
+`git log -p` sobre el historial reachable. Medir con `grep -c` /
+`grep -q`, nunca `grep | head && echo OK`. Fuga intermedia → squash.
 
 ## Anti-patrones de costura
 
@@ -52,6 +63,9 @@ worktrees huérfanos removidos.
 | Ocultar al vigía o revelar el marco | Eje V: asimetría de marco |
 | Un commit mezcla ✅ de un WP + brief 🔶 de otro | V2: commits de gobierno atómicos (reglas 2+7) |
 | Cerrar ola con ramas `wp/*` mergeadas vivas | Checklist cierre (regla 10) |
+| Activación con agente que ya conoce el marco | Regla 13: agente fresco |
+| Ceguera solo del árbol; fuga en commit intermedio | Regla 14: `git log -p` + squash |
+| `grep | head && echo OK` como evidencia | Regla 14 práctica: `grep -c` / `grep -q` |
 
 ## Señal de worker vivo
 

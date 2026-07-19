@@ -29,6 +29,11 @@ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
 
 Debe salir `ceguera: 0` sobre `skills/swarm-orquestacion/`.
 
+Además (regla 14): verificar el **historial reachable**, no solo el
+árbol — p. ej. `git log -p -- skills/swarm-orquestacion/` medido con
+`grep -c` / `grep -q` (nunca `grep | head && echo OK`). Fuga en commit
+intermedio = squash antes del merge.
+
 ## Qué no va aquí
 
 Datos de sesión de un mundo concreto, histórico de vigilancia, handoffs.

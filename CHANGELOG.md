@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.0 — 2026-07-19
+
+Bump menor del contrato de `swarm-orquestacion` (ceguera de activación).
+
+### Contenido
+
+- `swarm-orquestacion` v0.3: 14 reglas de método
+  (`reference/reglas-metodo-v03.md`) — reglas 1–12 de v0.2 + **13**
+  (activación = agente fresco solo-skill) + **14** (ceguera sobre
+  historial reachable `git log -p`; squash ante fuga intermedia)
+- Práctica de medida canónica: `grep -c` / `grep -q`, nunca
+  `grep | head && echo OK`
+- CA transversal de ceguera + filas de activación/publish en
+  `reference/ejes-ca.md`; reglas 9–10 en `SKILL.md`; §§6–7 en
+  `reference/ciclo.md`; anti-patrones en ORQUESTADOR
+
+### Semver
+
+`0.3.0` — minor: contrato del skill ampliado (reglas 13–14); sin
+ruptura de layout ni frontmatter. v0.2 queda como histórico.
+
 ## 0.2.0 — 2026-07-19
 
 Bump menor del contrato de `swarm-orquestacion` (costuras de método).
