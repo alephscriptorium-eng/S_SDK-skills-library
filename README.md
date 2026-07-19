@@ -24,11 +24,13 @@ posteriores del paquete.
 
 ## Activar un skill en un mundo
 
-### 1. Registry (cuando esté publicado)
+### 1. Registry
 
 ```bash
 npm install @alephscript/skills-scriptorium --registry https://npm.scriptorium.escrivivir.co
 ```
+
+Release notes: ver `CHANGELOG.md` (semver inicial `0.1.0`).
 
 Luego apuntá el runtime de skills del mundo al path instalado, p. ej.:
 
