@@ -43,7 +43,8 @@ mundo, no en este skill.
 4. Arrancá el ciclo: orquestador → BRIEF → worker → reporte → revisión.
 
 Detalle: `reference/ciclo.md` · roles: `reference/roles/` · ejes:
-`reference/ejes-ca.md` · ejemplo: `examples/`.
+`reference/ejes-ca.md` · re-plan: `reference/RE-PLAN-protocolo-swarm.md` ·
+ejemplo: `examples/`.
 
 ## Ciclo (resumen)
 
@@ -70,6 +71,7 @@ Detalle: `reference/ciclo.md` · roles: `reference/roles/` · ejes:
 | ---- | --------- |
 | `reference/roles/` | ORQUESTADOR, WORKER, REVISION, CORRECCION, BRIEF, README |
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo |
+| `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |

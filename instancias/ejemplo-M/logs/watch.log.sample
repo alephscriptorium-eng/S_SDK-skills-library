@@ -1,0 +1,6 @@
+[2026-07-01 10:00:00] wt_reg=1 wt_dir=1 mtime[ wp-m10-contrato:12s ] ajenos[ ] locks=''
+[2026-07-01 10:00:45] wt_reg=1 wt_dir=1 mtime[ wp-m10-contrato:57s ] ajenos[ ] locks=''
+[2026-07-01 10:40:00] wt_reg=2 wt_dir=2 mtime[ wp-m11-kit:3s wp-m12-kit:3s ] ajenos[ ] locks=''
+[2026-07-01 10:41:00] wt_reg=1 wt_dir=2 mtime[ wp-m11-kit:63s ] ajenos[ ] locks=''
+[2026-07-01 10:41:00] !!HUERFANO carpeta .worktrees/wp-m10-contrato sin registro en git worktree list
+[2026-07-01 10:41:45] wt_reg=1 wt_dir=1 mtime[ wp-m11-kit:108s ] ajenos[ ] locks=''

@@ -6,3 +6,7 @@ el consumidor.
 
 Datos de sesión (bitácoras, logs, addendas reales) → `instancias/` o
 calibración local. Este directorio solo lleva método + fixture sintética.
+
+Corpus público de-identificado: `instancias/ejemplo-M/` (parámetro «M»).
+Doctrina de costuras del swarm: skill `swarm-orquestacion` →
+`reference/RE-PLAN-protocolo-swarm.md`.

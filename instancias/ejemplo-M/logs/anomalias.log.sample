@@ -1,0 +1,2 @@
+# anomalias.log — fixture (vacío tras calibración de persistencia ≥2 ciclos)
+# El !!HUERFANO de un solo ciclo en watch.log.sample es ruido de remove.

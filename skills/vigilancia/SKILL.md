@@ -46,5 +46,7 @@ prohibido para la cara pública, canal de CI (`gh` u otro).
 
 - `reference/ESTACION.md` — protocolo abstraído
 - `reference/ADDENDA-DOS-CARAS.md` — formato §interna / §WP + ceguera
-- `examples/` — fixtures sintéticas (sin datos de mundo real)
+- `examples/` — fixtures sintéticas mínimas (sin datos de mundo real)
+- `../../instancias/ejemplo-M/` — corpus-instancia de-identificado (bitácora /
+  revisiones / addendas / handoffs sintéticos; ceguera = 0)
 - `scripts/watcher.sh` — muestreo parametrizado (no usa `git status`)

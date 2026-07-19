@@ -9,4 +9,10 @@ Reglas:
 - Esta carpeta lleva la **instancia** (dato parametrizado: mundo →
   parámetro genérico).
 - No meter datos identificables de un mundo real en el árbol publicable.
-- I20 deja la carpeta vacía (solo este README + `.gitkeep`).
+
+## Contenido
+
+| ruta | qué |
+| ---- | --- |
+| `ejemplo-M/` | primer corpus-instancia (vigilancia): bitácora / revisiones /
+  addendas / handoffs / logs sintéticos; ceguera delta 5 = 0 |

@@ -3,6 +3,8 @@
 Lecciones de costura entre WPs y entre capas. El núcleo
 (worktree+rama por WP) no se toca: estos ejes cierran los **bordes**.
 
+Fuente narrativa: `RE-PLAN-protocolo-swarm.md` (mismo directorio).
+
 Cada eje es **CA obligatorio** cuando el WP es de ese tipo. El orquestador
 lo declara en el BRIEF; el worker lo evidencia; la revisión lo verifica.
 
