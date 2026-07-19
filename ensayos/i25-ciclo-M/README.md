@@ -18,8 +18,8 @@ completo (pulso + veredicto/addenda).
 
 | ruta | rol |
 | ---- | --- |
-| `watch.log` | pulso del watcher |
-| `anomalias.log` | anomalías elevadas |
+| `watch.log.sample` | pulso del watcher (corrida I25) |
+| `anomalias.log.sample` | anomalías elevadas (corrida I25) |
 | `addenda-A-i25-huerfano.md` | addenda dos caras + prueba de ceguera |
 | `veredicto.md` | cierre del ciclo (re-verificación de facto) |
 
