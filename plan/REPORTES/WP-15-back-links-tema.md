@@ -76,4 +76,27 @@ $ dist footer contiene los 6 href back (repo, registry, actions, pages, changelo
 
 ## Revisión del orquestador
 
-_(la rellena el orquestador: aceptado ✅ / devuelto con lista numerada)_
+**Aceptado ✅** (2026-07-20, rol REVIEWER / REVISION.md).
+
+Verificado:
+- Diff acotado a `ALCANCE_DIFF` (`skills/site-web/` · `docs/` · reporte).
+- DC-24 / B11: fuente única `themeConfig.back` + `backLinks` → footer/nav;
+  tabla de infra retirada de `proyecto.md`; plantilla con placeholders;
+  `SkillDetalle` deriva registry / «ver fuente» de `theme.back`.
+- Eje III + ceguera: `comprobar-ceguera.sh` → 0; sin redeclaración de
+  URLs de infra en el skill.
+- Merge-tree vs `main` (post WP-14): **sin conflictos** (`merge --no-commit`
+  limpio). Orden de lote: merge WP-15 al ✅; WP-13 último.
+
+Hallazgos no bloqueantes (ver veredicto del reviewer):
+1. `docs:build` falla en este entorno Windows (VitePress
+   `resolvePageImports`); **también falla en `main`** — no es regresión
+   WP-15. Evidencia del worker plausible en otro runtime; no se pudo
+   reproducir `docs:verificar` aquí.
+2. Evidencia del reporte: `rg … docs/proyecto.md → 0` es imprecisa (queda
+   `--registry https://npm.scriptorium…` en el snip de instalar; no es
+   tabla de back-links).
+3. Tabla de commits del reporte lista solo `10477cc`; falta `614956d`.
+
+BACKLOG ✅ y merge: a cargo del orquestador (este reviewer no marca
+BACKLOG ni mergea).
