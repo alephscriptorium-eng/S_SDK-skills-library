@@ -20,8 +20,11 @@ Cuando un agente deba:
 
 1. Mantener pulso read-only de worktrees, locks y CI del mundo.
 2. Clasificar huérfanos y elevar solo anomalías reales.
-3. Emitir addendas dos caras (§interna / §WP) con prueba de ceguera.
-4. Re-verificar CAs de facto tras merge (nunca fiarse del ✅ del reporte).
+3. Elevar **residuo de info** en carpetas de IDE (markdowns/notas de
+   sesión bajo `.claude`/`.cursor`/…; regla 15 del swarm). La config
+   funcional no es residuo.
+4. Emitir addendas dos caras (§interna / §WP) con prueba de ceguera.
+5. Re-verificar CAs de facto tras merge (nunca fiarse del ✅ del reporte).
 
 ## Parámetros («el mundo»)
 

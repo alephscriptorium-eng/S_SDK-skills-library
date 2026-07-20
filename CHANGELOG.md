@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased — destinado a 0.4.0
+
+Contrato ampliado (minor). **Publicación pendiente** (ops/CI): hasta
+publicar, la versión fijada vigente para consumo sigue siendo `0.3.0`; por
+eso `package.json` no se bumpea aún (evita anunciar una versión que el
+registry no resuelve).
+
+### `swarm-orquestacion` — regla 15 (WP-05)
+
+- **Fuente de verdad única y efimeralidad**
+  (`reference/reglas-metodo-v04.md`): el plan trazado en git es la única
+  verdad; la memoria interna del agente y las carpetas de IDE
+  (`.claude`/`.cursor`/…) son scratch efímero. Se conserva la config
+  funcional (settings/tasks/MCP); se prohíbe el texto de info de sesión
+  (markdowns, identificadores). Verificar contra el plan, no contra el
+  recuerdo. Checklist de cierre de ola extendida.
+
+### `vigilancia` — residuo de info (WP-05)
+
+- El vigía **eleva** markdowns de info bajo carpetas de IDE como anomalía
+  (`scripts/watcher.sh`, doctrina en `reference/ESTACION.md`). La config
+  funcional no es residuo.
+
 ## 0.3.0 — 2026-07-19
 
 Bump menor del contrato de `swarm-orquestacion` (ceguera de activación).

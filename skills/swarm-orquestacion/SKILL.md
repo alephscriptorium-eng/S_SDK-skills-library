@@ -72,14 +72,20 @@ ejemplo: `examples/`.
    solo conoce el skill — jamás uno con contexto del marco.
 10. Ceguera (regla 14): además del árbol, verificar historial reachable
     (`git log -p`); fuga intermedia = squash antes del merge.
+11. Fuente de verdad única (regla 15): el plan trazado en git, no la
+    memoria interna del agente ni las carpetas de IDE. Se conserva la
+    config funcional del entorno; se prohíbe el texto de info de sesión
+    (markdowns, identificadores). Verificar contra el plan, no contra el
+    recuerdo.
 
-## Método v0.3 (costuras)
+## Método v0.4 (costuras)
 
-Catorce reglas de borde + práctica V2 + checklist de cierre + práctica
-de medida (`grep -c` / `grep -q`, nunca `grep | head && echo OK`):
-`reference/reglas-metodo-v03.md`. Resumen operativo en
-`reference/ciclo.md` y ritual del orquestador. (v0.2 queda como
-histórico en `reglas-metodo-v02.md`.)
+Quince reglas de borde + práctica V2 + checklist de cierre extendida +
+práctica de medida (`grep -c` / `grep -q`, nunca `grep | head && echo
+OK`): `reference/reglas-metodo-v04.md` (regla 15) sobre
+`reference/reglas-metodo-v03.md` (1–14). Resumen operativo en
+`reference/ciclo.md` y ritual del orquestador. (v0.2 y v0.3 quedan como
+histórico.)
 
 ## Recursos
 
@@ -89,7 +95,8 @@ histórico en `reglas-metodo-v02.md`.)
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo (+ ceguera 13/14) |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
-| `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola |
+| `reference/reglas-metodo-v04.md` | **vigente**: regla 15 (fuente de verdad única) + checklist ola extendida |
+| `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola (base de v0.4) |
 | `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |

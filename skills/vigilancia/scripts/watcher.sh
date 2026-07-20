@@ -83,6 +83,23 @@ while true; do
     done
   fi
 
+  # Residuo de info en carpetas de IDE (regla 15): markdowns/notas de
+  # sesión = fuente de verdad paralela y efímera. La config funcional
+  # (json/toml/tasks/mcp) NO es residuo. Excluye worktrees (checkouts
+  # legítimos con sus propios .md) y node_modules/.git.
+  for ide in .claude .cursor .windsurf .aider; do
+    idedir="$WORLD_ROOT/$ide"
+    [ -d "$idedir" ] || continue
+    resid="$(find "$idedir" -type f -name '*.md' \
+      -not -path '*/worktrees/*' -not -path '*/node_modules/*' \
+      -not -path '*/.git/*' 2>/dev/null)"
+    [ -z "$resid" ] && continue
+    while IFS= read -r rf; do
+      [ -z "$rf" ] && continue
+      echo "[$ts] !!RESIDUO markdown de info en carpeta de IDE (regla 15; solo config funcional): ${rf#$WORLD_ROOT/}" | tee -a "$ANOM" >> "$LOG"
+    done <<< "$resid"
+  done
+
   line="[$ts] wt_reg=$reg_n wt_dir=$real_n mtime[$mts ] ajenos[$foreign ] locks='${locks}${wtlocks}'"
   echo "$line" >> "$LOG"
 

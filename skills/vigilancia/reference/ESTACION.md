@@ -55,6 +55,14 @@ orquestador antes de entregar (no duplicar).
 - **Pulso CI:** el pulso incluye SIEMPRE el último run de CI de la rama
   principal del mundo (`gh run list -L2` u equivalente). Los smokes locales
   de workers no sustituyen al runner limpio.
+- **Residuo de info en carpetas de IDE (regla 15 del swarm):**
+  markdowns/notas de sesión bajo `.claude/`, `.cursor/` u otras carpetas
+  de herramienta son una **fuente de verdad paralela y efímera** — se
+  pierden al cerrar y hacen creer que «el resto ya lo sabe». El vigía los
+  **eleva como anomalía**. La **configuración funcional** (json/toml,
+  tasks, servidores MCP) **no** es residuo y no se toca. Corolario del
+  propio vigía: persiste TODO veredicto a disco trazado (`OUT_DIR`), nunca
+  solo en memoria de chat.
 
 ## Ciclo de sprint
 
