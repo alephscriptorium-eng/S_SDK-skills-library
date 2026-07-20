@@ -132,7 +132,43 @@ Solo el orquestador edita este fichero, en `main`.
   - `verificar-sitio.mjs` verde sobre el portal ampliado (enlaces nuevos).
   - Ceguera 0.
 
-## Ola 4 — candidatos (sin abrir)
+## Ola 4 — proyección del scrum a issues (release 0.3.2)
+
+- ⬜ **WP-09 · Proyección del backlog a GitHub Issues** — dar al scrum de
+  markdown una proyección a un tracker externo **sin sync bidireccional**:
+  el markdown local es la **fuente de verdad única** (regla 15); los issues
+  son proyección desechable (build artifact); el remoto **nunca** tiene
+  autoridad. Propuesta del custodio (2026-07-20), refinada por el
+  orquestador (gate de ceguera).
+  **Skill:** `swarm-orquestacion` (método + script) · **Rama:** `wp/09-proyeccion`
+  · **Eje(s):** III (una fuente de verdad) + ceguera (issues = cara pública)
+  + IV (2º cliente: el propio repo).
+  **CA:**
+  - **Export local→GH** determinista e idempotente: cada WP con su **ID
+    estable** (parseado del BACKLOG, `WP-[A-Za-z0-9]+`) → issue;
+    `plan/.sync-map.json` (WP-ID → issue #) git-tracked; crear/actualizar +
+    cerrar (`✅`→closed, `🔶/⬜`→open) vía adaptador `gh api`. Re-correr no
+    duplica; regenerable desde cero.
+  - **Import GH→local** **jamás** escribe el BACKLOG: comentarios/cierres
+    remotos → `plan/INBOX-GH.md` (git-tracked) que el orquestador reconcilia
+    a mano (solo el orquestador escribe BACKLOG).
+  - **Gate de ceguera en el export (DC-12):** antes de proyectar a issues
+    **públicos**, correr la prueba de ceguera sobre el contenido a exportar;
+    **rechazar** (exit ≠ 0) si hay tokens de marco. Nadie proyecta un
+    backlog no-blindado a un tracker público.
+  - Cuerpo del issue: nota «proyección generada — comentad, no editéis; los
+    comentarios entran por inbox».
+  - **Remote-agnóstico:** adaptador (GitHub hoy; GitLab/nada mañana = otro
+    adaptador). Método documentado en `reference/`.
+  - **Modos:** (a) solo-local (no correr), (b) sesión (import-inbox al abrir
+    + export al cerrar). Modo (c) continuo (hook post-commit) = patrón
+    documentado, no implementado en 0.3.2.
+  - Semver: contrato de `swarm-orquestacion` ampliado → **0.3.2**
+    (`CHANGELOG` + gate `verificar-changelog`). Ceguera 0.
+  **Decisiones:** DC-10..DC-13. **Pendiente:** GO del custodio + alcance
+  (ver decisiones).
+
+## Ola 5 — candidatos (sin abrir)
 
 - ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al
   cuerpo de cada `SKILL.md` un puntero a `/guide/consumo`, si el custodio

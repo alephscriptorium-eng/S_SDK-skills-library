@@ -57,6 +57,27 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   **respaldo**. Próximo release: `git tag vX.Y.Z && git push origin vX.Y.Z`.
   Cierra el hallazgo «`publish.yml` era infra no probada / secrets sin
   cablear».
+- **DC-10 · Proyección, no sync bidireccional (WP-09; custodio).** El
+  markdown local del plan es la **fuente de verdad única** (regla 15); los
+  GitHub Issues son **proyección desechable** (build artifact) y **nunca**
+  tienen autoridad. El import remoto no escribe el BACKLOG: entra por
+  `plan/INBOX-GH.md` y lo reconcilia a mano el orquestador (solo él escribe
+  BACKLOG). Evita el pantano de conflictos del two-way sync por diseño.
+- **DC-11 · Exportador propio, no git-bug (WP-09; custodio).** git-bug
+  perdería el backlog-como-texto-con-marcas (corazón del método). Se
+  construye un exportador propio sobre `gh api`, **remote-agnóstico**
+  (adaptador: GitHub hoy; GitLab/nada mañana = otro adaptador).
+- **DC-12 · Ceguera obligatoria en el export (WP-09; orquestador, candado
+  de ceguera).** Los issues son cara pública: el export corre la prueba de
+  ceguera sobre el contenido a proyectar y **rechaza** (exit ≠ 0) si hay
+  tokens de marco. `plan/.sync-map.json` e `plan/INBOX-GH.md` viven en git
+  (estado trazado, **no** residuo de IDE; regla 15).
+- **DC-13 · Home y alcance de WP-09 (orquestador; alcance a ratificar).**
+  El skill anfitrión es `swarm-orquestacion` (la proyección es del backlog,
+  dominio del swarm). Alcance propuesto para **0.3.2**: modos (a) solo-local
+  y (b) sesión + inbox + gate de ceguera. Modo (c) hook post-commit y check
+  de vigía (proyección no diverge) = follow-up. → custodio ratifica el
+  alcance en el GO.
 
 ## Abiertas
 
