@@ -25,6 +25,10 @@ features:
     details: Un dir por skill con SKILL.md (frontmatter name + description) y recursos opcionales.
   - title: Protocolo ≠ datos
     details: El skill lleva el método; instancias/ guarda fixtures de-identificadas.
+  - title: Proyecto
+    details: Repo, registry propio, CI y CHANGELOG — el back FOSS a un clic desde el front.
+    link: /proyecto
+    linkText: Ver proyecto
 ---
 
 ## Local

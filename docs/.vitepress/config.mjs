@@ -31,7 +31,8 @@ export default defineConfig({
       { text: 'Portada', link: '/' },
       { text: 'Catálogo', link: '/catalogo' },
       { text: 'Consumo', link: '/guide/consumo' },
-      { text: 'Activar', link: '/guide/activar' }
+      { text: 'Activar', link: '/guide/activar' },
+      { text: 'Proyecto', link: '/proyecto' }
     ],
     sidebar: [
       {
@@ -40,7 +41,8 @@ export default defineConfig({
           { text: 'Portada', link: '/' },
           { text: 'Catálogo de skills', link: '/catalogo' },
           { text: 'Consumir el paquete', link: '/guide/consumo' },
-          { text: 'Activar un skill', link: '/guide/activar' }
+          { text: 'Activar un skill', link: '/guide/activar' },
+          { text: 'Proyecto (repo · registry · CI)', link: '/proyecto' }
         ]
       }
     ],

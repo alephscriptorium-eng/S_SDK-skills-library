@@ -89,6 +89,30 @@ No hardcodear el dominio de otro mundo en plantillas del skill: usá
 | 6 | spec-gen acoplado a `docs:build` | build = solo VitePress |
 | 7 | gap `paths: docs/**` | documentar + `workflow_dispatch` |
 
+## Enlaces al back (DevOps) — B11
+
+El portal vive **en la forja** (GitHub Pages): aprovechar la cercanía para
+que el visitante FOSS salte de lo que ve a su back en un clic. Método:
+
+- **Por página**, enlace a su **parte tec**: el recurso que la origina en
+  el repo (`{{REPO}}/tree/{{RAMA}}/<ruta>`), y el canal C8 pertinente
+  (registry `{{REGISTRY}}`, release, tarball).
+- **Página dedicada** «Proyecto / DevOps» que agrega los enlaces de infra
+  **no repartidos** en el resto del sitio:
+
+  | enlace | destino (parametrizable) |
+  | ------ | ------------------------ |
+  | Repositorio | `{{REPO}}` |
+  | Registry (paquete) | `{{REGISTRY}}` |
+  | CI / Actions | `{{REPO}}/actions` |
+  | Pages (dominio vivo) | `https://{{DOMINIO}}` |
+  | CHANGELOG | `{{REPO}}/blob/{{RAMA}}/CHANGELOG.md` |
+  | Contribuir / issues | `{{REPO}}/issues` |
+
+- No hardcodear estas URLs en el **skill**: van con placeholders; el
+  **mundo** las materializa en su página. Cubre el flujo devops (código →
+  registry → CI → Pages) para que el back sea alcanzable desde el front.
+
 ## Gate de verificación (enlaces + verdad de contenido)
 
 El `ignoreDeadLinks: false` de VitePress solo valida enlaces del

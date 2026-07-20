@@ -29,6 +29,13 @@ fundación las reemplaza; interiores válidos siguen si no chocan.
 9. Conector entre portales = categoría pública (si existe).
 10. Cards de obra = mecánica en términos del sistema; catálogo cierra con
     vía de contribución.
+11. **Enlaces al back (DevOps).** Cada superficie enlaza a su **parte tec**
+    (repo en la forja, registry del canal C8, CI). Una página dedicada
+    «aparato/proyecto» agrega los enlaces de infra **no repartidos** (repo,
+    registry, CI/Actions, Pages, CHANGELOG, vía de contribución). El
+    navegante FOSS llega al back de lo que ve en pantalla sin buscarlo.
+    Cubre el flujo devops; complementa B9 (conector entre portales) y B10
+    (vía de contribución).
 
 ## C · Filtros (grep / revisión antes de entregar)
 
