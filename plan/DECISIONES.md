@@ -126,6 +126,39 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   alcance se elige **en el momento de activar** la proyección; el
   orquestador lo confirma junto al modo en el ritual de inicio.
 
+- **DC-21 · Intake de feedback externo de consumidor (mediación, Eje V).**
+  Un **mundo consumidor** (monorepo npm-workspaces con changesets + portal
+  VitePress) elevó, tras adoptar 0.3.1–0.3.3, tres puntos: (1) el contrato
+  de método (regla 15) se sirvió como **patch**; (2) el gate de CHANGELOG
+  **asume un solo paquete**; (3) los back-links **por página** son
+  duplicación. Nota externa recibida 2026-07-20; entra por **reconciliación
+  del orquestador** (no auto-ejecuta). Se abren WP-13/14/15 para 0.4.0.
+  Convergencia a favor: el consumidor gitignoró la copia sincronizada,
+  igual que DC-16.
+- **DC-22 · Semver: contrato de método = minor; badge = eje distinto
+  (cierra Punto 1; propuesta del orquestador, ratifica el GO).** Política:
+  añadir/modificar una **regla de método** amplía el contrato → al menos
+  **minor** del paquete; patch = solo correcciones sin cambio de contrato.
+  La «versión de método» por skill (badge del catálogo) y el «semver del
+  paquete» son **ejes distintos**; el README fija la correspondencia.
+  Reconciliación: **0.4.0** absorbe la expansión de contrato acumulada
+  (regla 15 + gates 0.3.x) y estrena la doctrina.
+- **DC-23 · verificar-changelog = gate de GOBIERNO, parametrizable (cierra
+  Punto 2).** El gate aplica al **CHANGELOG de gobierno** (uno por mundo,
+  derivado del BACKLOG, WP-id-keyed). **No** asume ser el único changelog:
+  en monorepos con changesets, los **CHANGELOG de paquete** (N, por
+  SHA/semver, máquina-generados) son otro eje y no pasan por este gate. El
+  gate se declara opt-in/parametrizable (rutas + rol) para ser adoptable en
+  monorepos.
+- **DC-24 · Back-links a nivel de tema, no por página (cierra Punto 3).**
+  Los enlaces al back (repo/registry/CI) se declaran **una vez** como
+  config de tema + placeholders (variables del sitio) y se renderizan vía
+  footer/nav; nunca un bloque repetido por página (drift). El método
+  `site-web` entrega WP-08 como **config de tema + placeholders**, no texto
+  por página. Corrección de generador defectuoso = regenerar la pipeline
+  con fuente única, no parchear página a página.
+
 ## Abiertas
 
-_(ninguna abierta; DA-1/DA-2 cerradas como DC-16/DC-17; DA-3/DA-4 como DC-4/DC-5.)_
+_(ninguna abierta; DA-1/DA-2 → DC-16/DC-17; DA-3/DA-4 → DC-4/DC-5. DC-22..24
+las ratifica el GO.)_
