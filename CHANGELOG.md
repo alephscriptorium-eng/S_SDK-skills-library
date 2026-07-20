@@ -6,25 +6,28 @@ versionado [SemVer](https://semver.org/lang/es/). Las entradas se
 no se inventa texto. Gate:
 `skills/swarm-orquestacion/scripts/verificar-changelog.mjs`.
 
-Doctrina semver del paquete (DC-22, desde 0.4.0): cambio de **regla de
-método** → al menos **minor**; **patch** = sin cambio de contrato. La
-«versión de método» (badge del catálogo) y el «semver del paquete» son
-ejes distintos; la correspondencia se declara en el `README.md` raíz.
+Doctrina semver del paquete (DC-22, estrenada en este corte): cambio de
+**regla de método** → al menos **minor**; **patch** = sin cambio de
+contrato. La «versión de método» (badge del catálogo) y el «semver del
+paquete» son ejes distintos; la correspondencia se declara en el
+`README.md` raíz.
 
-## [0.4.0] — 2026-07-20
+## [0.3.4] — 2026-07-20
 
 Reconciliación de la expansión de contrato acumulada (regla 15 + gates
-0.3.x) y estreno de la doctrina semver (DC-22). Entradas copiadas de los
-WP ✅ del backlog (Ola 6: WP-13/14/15).
+0.3.x) y estreno de la doctrina semver (DC-22). Corte publicable
+**0.3.4** por decisión del custodio (retarget del 0.4.0 previsto).
+Entradas copiadas de los WP ✅ del backlog (Ola 6: WP-13/14/15).
 
 ### Changed
 
 - **WP-13 · Doctrina semver + reconciliación 0.4.0** — README/CHANGELOG
   fijan la doctrina: cambio de **regla de método** = minor; patch = sin
   cambio de contrato; «versión de método» (badge) y «semver de paquete» =
-  ejes distintos, con correspondencia declarada. **0.4.0** cortada
-  (minor) reconciliando la expansión acumulada; el badge v0.4 queda con
-  relación documentada al paquete.
+  ejes distintos, con correspondencia declarada. Contenido de Ola 6
+  publicado como **0.3.4** (override del custodio frente al corte minor
+  0.4.0 previsto); el badge v0.4 queda con relación documentada al
+  paquete.
 - **WP-14 · verificar-changelog: gobierno vs paquete** — la práctica y el
   gate distinguen CHANGELOG de **gobierno** (uno/mundo, WP-id-keyed) de
   CHANGELOG de **paquete** (N, changesets/semver); el gate es

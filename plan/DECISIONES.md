@@ -141,8 +141,11 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   al menos **minor** del paquete; patch = solo correcciones sin cambio de
   contrato. La «versión de método» por skill (badge del catálogo) y el
   «semver del paquete» son **ejes distintos**; el README fija la
-  correspondencia. Reconciliación: **0.4.0** absorbe la expansión de
-  contrato acumulada (regla 15 + gates 0.3.x) y estrena la doctrina.
+  correspondencia. Reconciliación prevista: **0.4.0** absorbe la expansión
+  de contrato acumulada (regla 15 + gates 0.3.x) y estrena la doctrina.
+  **Override ops (custodio, 2026-07-20):** el corte publicable de Ola 6 se
+  retargeta a **0.3.4** (no se publica 0.4.0). La política (método →
+  minor) permanece; solo cambia el número de corte de este release.
 - **DC-23 · verificar-changelog = gate de GOBIERNO, parametrizable (cierra
   Punto 2; WP-14).** **Ratificado por el custodio (GO 2026-07-20).** El
   gate aplica al **CHANGELOG de gobierno** (uno por mundo, derivado del

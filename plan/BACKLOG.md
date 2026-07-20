@@ -215,13 +215,14 @@ Solo el orquestador edita este fichero, en `main`.
   - Dry-run cubre ambos (preview sin API); ceguera 0.
   - Semver: contrato ampliado → **0.3.3** (`CHANGELOG` + gate).
 
-## Ola 6 — feedback de consumidor (release 0.4.0) · cerrada
+## Ola 6 — feedback de consumidor (release 0.3.4) · cerrada
 
 Origen: feedback externo de un mundo consumidor (DC-21). GO del custodio
 (2026-07-20): abre WP-13/14/15 (🔶) y ratifica DC-22..24. Modo sesión:
 **local-only** (sin proyección a issues). Briefs: `plan/BRIEFS/`.
-Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último** (corte
-0.4.0).
+Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último**.
+Corte publicable: **0.3.4** (custodio retargeta el 0.4.0 previsto; ver
+DC-22).
 
 - ✅ **WP-13 · Doctrina semver + reconciliación 0.4.0** (Punto 1, DC-22).
   **Skill:** pack (README/CHANGELOG) + `swarm-orquestacion` · **Rama:**

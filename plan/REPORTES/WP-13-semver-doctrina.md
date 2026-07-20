@@ -98,5 +98,9 @@ Verificado:
 **Merge (orquestador):** integrado en `main` por ff-only → `a51508c`
 (2026-07-20). WP-14/15 volcados en `[0.4.0]`. Ola 6 cerrada.
 
+**Override custodio (ops, 2026-07-20):** corte publicable retargetado
+**0.4.0 → 0.3.4** (no se publica 0.4.0). Sección CHANGELOG / `package.json`
+/ README alineados a 0.3.4; política DC-22 intacta. Ver nota en DC-22.
+
 Nits no bloqueantes: ancla skill README usa «v0.4» (raíz/badge «v0.4.0»);
 tabla de commits del reporte omite `be02d47`.

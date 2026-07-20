@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.4.0`).
+Release notes: `CHANGELOG.md` (actual `0.3.4`).
 
 ### Semver del paquete vs versión de método
 
@@ -46,11 +46,11 @@ Política del semver del paquete:
 - **major**: ruptura de layout del skill o del frontmatter
   (`name` + `description`).
 
-Correspondencia actual: el paquete **0.4.0** (minor) absorbe la expansión
-de contrato acumulada en 0.3.x (regla 15 + gates) y estrena esta doctrina.
-El badge de método de `swarm-orquestacion` sigue en **v0.4.0** (DC-18):
-mismo número por reconciliación, ejes distintos — el badge no «es» el
-semver del paquete.
+Correspondencia actual: el paquete **0.3.4** publica el contenido de Ola 6
+(doctrina DC-22 + WP-13/14/15). El corte **0.4.0** (minor) previsto por
+DC-22 fue **retargetado a 0.3.4** por el custodio. El badge de método de
+`swarm-orquestacion` sigue en **v0.4.0** (DC-18): ejes distintos — el
+badge no «es» el semver del paquete.
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -59,7 +59,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.4.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.3.4 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
@@ -104,9 +104,9 @@ emmanuel WP-I60.
 La referencia fijada debe **resolver** contra el registry:
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.4.0 \
+npm view @alephscript/skills-scriptorium@0.3.4 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.4.0, exit 0  (<pendiente> hasta npm publish)
+# → 0.3.4, exit 0  (<pendiente> hasta npm publish)
 ```
 
 ## Desarrollo local (no es consumo)
@@ -121,7 +121,7 @@ npm install /ruta/absoluta/al/repo-skills-library
 # simulación sin registry (pack → install en temporal)
 cd /ruta/al/repo-skills-library && npm pack
 TMP=$(mktemp -d) && cd "$TMP" && npm init -y
-npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.4.0.tgz
+npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.4.tgz
 ls node_modules/@alephscript/skills-scriptorium/skills/
 ```
 
