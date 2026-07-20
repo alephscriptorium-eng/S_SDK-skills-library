@@ -27,7 +27,30 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.3.3`).
+Release notes: `CHANGELOG.md` (actual `0.4.0`).
+
+### Semver del paquete vs versión de método
+
+Dos ejes distintos (DC-22); no se confunden:
+
+| Eje | Dónde se ve | Qué versiona |
+| --- | ----------- | ------------ |
+| **Semver del paquete** | `package.json` / npm (`@alephscript/skills-scriptorium@X.Y.Z`) | Contrato publicable del tarball |
+| **Versión de método** | Badge del catálogo por skill (p. ej. `swarm-orquestacion` **v0.4.0**) | Contrato de reglas del skill concreto |
+
+Política del semver del paquete:
+
+- **minor** (o major si aplica): añadir o modificar una **regla de método**
+  amplía el contrato → al menos minor.
+- **patch**: solo correcciones **sin** cambio de contrato.
+- **major**: ruptura de layout del skill o del frontmatter
+  (`name` + `description`).
+
+Correspondencia actual: el paquete **0.4.0** (minor) absorbe la expansión
+de contrato acumulada en 0.3.x (regla 15 + gates) y estrena esta doctrina.
+El badge de método de `swarm-orquestacion` sigue en **v0.4.0** (DC-18):
+mismo número por reconciliación, ejes distintos — el badge no «es» el
+semver del paquete.
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -36,7 +59,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.3.3 \
+npm install --save-exact @alephscript/skills-scriptorium@0.4.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
@@ -81,9 +104,9 @@ emmanuel WP-I60.
 La referencia fijada debe **resolver** contra el registry:
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.3.3 \
+npm view @alephscript/skills-scriptorium@0.4.0 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.3.3, exit 0
+# → 0.4.0, exit 0  (<pendiente> hasta npm publish)
 ```
 
 ## Desarrollo local (no es consumo)
@@ -98,7 +121,7 @@ npm install /ruta/absoluta/al/repo-skills-library
 # simulación sin registry (pack → install en temporal)
 cd /ruta/al/repo-skills-library && npm pack
 TMP=$(mktemp -d) && cd "$TMP" && npm init -y
-npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.3.tgz
+npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.4.0.tgz
 ls node_modules/@alephscript/skills-scriptorium/skills/
 ```
 

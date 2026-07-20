@@ -6,6 +6,27 @@ versionado [SemVer](https://semver.org/lang/es/). Las entradas se
 no se inventa texto. Gate:
 `skills/swarm-orquestacion/scripts/verificar-changelog.mjs`.
 
+Doctrina semver del paquete (DC-22, desde 0.4.0): cambio de **regla de
+método** → al menos **minor**; **patch** = sin cambio de contrato. La
+«versión de método» (badge del catálogo) y el «semver del paquete» son
+ejes distintos; la correspondencia se declara en el `README.md` raíz.
+
+## [0.4.0] — 2026-07-20
+
+Reconciliación de la expansión de contrato acumulada (regla 15 + gates
+0.3.x) y estreno de la doctrina semver (DC-22). Entrada copiada del WP
+del backlog. `<pendiente al merge final>`: incorporar ids de WP-14 y
+WP-15 cuando estén ✅.
+
+### Changed
+
+- **WP-13 · Doctrina semver + reconciliación 0.4.0** — README/CHANGELOG
+  fijan la doctrina: cambio de **regla de método** = minor; patch = sin
+  cambio de contrato; «versión de método» (badge) y «semver de paquete» =
+  ejes distintos, con correspondencia declarada. **0.4.0** cortada
+  (minor) reconciliando la expansión acumulada; el badge v0.4 queda con
+  relación documentada al paquete.
+
 ## [0.3.3] — 2026-07-20
 
 Refinamientos de la proyección del backlog a issues. Entrada copiada del

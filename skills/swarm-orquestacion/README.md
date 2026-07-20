@@ -2,6 +2,12 @@
 
 Skill de protocolo de swarm (roles + ciclo + cinco ejes de CA).
 
+**Versión de método** de este skill: **v0.4** (regla 15;
+`reference/reglas-metodo-v04.md`). Es el eje del badge del catálogo
+(DC-18), distinto del **semver del paquete** npm. Política y
+correspondencia (método = minor del paquete; patch sin cambio de
+contrato): `README.md` raíz del paquete (DC-22).
+
 > Procedimiento canónico de consumo (versión **fijada**, adaptadores por
 > runner, dedup, verificación C8): README raíz del paquete o
 > `skills.s-sdk.escrivivir.co/guide/consumo`. Los pasos de abajo son la
