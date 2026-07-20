@@ -168,7 +168,7 @@ Solo el orquestador edita este fichero, en `main`.
   **Decisiones:** DC-10..DC-13. **Pendiente:** GO del custodio + alcance
   (ver decisiones).
 
-- 🔶 **WP-10 · Proyección local-only por defecto + modo de sesión** —
+- ✅ **WP-10 · Proyección local-only por defecto + modo de sesión** —
   blindar WP-09: por defecto **nadie proyecta** a GitHub; solo con opt-in
   explícito del usuario. Endurecimiento de seguridad (DC-15), dentro de
   0.3.2. **Skill:** `swarm-orquestacion` · **Rama:** `main` · **Eje(s):**

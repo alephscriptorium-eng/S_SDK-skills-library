@@ -20,6 +20,11 @@ Entrada copiada del WP ✅ del backlog.
   import → `plan/INBOX-GH.md` (no escribe el BACKLOG), adaptador `gh`
   remote-agnóstico y **gate de ceguera obligatorio** (`CEGUERA_PATTERN`
   por env). El markdown local sigue siendo la fuente de verdad única.
+- **WP-10 · Proyección local-only por defecto** — la proyección a GitHub
+  es **opt-in** (DC-15): el `export` real rehúsa sin `--habilitar-github` /
+  `PROYECCION_GITHUB=1` (dry-run permitido); el orquestador confirma el
+  modo al inicio de sesión (default local-only); el vigía eleva proyección
+  no declarada. Doble candado con el gate de ceguera.
 
 ## [0.3.1] — 2026-07-20
 
