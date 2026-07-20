@@ -5,7 +5,7 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 1 — Portal de skills
 
-- 🔶 **WP-01 · Portal de consumo + catálogo** — dar al portal la capa que
+- ✅ **WP-01 · Portal de consumo + catálogo** — dar al portal la capa que
   faltaba para un mundo consumidor y para el descubrimiento de skills.
   Fusiona el consumo canónico y el catálogo en un portal coherente:
   hub (catálogo con filtrado) → página por skill (autogenerada) →
