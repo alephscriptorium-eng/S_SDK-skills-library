@@ -10,3 +10,6 @@ calibración local. Este directorio solo lleva método + fixture sintética.
 Corpus público de-identificado: `instancias/ejemplo-M/` (parámetro «M»).
 Doctrina de costuras del swarm: skill `swarm-orquestacion` →
 `reference/RE-PLAN-protocolo-swarm.md`.
+
+Consumo canónico (versión fijada + dedup + C8): README raíz del paquete o
+`skills.s-sdk.escrivivir.co/guide/consumo`.

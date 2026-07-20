@@ -22,46 +22,83 @@ docs/               # VitePress (no va al tarball npm)
 Plantilla vacía: `skills/_plantilla/`. Skills reales llegan en entregas
 posteriores del paquete.
 
-## Activar un skill en un mundo
+## Consumo desde un mundo (procedimiento canónico)
 
-### 1. Registry
+Agnóstico de IDE. Versión extendida (script de sincronización, patrón
+dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
+[skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
+Release notes: `CHANGELOG.md` (actual `0.3.0`).
+
+### 1. Dependencia con versión exacta fijada
+
+Nunca `latest` ni rango `^`/`~`: el contrato del skill cambia por semver
+y el mundo consumidor decide **cuándo** subir. `--save-exact` es
+obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install @alephscript/skills-scriptorium --registry https://npm.scriptorium.escrivivir.co
+npm install --save-exact @alephscript/skills-scriptorium@0.3.0 \
+  --registry https://npm.scriptorium.escrivivir.co
 ```
 
-Release notes: ver `CHANGELOG.md` (actual `0.3.0`).
+O fijando el registry por scope en el `.npmrc` del consumidor:
 
-Luego apuntá el runtime de skills del mundo al path instalado, p. ej.:
+```ini
+@alephscript:registry=https://npm.scriptorium.escrivivir.co
+save-exact=true
+```
+
+### 2. Fuente de verdad: `node_modules`
+
+El método vive **solo** en el paquete instalado:
 
 ```text
-node_modules/@alephscript/skills-scriptorium/skills/<nombre>/
+node_modules/@alephscript/skills-scriptorium/skills/<nombre>/SKILL.md
 ```
 
-### 2. Path local (desarrollo hermano)
+Cualquier runner/IDE que sepa leer un path arbitrario de skills apunta
+ahí directamente.
+
+### 3. Adaptadores por runner
+
+Runners que exigen un directorio propio (p. ej. Claude Code y su
+`.claude/skills/`) **sincronizan por script idempotente** desde
+`node_modules` — nunca se edita la copia a mano; se regenera tras cada
+`npm install`. Patrón general para otros IDEs: mismo script, otro
+destino. Ver [docs/guide/consumo.md](docs/guide/consumo.md).
+
+### 4. Dedup: referencia versionada + calibración local
+
+Los prompts/protocolos **no se copian** al repo consumidor. El repo
+consumidor documenta (a) la referencia versionada
+`@alephscript/skills-scriptorium@X.Y.Z` y (b) solo su **calibración
+local** (lo que difiere del método común). Modelo de referencia:
+emmanuel WP-I60.
+
+### 5. Verificación (C8)
+
+La referencia fijada debe **resolver** contra el registry:
 
 ```bash
+npm view @alephscript/skills-scriptorium@0.3.0 \
+  --registry=https://npm.scriptorium.escrivivir.co version
+# → 0.3.0, exit 0
+```
+
+## Desarrollo local (no es consumo)
+
+Solo para trabajar sobre el propio skill; un mundo consumidor jamás
+depende por `file:`/tgz.
+
+```bash
+# path hermano
 npm install /ruta/absoluta/al/repo-skills-library
-# o en package.json:
-# "@alephscript/skills-scriptorium": "file:../repo-skills-library"
-```
 
-### 3. Simulación sin registry (`npm pack`)
-
-```bash
-cd /ruta/al/repo-skills-library
-npm pack
-# → alephscript-skills-scriptorium-0.3.0.tgz
-
-TMP=$(mktemp -d)
-cd "$TMP"
-npm init -y
+# simulación sin registry (pack → install en temporal)
+cd /ruta/al/repo-skills-library && npm pack
+TMP=$(mktemp -d) && cd "$TMP" && npm init -y
 npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.0.tgz
 ls node_modules/@alephscript/skills-scriptorium/skills/
 ```
-
-El ciclo pack → install en temporal es la simulación canónica mientras no
-haya publish al registry.
 
 ## Docs locales
 

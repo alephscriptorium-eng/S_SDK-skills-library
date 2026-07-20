@@ -2,10 +2,17 @@
 
 Skill de protocolo de swarm (roles + ciclo + cinco ejes de CA).
 
+> Procedimiento canónico de consumo (versión **fijada**, adaptadores por
+> runner, dedup, verificación C8): README raíz del paquete o
+> `skills.s-sdk.escrivivir.co/guide/consumo`. Los pasos de abajo son la
+> activación específica de este skill.
+
 ## Activar en un mundo
 
-1. Instalá el paquete (`npm i @alephscript/skills-scriptorium` desde el
-   registry del consumidor, o `npm pack` + install por ruta).
+1. Instalá el paquete con versión **exacta** (`npm install --save-exact
+   @alephscript/skills-scriptorium@X.Y.Z` desde el registry del
+   consumidor; nunca `latest`). Solo para desarrollo del propio skill:
+   `npm pack` + install por ruta.
 2. Localizá el skill:
    `node_modules/@alephscript/skills-scriptorium/skills/swarm-orquestacion/`
    (o la ruta del checkout hermano).

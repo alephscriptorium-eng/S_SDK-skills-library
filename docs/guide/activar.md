@@ -3,6 +3,10 @@
 El paquete `@alephscript/skills-scriptorium` expone skills bajo `skills/`.
 Un mundo los **activa** (instala + apunta el runtime); no copia el método.
 
+> Procedimiento canónico completo para un mundo consumidor (versión
+> fijada, adaptadores por runner, dedup, verificación C8):
+> [Consumir el paquete](/guide/consumo).
+
 ## Desde registry
 
 ```bash

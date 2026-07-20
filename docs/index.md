@@ -8,16 +8,21 @@ hero:
     método común; los datos viven aparte (instancias/).
   actions:
     - theme: brand
+      text: Catálogo
+      link: /catalogo
+    - theme: alt
+      text: Consumo
+      link: /guide/consumo
+    - theme: alt
       text: Activar
       link: /guide/activar
-    - theme: alt
-      text: Paquete
-      link: https://github.com/alephscriptorium-eng/S_SDK-skills-library
 features:
+  - title: Catálogo
+    details: Vista overview con filtrado por categoría, tag y búsqueda; los skills se derivan del frontmatter real.
+    link: /catalogo
+    linkText: Ver catálogo
   - title: Formato skill
     details: Un dir por skill con SKILL.md (frontmatter name + description) y recursos opcionales.
-  - title: Activación
-    details: Registry, path local o npm pack (simulación sin publish).
   - title: Protocolo ≠ datos
     details: El skill lleva el método; instancias/ guarda fixtures de-identificadas.
 ---
