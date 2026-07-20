@@ -48,6 +48,15 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   una **página dedicada** («Proyecto/DevOps») agrega los enlaces de infra
   no repartidos (repo, registry, Actions, Pages, CHANGELOG, contribuir).
   Objetivo: el navegante FOSS llega al back rápido (flujo devops).
+- **DC-9 · Vía de release canónica = tag `v*` → `publish.yml` (CI).**
+  Verificado 2026-07-20 con 0.3.1: con los secrets `NPM_USERNAME` /
+  `NPM_PASSWORD` puestos en el repo S_SDK, el push de un tag `v*` dispara
+  `publish.yml` → `npm publish` al Verdaccio (`npm.scriptorium.escrivivir.co`);
+  C8 `@0.3.1` resuelto ✅. Hasta 0.3.0 el publish fue **local** (DE-I12,
+  `ScriptoriumVps/scripts/publish-package.sh`); esa vía queda como
+  **respaldo**. Próximo release: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+  Cierra el hallazgo «`publish.yml` era infra no probada / secrets sin
+  cablear».
 
 ## Abiertas
 
@@ -61,4 +70,5 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   skills ya apuntan a `/guide/consumo`. ¿Debe el propio `SKILL.md`
   (frontmatter + cuerpo) llevar también el puntero, o se mantiene el
   README como único punto de entrada por skill? → custodio decide.
-_(ninguna abierta ahora; DA-3 y DA-4 cerradas como DC-4/DC-5)_
+
+_(DA-3 y DA-4 se cerraron como DC-4/DC-5; DA-1 y DA-2 siguen abiertas.)_
