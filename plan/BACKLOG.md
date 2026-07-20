@@ -92,7 +92,7 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 3 — CHANGELOG disciplinado y enlaces al back
 
-- 🔶 **WP-07 · CHANGELOG estándar vinculado al backlog** — hoy cada agente
+- ✅ **WP-07 · CHANGELOG estándar vinculado al backlog** — hoy cada agente
   apunta texto libre en el CHANGELOG. Restringirlo: formato FOSS estándar
   (Keep a Changelog), contenido **derivado del backlog cerrado** (el
   agente copia los WP ✅, no inventa texto), y un mecanismo que asegura que
@@ -113,7 +113,7 @@ Solo el orquestador edita este fichero, en `main`.
     1–2 copiados del backlog.
   - Ceguera 0.
 
-- 🔶 **WP-08 · Enlaces al back (DevOps) en el portal** — aprovechar que el
+- ✅ **WP-08 · Enlaces al back (DevOps) en el portal** — aprovechar que el
   portal vive en GitHub Pages: cada página ofrece enlace a su **parte tec**
   (repo en github.com, registry propio, CI) y una **sección dedicada** que
   agrega los enlaces de infra no repartidos, para que el navegante FOSS
