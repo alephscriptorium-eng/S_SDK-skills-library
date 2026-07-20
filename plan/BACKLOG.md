@@ -134,7 +134,7 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 4 — proyección del scrum a issues (release 0.3.2)
 
-- ⬜ **WP-09 · Proyección del backlog a GitHub Issues** — dar al scrum de
+- 🔶 **WP-09 · Proyección del backlog a GitHub Issues** — dar al scrum de
   markdown una proyección a un tracker externo **sin sync bidireccional**:
   el markdown local es la **fuente de verdad única** (regla 15); los issues
   son proyección desechable (build artifact); el remoto **nunca** tiene

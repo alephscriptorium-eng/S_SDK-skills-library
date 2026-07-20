@@ -76,8 +76,13 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   El skill anfitrión es `swarm-orquestacion` (la proyección es del backlog,
   dominio del swarm). Alcance propuesto para **0.3.2**: modos (a) solo-local
   y (b) sesión + inbox + gate de ceguera. Modo (c) hook post-commit y check
-  de vigía (proyección no diverge) = follow-up. → custodio ratifica el
-  alcance en el GO.
+  de vigía (proyección no diverge) = follow-up. **Ratificado por el custodio
+  (2026-07-20):** alcance 0.3.2 = export + import/inbox + gate de ceguera
+  (modos a/b); modo c y check de vigía = follow-up.
+- **DC-14 · Mapeo marcas↔issue = open/closed, sin labels (WP-09; custodio).**
+  `⬜`/`🔶` → issue **open**; `✅` → **closed**. Sin labels de estado ni
+  eje (menos superficie pública que blindar; añadir labels después es
+  trivial y reversible). El detalle del WP vive en el body proyectado.
 
 ## Abiertas
 
