@@ -200,7 +200,7 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 5 — refinamientos de proyección (release 0.3.3)
 
-- 🔶 **WP-12 · Proyección: auto-cierre de huérfanos + modo de alcance** —
+- ✅ **WP-12 · Proyección: auto-cierre de huérfanos + modo de alcance** —
   dos refinamientos del exportador (WP-09), unificados en una lógica:
   «proyectá el conjunto elegido; cerrá lo que ya no esté en él».
   **Skill:** `swarm-orquestacion` · **Rama:** `main` · **Eje(s):** ceguera.
