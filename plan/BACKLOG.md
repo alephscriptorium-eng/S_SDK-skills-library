@@ -245,9 +245,9 @@ Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último** (corte
   - El gate es **opt-in/parametrizable** (rutas + declaración de rol); no
     asume changelog único. Documentado como adoptable en monorepos.
 
-- 🔶 **WP-15 · Back-links a nivel de tema** (Punto 3, DC-24).
-  **Skill:** `site-web` + mundo-fuente (portal) · **Rama:**
-  `wp/15-back-links-tema` · **Eje(s):** III (dedup) + ceguera.
+- ✅ **WP-15 · Back-links a nivel de tema** (Punto 3, DC-24).
+  **Skill:** `site-web` + mundo-fuente (portal) · **Rama:** `main` ·
+  **Eje(s):** III (dedup) + ceguera.
   **Brief:** `plan/BRIEFS/WP-15-back-links-tema.md`.
   **CA:**
   - `metodo-mecanismo.md` (B11) + `protocolo-ghpages.md`: back-links =
