@@ -39,7 +39,7 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 2 — higiene de método y verificación (planificados)
 
-- 🔶 **WP-05 · Efimeralidad y fuente de verdad única** — cerrar el
+- ✅ **WP-05 · Efimeralidad y fuente de verdad única** — cerrar el
   anti-patrón vivido: carpetas de IDE (`.claude`/`.cursor`/`.github`) y
   **memorias internas** de agentes acumulan info efímera que solo conoce
   ese agente, se pierde al cerrar sesión, y hace que los agentes tomen su
@@ -66,7 +66,7 @@ Solo el orquestador edita este fichero, en `main`.
     + entrada en `CHANGELOG.md`.
   - Ceguera 0 (árbol + `git log -p`) en la cara pública tocada.
 
-- 🔶 **WP-06 · Gate de verificación de sitio (enlaces + verdad)** — cada
+- ✅ **WP-06 · Gate de verificación de sitio (enlaces + verdad)** — cada
   deploy tuvo enlaces rotos porque `ignoreDeadLinks:false` **no** cubre
   hrefs en componentes `.vue` (catálogo/páginas por skill), ni externos,
   ni anclas. Falta además verificar que la info del sitio es cierta.
