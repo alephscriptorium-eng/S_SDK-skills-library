@@ -6,6 +6,20 @@ versionado [SemVer](https://semver.org/lang/es/). Las entradas se
 no se inventa texto. Gate:
 `skills/swarm-orquestacion/scripts/verificar-changelog.mjs`.
 
+## [0.3.3] — 2026-07-20
+
+Refinamientos de la proyección del backlog a issues. Entrada copiada del
+WP ✅ del backlog.
+
+### Added
+
+- **WP-12 · Proyección: auto-cierre de huérfanos + alcance configurable** —
+  el `export` de `proyectar-backlog.mjs` **auto-cierra** los issues del
+  `sync-map` cuyo WP ya no está en el conjunto proyectado (DC-19) y acepta
+  **`--alcance todos|abiertos`** (DC-20: `abiertos` proyecta solo `⬜`/`🔶`
+  y cierra los `✅`). Lógica unificada: «proyectá el conjunto; cerrá lo que
+  sobra».
+
 ## [0.3.2] — 2026-07-20
 
 Sistema de scrum: proyección del backlog a issues sin sync bidireccional.

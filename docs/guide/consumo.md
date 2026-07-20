@@ -17,11 +17,11 @@ cuándo absorber un bump — una actualización implícita en un `npm
 install` rutinario cambiaría el protocolo bajo los pies del orquestador.
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.3.2 \
+npm install --save-exact @alephscript/skills-scriptorium@0.3.3 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
-`--save-exact` es obligatorio: sin él, npm guarda `"^0.3.2"` en
+`--save-exact` es obligatorio: sin él, npm guarda `"^0.3.3"` en
 `package.json` y la fijación es ilusoria.
 
 Alternativa equivalente — registry por scope en el `.npmrc` del repo
@@ -33,14 +33,14 @@ save-exact=true
 ```
 
 ```bash
-npm install @alephscript/skills-scriptorium@0.3.2
+npm install @alephscript/skills-scriptorium@0.3.3
 ```
 
 Resultado esperado en el `package.json` consumidor:
 
 ```json
 "dependencies": {
-  "@alephscript/skills-scriptorium": "0.3.2"
+  "@alephscript/skills-scriptorium": "0.3.3"
 }
 ```
 
@@ -154,9 +154,9 @@ Criterio de cierre: la versión fijada **resuelve** contra el registry
 desde el entorno del consumidor.
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.3.2 \
+npm view @alephscript/skills-scriptorium@0.3.3 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.3.2
+# → 0.3.3
 # exit 0 ← la referencia fijada existe y resuelve
 ```
 
