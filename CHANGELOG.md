@@ -14,9 +14,8 @@ ejes distintos; la correspondencia se declara en el `README.md` raíz.
 ## [0.4.0] — 2026-07-20
 
 Reconciliación de la expansión de contrato acumulada (regla 15 + gates
-0.3.x) y estreno de la doctrina semver (DC-22). Entrada copiada del WP
-del backlog. `<pendiente al merge final>`: incorporar ids de WP-14 y
-WP-15 cuando estén ✅.
+0.3.x) y estreno de la doctrina semver (DC-22). Entradas copiadas de los
+WP ✅ del backlog (Ola 6: WP-13/14/15).
 
 ### Changed
 
@@ -26,6 +25,15 @@ WP-15 cuando estén ✅.
   ejes distintos, con correspondencia declarada. **0.4.0** cortada
   (minor) reconciliando la expansión acumulada; el badge v0.4 queda con
   relación documentada al paquete.
+- **WP-14 · verificar-changelog: gobierno vs paquete** — la práctica y el
+  gate distinguen CHANGELOG de **gobierno** (uno/mundo, WP-id-keyed) de
+  CHANGELOG de **paquete** (N, changesets/semver); el gate es
+  opt-in/parametrizable (`--role gobierno`, rutas) y adoptable en
+  monorepos.
+- **WP-15 · Back-links a nivel de tema** — back-links = config de tema +
+  placeholders únicos (footer/nav), no texto por página; generador =
+  regenerar desde fuente única. Mundo-fuente: back-links en footer/nav
+  del tema.
 
 ## [0.3.3] — 2026-07-20
 
