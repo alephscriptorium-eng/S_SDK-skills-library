@@ -95,18 +95,24 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   vigía eleva cualquier proyección no declarada. Motivo: evitar líos por
   proyección accidental a un tracker público. El dry-run (preview, sin
   API) se permite siempre.
+- **DC-16 · Copia sincronizada = gitignorada, no versionada (cierra DA-1;
+  custodio).** La fuente de verdad **runner-agnóstica** es
+  `node_modules/@alephscript/skills-scriptorium/skills/`. El directorio del
+  runner (`.claude/skills/` es el **namespace de Claude Code**, no nuestro;
+  otro runner usa su propia ruta) es un adaptador **derivado**: se regenera
+  en `postinstall` y se **ignora en git**. No se commitea la carpeta de un
+  IDE (si abrís con otro runner no ves cruft ajeno) ni se duplica el método
+  (dedup; encaja con la regla 15). El doc aclara que `.claude` es
+  convención de Claude Code, no universal.
+- **DC-17 · Puntero de consumo = README + portal, no en `SKILL.md` (cierra
+  DA-2; custodio).** El puntero a Consumo vive en el `README.md` de cada
+  skill y en el portal; el `SKILL.md` queda enfocado en el método (no se
+  repite el puntero en dos ficheros por skill).
+- **DC-18 · Badge de método de swarm = v0.4.0 (custodio).** El catálogo
+  muestra la **versión de método** del skill (`swarm-orquestacion` va por
+  v0.4 desde la regla 15), distinta de la versión del **paquete** (0.3.2).
+  Arreglo de verdad de contenido.
 
 ## Abiertas
 
-- **DA-1 · ¿Versionar la copia sincronizada en consumidores?** El adaptador
-  Claude Code (`docs/guide/consumo.md` §3) sincroniza `node_modules →
-  .claude/skills/`. Queda a criterio de cada mundo consumidor versionar el
-  artefacto derivado o ignorarlo en git. El mundo-fuente solo **documenta**
-  el patrón; no impone. → custodio confirma si el doc debe recomendar una
-  opción por defecto.
-- **DA-2 · Puntero de consumo en cada `SKILL.md`.** Los `README.md` de
-  skills ya apuntan a `/guide/consumo`. ¿Debe el propio `SKILL.md`
-  (frontmatter + cuerpo) llevar también el puntero, o se mantiene el
-  README como único punto de entrada por skill? → custodio decide.
-
-_(DA-3 y DA-4 se cerraron como DC-4/DC-5; DA-1 y DA-2 siguen abiertas.)_
+_(ninguna abierta; DA-1/DA-2 cerradas como DC-16/DC-17; DA-3/DA-4 como DC-4/DC-5.)_

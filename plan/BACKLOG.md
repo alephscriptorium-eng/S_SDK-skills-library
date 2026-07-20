@@ -183,6 +183,21 @@ Solo el orquestador edita este fichero, en `main`.
     proyección no declarada.
   - Ceguera 0.
 
+- 🔶 **WP-11 · Cerrar DA-1/DA-2 + badge de método v0.4** — resolver las
+  decisiones pendientes del portal/consumo (DC-16..DC-18), dentro de 0.3.2.
+  **Skill:** `site-web` (doc) · **mundo-fuente** (portal) · **Rama:** `main`
+  · **Eje(s):** ceguera + III (dedup).
+  **CA:**
+  - `docs/.vitepress/skills-meta.js`: badge de `swarm-orquestacion` → `0.4.0`
+    (DC-18).
+  - `docs/guide/consumo.md` §3 + `README.md`: aclarar que `.claude/skills/`
+    es namespace de **Claude Code** (no universal); fuente runner-agnóstica
+    = `node_modules/.../skills/`; recomendar **gitignorar** la copia
+    sincronizada (DC-16).
+  - DA-2 cerrada sin cambio de código (DC-17): README + portal como únicas
+    entradas.
+  - `verificar-sitio.mjs` verde; ceguera 0.
+
 ## Ola 5 — candidatos (sin abrir)
 
 - ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al
