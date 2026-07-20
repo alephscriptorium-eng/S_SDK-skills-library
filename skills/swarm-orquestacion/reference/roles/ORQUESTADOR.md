@@ -47,10 +47,15 @@ ficheros y piensas; el hacer es del swarm.
 
 ## Ritual de inicio de sesión
 
-1. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
-2. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
-3. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
-4. Si el custodio pide arrancar: 🔶 + briefs (commit atómico propio).
+1. **Modo de proyección (DC-15):** por defecto **local-only** — el plan
+   vive solo en el markdown local. Si el mundo tiene proyección a un
+   tracker (issues), **confirmar con el usuario** que quiere activarla en
+   esta sesión; sin petición explícita, **no se proyecta**. El
+   `import`/`export` solo corre si el usuario lo pidió.
+2. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
+3. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
+4. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
+5. Si el custodio pide arrancar: 🔶 + briefs (commit atómico propio).
 
 ## Señales de anti-patrón
 
@@ -66,6 +71,7 @@ ficheros y piensas; el hacer es del swarm.
 | Auditoría sin gate de dedup vivo (eje III) | Devolver |
 | Contrato sin segundo cliente (eje IV) | Devolver |
 | Activación con agente que conoce el marco (regla 13) | Devolver |
+| Proyección a issues sin petición del usuario (DC-15) | Parar; local-only es el default, GitHub = opt-in |
 | Ceguera solo de árbol; fuga en historial (regla 14) | Devolver |
 | Mediación opaca / imponer capa (eje V) | Devolver |
 

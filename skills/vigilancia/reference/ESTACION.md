@@ -68,6 +68,11 @@ orquestador antes de entregar (no duplicar).
   derivado del backlog, no inventado). Desfase = anomalía a elevar.
   Herramienta: `verificar-changelog.mjs` del swarm (o grep de los WP ✅
   contra el CHANGELOG). Especialmente antes de un release.
+- **Proyección no declarada (DC-15 del swarm):** la proyección del backlog
+  a un tracker de issues es **local-only por defecto**; solo se activa si
+  el usuario la pidió. El vigía eleva como anomalía cualquier proyección
+  (issues creados/actualizados, `.sync-map.json` nuevo) **sin modo
+  declarado** en la sesión.
 
 ## Ciclo de sprint
 

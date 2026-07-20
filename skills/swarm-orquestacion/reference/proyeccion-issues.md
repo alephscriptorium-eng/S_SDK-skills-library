@@ -8,6 +8,14 @@ desechable, regenerable, sin autoridad.
 Herramienta: `scripts/proyectar-backlog.mjs` (Node ≥18 + `gh` CLI
 autenticado para el adaptador GitHub). Marco-agnóstico.
 
+> **Modo por defecto: LOCAL-ONLY (DC-15).** Nadie proyecta a GitHub salvo
+> que el **usuario lo pida explícitamente**. El modo se **declara al
+> inicio de sesión** (el orquestador lo confirma; default local-only). El
+> `export` real rehúsa sin opt-in (`--habilitar-github` /
+> `PROYECCION_GITHUB=1`); el `--dry-run` (preview, sin API) se permite
+> siempre. Un tracker público mal proyectado causa líos: por eso el
+> silencio es el estado seguro.
+
 ## Principio
 
 ```
@@ -36,8 +44,13 @@ Determinista e idempotente:
   export los reconstruye).
 
 ```bash
+# preview seguro (sin API, sin opt-in):
 CEGUERA_PATTERN='<patrón del mundo>' \
-  node scripts/proyectar-backlog.mjs export [--dry-run] [--repo owner/name]
+  node scripts/proyectar-backlog.mjs export --dry-run
+
+# proyección real (SOLO si el usuario lo pidió — DC-15):
+CEGUERA_PATTERN='<patrón del mundo>' PROYECCION_GITHUB=1 \
+  node scripts/proyectar-backlog.mjs export [--repo owner/name]
 ```
 
 ## Gate de ceguera (DC-12) — obligatorio
@@ -64,11 +77,14 @@ comentad, no editéis; los comentarios entran por inbox»*.
 
 ## Modos
 
-| modo | qué es |
-| ---- | ------ |
-| a) solo local | no ejecutar el exportador; coste cero |
-| b) sesión | `import` al abrir (drenar inbox), `export` al cerrar |
-| c) continuo | `export` en hook post-commit — **patrón**, no incluido en 0.3.2 |
+| modo | qué es | activación |
+| ---- | ------ | ---------- |
+| a) solo local | no ejecutar el exportador; coste cero | **por defecto** |
+| b) sesión | `import` al abrir (drenar inbox), `export` al cerrar | opt-in explícito del usuario |
+| c) continuo | `export` en hook post-commit — **patrón**, no incluido en 0.3.2 | opt-in explícito del usuario |
+
+El modo se fija al **inicio de sesión**: el orquestador confirma con el
+usuario (ver `roles/ORQUESTADOR.md`). Sin declaración → modo a (local).
 
 ## Adaptador (remote-agnóstico)
 

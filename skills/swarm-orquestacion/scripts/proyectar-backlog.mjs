@@ -12,8 +12,15 @@
 // contenido se valida contra CEGUERA_PATTERN (regex del mundo, vía env —
 // NUNCA se almacena en el skill). Sin patrón → se rehúsa (fail-safe).
 //
+// MODO POR DEFECTO: LOCAL-ONLY (DC-15). El `export` real a GitHub exige
+// opt-in explícito (`--habilitar-github` / `PROYECCION_GITHUB=1`); sin él
+// rehúsa. El `--dry-run` (preview, sin API) se permite siempre.
+//
 // Uso:
-//   CEGUERA_PATTERN='tok1|tok2' node proyectar-backlog.mjs export [--dry-run] [--repo owner/name]
+//   # preview (sin API, sin opt-in):
+//   CEGUERA_PATTERN='tok1|tok2' node proyectar-backlog.mjs export --dry-run
+//   # proyección real (solo si el usuario lo pidió):
+//   CEGUERA_PATTERN='tok1|tok2' PROYECCION_GITHUB=1 node proyectar-backlog.mjs export [--repo owner/name]
 //   node proyectar-backlog.mjs import [--dry-run] [--repo owner/name]
 //   [--backlog plan/BACKLOG.md] [--map plan/.sync-map.json] [--inbox plan/INBOX-GH.md]
 
@@ -112,6 +119,18 @@ function loadMap() {
 }
 
 function doExport() {
+  // Candado de modo (DC-15): local-only por defecto. La proyección real a
+  // GitHub exige opt-in EXPLÍCITO del usuario. El dry-run (preview, sin
+  // API) se permite siempre.
+  if (!DRY) {
+    const optin = has('--habilitar-github') || process.env.PROYECCION_GITHUB === '1';
+    if (!optin) {
+      console.error('[proyectar] proyección a GitHub DESHABILITADA por defecto (local-only, DC-15).');
+      console.error('  Actívala solo si el usuario lo pidió: --habilitar-github o PROYECCION_GITHUB=1.');
+      console.error('  (Para previsualizar sin tocar la API: añade --dry-run.)');
+      process.exit(4);
+    }
+  }
   const wps = parseBacklog(readFileSync(BACKLOG, 'utf-8'));
   cegueraGate(wps);
   const map = loadMap();
