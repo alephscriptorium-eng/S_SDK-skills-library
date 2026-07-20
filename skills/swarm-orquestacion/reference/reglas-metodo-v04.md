@@ -52,25 +52,36 @@ Extiende la de v0.3 con el ítem de efimeralidad:
                               no citada como fuente — verificado el plan
 ```
 
-## Práctica · CHANGELOG estándar vinculado al backlog
+## Práctica · CHANGELOG de gobierno vinculado al backlog
 
-Aplicación de C9 (no listas que se pudren): el `CHANGELOG.md` **no se
-inventa**, se **deriva** del backlog cerrado. Disciplina:
+Aplicación de C9 (no listas que se pudren). Hay **dos ejes** de changelog;
+no se confunden:
+
+| eje | cardinalidad | clave | quién lo escribe | este gate |
+| --- | ------------ | ----- | ---------------- | --------- |
+| **CHANGELOG de gobierno** | uno por mundo | WP-id (✅ del BACKLOG) | agente: copia del plan, no inventa | sí |
+| **CHANGELOG de paquete** | N (p. ej. monorepo + changesets) | SHA / semver del paquete | máquina / tooling de release | no |
+
+Disciplina del eje de **gobierno**:
 
 - **Formato FOSS estándar** (Keep a Changelog): `## [x.y.z] — fecha` con
   secciones `Added` / `Changed` / `Fixed` (u homónimos). Sin prosa libre
   por agente.
 - **Contenido = WP ✅ del plan.** Cada entrada de una versión copia los WP
   cerrados de esa release (id + título del BACKLOG), no textos improvisados.
-  Un WP ✅ que no está en el CHANGELOG es un desfase.
-- **Gate pre-publish:** `scripts/verificar-changelog.mjs` — falla si falta
-  la sección de la versión a publicar, o si un WP ✅ del BACKLOG no está
-  referenciado en el CHANGELOG. Correrlo antes de `npm publish` (y en CI).
+  Un WP ✅ que no está en el CHANGELOG de gobierno es un desfase.
+- **Gate opt-in / parametrizable:** `scripts/verificar-changelog.mjs`
+  — declarar `--role gobierno` y las rutas (`--changelog`, `--backlog`,
+  `--version`). Falla si falta la sección de la versión, o si un WP ✅ del
+  BACKLOG no está referenciado. **Rechaza** `--role paquete`: los
+  CHANGELOG de paquete no pasan por este gate. En monorepos, apuntar solo
+  al CHANGELOG de gobierno del mundo; no asumir changelog único en la raíz.
+  Correrlo antes de `npm publish` (y en CI) cuando el mundo lo active.
 - **El vigía** lo cruza en su pulso (ver skill `vigilancia`): el CHANGELOG
-  refleja lo cerrado del plan, o se eleva como anomalía.
+  de gobierno refleja lo cerrado del plan, o se eleva como anomalía.
 
-**Regla:** el CHANGELOG es un espejo del backlog cerrado, no un cuaderno
-personal.
+**Regla:** el CHANGELOG de gobierno es un espejo del backlog cerrado, no un
+cuaderno personal ni el changelog de un paquete npm.
 
 ## Relación con v0.2 / v0.3
 

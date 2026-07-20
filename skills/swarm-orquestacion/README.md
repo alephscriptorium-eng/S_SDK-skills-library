@@ -26,6 +26,22 @@ bash skills/swarm-orquestacion/scripts/montar-plan.sh /ruta/al/mundo
    `plan/roles/ORQUESTADOR.md` (ya copiado por el script).
 5. Para cada WP: BRIEF + `plan/roles/WORKER.md` en un chat nuevo.
 
+## Gate · CHANGELOG de gobierno (opt-in)
+
+El script `scripts/verificar-changelog.mjs` comprueba el **CHANGELOG de
+gobierno** del mundo (uno, WP-id-keyed, derivado del BACKLOG). No verifica
+CHANGELOG de paquete (N, changesets/semver). Opt-in: hay que declarar rol y
+rutas — adoptable en monorepos sin asumir un único changelog en la raíz.
+
+```bash
+node skills/swarm-orquestacion/scripts/verificar-changelog.mjs \
+  --role gobierno --version X.Y.Z \
+  --changelog CHANGELOG.md --backlog plan/BACKLOG.md
+```
+
+`--role paquete` se rechaza a propósito. Detalle: `reference/reglas-metodo-v04.md`
+(§ práctica CHANGELOG) y `--help` del script.
+
 ## Ceguera (cara pública)
 
 Antes de publicar o empacar, en la raíz del paquete:

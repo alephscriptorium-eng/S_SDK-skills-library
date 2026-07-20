@@ -103,5 +103,5 @@ histórico.)
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` en un destino |
 | `scripts/comprobar-ceguera.sh` | grep de ceguera sobre este skill |
-| `scripts/verificar-changelog.mjs` | gate pre-publish: CHANGELOG estándar refleja el backlog cerrado |
+| `scripts/verificar-changelog.mjs` | gate opt-in del CHANGELOG de **gobierno** (WP-id ↔ BACKLOG; `--role gobierno` + rutas); no aplica a CHANGELOG de paquete |
 | `scripts/proyectar-backlog.mjs` | proyección del backlog a issues (export/import; sin sync; gate ceguera) — ver `reference/proyeccion-issues.md` |
