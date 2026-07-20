@@ -200,9 +200,14 @@ Solo el orquestador edita este fichero, en `main`.
 
 ## Ola 5 — candidatos (sin abrir)
 
-- ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al
-  cuerpo de cada `SKILL.md` un puntero a `/guide/consumo`, si el custodio
-  lo aprueba. **Eje:** ceguera. Bloqueado por DA-2.
-- ⬜ **WP-03 · Recomendación por defecto para la copia sincronizada** —
-  según DA-1. Ajustar `docs/guide/consumo.md` §3 con la opción por defecto
-  (versionar vs ignorar) que decida el custodio. Bloqueado por DA-1.
+_(ninguno abierto ahora.)_
+
+## Retirados por decisión
+
+No son ⬜/🔶/✅ (no se entregaron como WP): quedaron resueltos por decisión.
+No cuentan para el gate de CHANGELOG; sus issues de proyección se cierran.
+
+- **WP-02 · Puntero de consumo en `SKILL.md`** — **descartado** por DC-17:
+  el puntero vive solo en README + portal; el `SKILL.md` no lo lleva.
+- **WP-03 · Default de la copia sincronizada** — **resuelto** por DC-16
+  (gitignorar), implementado en WP-11 (`docs/guide/consumo.md` §3).
