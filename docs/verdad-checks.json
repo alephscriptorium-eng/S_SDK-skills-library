@@ -1,0 +1,15 @@
+[
+  {
+    "descripcion": "La versión de instalación mostrada es la del paquete publicado (0.3.0), no una sin publicar",
+    "patron": "@alephscript/skills-scriptorium@0\\.3\\.0"
+  },
+  {
+    "descripcion": "Ningún comando de instalación usa @latest (el consumo exige versión fijada)",
+    "patron": "skills-scriptorium@latest",
+    "noDebeAparecer": true
+  },
+  {
+    "descripcion": "El registry propio aparece citado como canal de consumo",
+    "patron": "npm\\.scriptorium\\.escrivivir\\.co"
+  }
+]

@@ -23,6 +23,16 @@ registry no resuelve).
   (`scripts/watcher.sh`, doctrina en `reference/ESTACION.md`). La config
   funcional no es residuo.
 
+### `site-web` — gate de verificación de sitio (WP-06)
+
+- `scripts/verificar-sitio.mjs`: sobre el `dist/` construido valida todos
+  los `<a href>` (internos → fichero respetando `base`+`cleanUrls`, anclas
+  `#id`, externos → warning) más verdad de contenido opcional por
+  manifiesto. Cubre los hrefs de componentes `.vue` que el
+  `ignoreDeadLinks` de VitePress no revisa — origen de los enlaces rotos
+  en deploys previos. Falla ante roto interno/ancla (DC-5). Integrado en
+  `reference/protocolo-ghpages.md`.
+
 ## 0.3.0 — 2026-07-19
 
 Bump menor del contrato de `swarm-orquestacion` (ceguera de activación).

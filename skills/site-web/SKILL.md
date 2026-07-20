@@ -88,6 +88,10 @@ Si marketing pide «otra iteración de backtracking»:
    cero CDN / fuentes web.
 5. Checklist DNS → Pages + Enforce HTTPS.
 6. Mitigar los 7 frágiles documentados en el protocolo.
+7. **Gate de verificación**: correr `scripts/verificar-sitio.mjs` sobre el
+   `dist/` (enlaces internos + anclas + externos + verdad de contenido)
+   antes del deploy. Falla ante roto interno/ancla; cubre los hrefs de
+   componentes `.vue` que `ignoreDeadLinks` no ve.
 
 ## Recursos
 
@@ -99,6 +103,8 @@ Si marketing pide «otra iteración de backtracking»:
 - `examples/mundo-limpio/` — fixture inventada (sin datos de mundo real)
 - `scripts/ceguera.sh` — grep de ceguera sobre `skills/site-web/`
 - `scripts/generar-sitio.sh` — scaffold parametrizado a un dir destino
+- `scripts/verificar-sitio.mjs` — gate de enlaces (dist) + anclas +
+  externos (warning) + verdad de contenido; falla ante roto interno/ancla
 
 ## Prueba de ceguera (antes de publicar el skill)
 

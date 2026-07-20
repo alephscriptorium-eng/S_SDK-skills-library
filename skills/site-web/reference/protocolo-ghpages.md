@@ -89,9 +89,35 @@ No hardcodear el dominio de otro mundo en plantillas del skill: usá
 | 6 | spec-gen acoplado a `docs:build` | build = solo VitePress |
 | 7 | gap `paths: docs/**` | documentar + `workflow_dispatch` |
 
+## Gate de verificación (enlaces + verdad de contenido)
+
+El `ignoreDeadLinks: false` de VitePress solo valida enlaces del
+**markdown** fuente — **no** los hrefs que emiten componentes `.vue`
+(catálogos, tarjetas, rutas dinámicas), ni externos, ni anclas. Ahí es
+donde reaparecen enlaces rotos tras el deploy. Mitigación de serie:
+`scripts/verificar-sitio.mjs`, que corre sobre el `dist/` ya construido.
+
+```bash
+npm run docs:build
+node <skill>/scripts/verificar-sitio.mjs --dist docs/.vitepress/dist --base /
+```
+
+- **Falla** (exit ≠ 0) ante enlace **interno** o **ancla** roto.
+- **Externos** http(s) → *warning* listado (un 404 transitorio no bloquea
+  el deploy).
+- **Verdad de contenido** (opcional): si existe
+  `docs/verdad-checks.json` (aserciones `{descripcion, patron,
+  noDebeAparecer?}`), valida que el HTML generado dice lo que debe (p. ej.
+  que la versión mostrada casa con `package.json`). Refuerza C8.
+
+Engancharlo en CI tras `docs:build` (mismo job, antes del deploy) y
+tenerlo disponible en local pre-deploy.
+
 ## Checklist de publicación
 
 - [ ] `npm ci` + `docs:build` verdes en local
+- [ ] `verificar-sitio.mjs` verde: enlaces internos + anclas resuelven
+  (externos = warning); verdad de contenido consistente
 - [ ] CNAME presente y equal a dominio vivo
 - [ ] Workflow parsea; deploy solo en `main`
 - [ ] Ceguera del mundo = 0 en copy pública
