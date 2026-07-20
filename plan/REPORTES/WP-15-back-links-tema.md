@@ -7,7 +7,7 @@
 | rama | `wp/15-back-links-tema` |
 | commits | `10477cc` |
 | eje(s) CA | III (dedup: una fuente de back-links) + ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | aceptado ✅ (mergeado) |
 
 ## Qué se hizo
 
@@ -98,5 +98,4 @@ Hallazgos no bloqueantes (ver veredicto del reviewer):
    tabla de back-links).
 3. Tabla de commits del reporte lista solo `10477cc`; falta `614956d`.
 
-BACKLOG ✅ y merge: a cargo del orquestador (este reviewer no marca
-BACKLOG ni mergea).
+**Merge (orquestador):** integrado en `main` por ff-only → `081d76a` (2026-07-20). **WP-13 último** (corte 0.4.0).
