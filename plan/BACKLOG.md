@@ -168,6 +168,21 @@ Solo el orquestador edita este fichero, en `main`.
   **Decisiones:** DC-10..DC-13. **Pendiente:** GO del custodio + alcance
   (ver decisiones).
 
+- 🔶 **WP-10 · Proyección local-only por defecto + modo de sesión** —
+  blindar WP-09: por defecto **nadie proyecta** a GitHub; solo con opt-in
+  explícito del usuario. Endurecimiento de seguridad (DC-15), dentro de
+  0.3.2. **Skill:** `swarm-orquestacion` · **Rama:** `main` · **Eje(s):**
+  ceguera (evitar cara pública accidental).
+  **CA:**
+  - `proyectar-backlog.mjs export` **rehúsa** sin opt-in explícito
+    (`--habilitar-github` / `PROYECCION_GITHUB=1`); dry-run sigue permitido.
+  - `reference/proyeccion-issues.md`: modo por defecto **local-only**
+    destacado; GitHub = opt-in; el modo se declara al inicio de sesión.
+  - `reference/roles/ORQUESTADOR.md`: ritual de inicio confirma el modo
+    con el usuario (default local-only). Worker no proyecta; vigía eleva
+    proyección no declarada.
+  - Ceguera 0.
+
 ## Ola 5 — candidatos (sin abrir)
 
 - ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al

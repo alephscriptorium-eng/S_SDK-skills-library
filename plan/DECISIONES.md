@@ -84,6 +84,18 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   eje (menos superficie pública que blindar; añadir labels después es
   trivial y reversible). El detalle del WP vive en el body proyectado.
 
+- **DC-15 · Proyección: LOCAL-ONLY por defecto (WP-10; custodio, seguridad).**
+  El modo de trabajo por defecto es **solo-local** (modo a): nadie proyecta
+  a GitHub. La proyección (export a issues) se activa **solo si el usuario
+  lo pide explícitamente**. Mecanismos: (1) el orquestador **confirma el
+  modo al inicio de sesión** (ritual; default local-only); (2)
+  `proyectar-backlog.mjs export` exige **opt-in explícito**
+  (`--habilitar-github` / `PROYECCION_GITHUB=1`) y rehúsa si falta — doble
+  candado con el gate de ceguera; (3) el worker **nunca** proyecta; el
+  vigía eleva cualquier proyección no declarada. Motivo: evitar líos por
+  proyección accidental a un tracker público. El dry-run (preview, sin
+  API) se permite siempre.
+
 ## Abiertas
 
 - **DA-1 · ¿Versionar la copia sincronizada en consumidores?** El adaptador
