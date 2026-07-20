@@ -6,6 +6,21 @@ versionado [SemVer](https://semver.org/lang/es/). Las entradas se
 no se inventa texto. Gate:
 `skills/swarm-orquestacion/scripts/verificar-changelog.mjs`.
 
+## [0.3.2] — 2026-07-20
+
+Sistema de scrum: proyección del backlog a issues sin sync bidireccional.
+Entrada copiada del WP ✅ del backlog.
+
+### Added
+
+- **WP-09 · Proyección del backlog a GitHub Issues** —
+  `skills/swarm-orquestacion/scripts/proyectar-backlog.mjs` + método
+  (`reference/proyeccion-issues.md`): export idempotente local→GH
+  (`plan/.sync-map.json` + marcador oculto; `✅`→closed, `⬜🔶`→open),
+  import → `plan/INBOX-GH.md` (no escribe el BACKLOG), adaptador `gh`
+  remote-agnóstico y **gate de ceguera obligatorio** (`CEGUERA_PATTERN`
+  por env). El markdown local sigue siendo la fuente de verdad única.
+
 ## [0.3.1] — 2026-07-20
 
 Consolidación de las olas 1–2 del plan (portal + higiene de método +

@@ -31,7 +31,7 @@ código (repo)  →  paquete (registry, versión fijada)  →  CI (Actions)  →
 ## Instalar
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.3.1 \
+npm install --save-exact @alephscript/skills-scriptorium@0.3.2 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
