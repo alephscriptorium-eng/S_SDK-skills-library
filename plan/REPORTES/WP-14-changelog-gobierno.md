@@ -88,4 +88,14 @@ _(ninguno)_
 
 ## Revisión del orquestador
 
-_(la rellena el orquestador: aceptado ✅ / devuelto con lista numerada)_
+**Aceptado ✅** (revisión WP-14 · 2026-07-20) — sin merge en este paso.
+
+Verificado:
+- Diff acotado a `skills/swarm-orquestacion/` + este reporte (pack/docs/site-web intactos).
+- CA: práctica + gate distinguen gobierno vs paquete; opt-in `--role` + rutas; docs de adopción monorepo.
+- DC-23: rol obligatorio, rechazo `paquete`, parametrización `--changelog/--backlog/--version`.
+- Smoke: sin rol→2; paquete→2; gobierno 0.3.3→0; sección ausente→1; fixture monorepo→0; WP-99→1; matcher prosa «al ✅»→0.
+- Ceguera 0; `grep` marco en diff/`git log -p` del skill → 0 hits.
+- Eje IV: fixture con N CHANGELOG de paquete + rutas parametrizadas (evidencia en reporte + reproducción).
+
+**Merge (orquestador):** puede integrar a `main` cuando no haya conflictos con hermanos; **WP-13 último** (corte 0.4.0). No marcar BACKLOG ✅ hasta el merge.
