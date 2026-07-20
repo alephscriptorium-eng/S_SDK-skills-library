@@ -40,6 +40,13 @@ Determinista e idempotente:
   body para resiliencia si se pierde el mapa.
 - **Mapeo (DC-14):** `✅` → issue **closed**; `⬜`/`🔶` → **open**. Sin
   labels.
+- **Alcance configurable (DC-20):** `--alcance todos` (default; proyecta
+  todo el backlog) o `--alcance abiertos` (solo `⬜`/`🔶`, el trabajo
+  accionable; los `✅` no se proyectan). Se elige **al activar**.
+- **Auto-cierre (DC-19):** todo issue del `sync-map` cuyo WP **no** esté en
+  el conjunto proyectado (retirado del backlog, o `✅` bajo
+  `--alcance abiertos`) se **cierra** con comentario y sale del map. Modelo:
+  «proyectá el conjunto; cerrá lo que sobra».
 - Re-correr no duplica; regenerable desde cero (si borras los issues, el
   export los reconstruye).
 

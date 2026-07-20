@@ -20,8 +20,12 @@
 //   # preview (sin API, sin opt-in):
 //   CEGUERA_PATTERN='tok1|tok2' node proyectar-backlog.mjs export --dry-run
 //   # proyección real (solo si el usuario lo pidió):
-//   CEGUERA_PATTERN='tok1|tok2' PROYECCION_GITHUB=1 node proyectar-backlog.mjs export [--repo owner/name]
+//   CEGUERA_PATTERN='tok1|tok2' PROYECCION_GITHUB=1 node proyectar-backlog.mjs export [--alcance todos|abiertos] [--repo owner/name]
 //   node proyectar-backlog.mjs import [--dry-run] [--repo owner/name]
+//
+// --alcance (DC-20): `todos` (default) proyecta todo el backlog; `abiertos`
+//   solo ⬜/🔶. Auto-cierre (DC-19): los issues del sync-map fuera del
+//   conjunto proyectado se cierran y salen del map.
 //   [--backlog plan/BACKLOG.md] [--map plan/.sync-map.json] [--inbox plan/INBOX-GH.md]
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -131,22 +135,45 @@ function doExport() {
       process.exit(4);
     }
   }
+  const alcance = val('--alcance', process.env.ALCANCE || 'todos'); // todos | abiertos
+  if (!['todos', 'abiertos'].includes(alcance)) {
+    console.error(`[proyectar] --alcance inválido: ${alcance} (usa todos|abiertos)`);
+    process.exit(2);
+  }
   const wps = parseBacklog(readFileSync(BACKLOG, 'utf-8'));
-  cegueraGate(wps);
+  // Conjunto proyectado según alcance (DC-20): 'abiertos' = solo ⬜/🔶.
+  const proyectados = alcance === 'abiertos' ? wps.filter((w) => w.estado !== '✅') : wps;
+  cegueraGate(proyectados);
   const map = loadMap();
+  const enConjunto = new Set(proyectados.map((w) => w.id));
+
   const plan = [];
-  for (const w of wps) {
+  for (const w of proyectados) {
     const cerrado = w.estado === '✅';
     const num = map[w.id];
     if (!num) plan.push({ w, accion: 'crear', estado: cerrado ? 'closed' : 'open' });
     else plan.push({ w, num, accion: 'actualizar', estado: cerrado ? 'closed' : 'open' });
   }
+  // Auto-cierre (DC-19): issue del map cuyo WP no está en el conjunto
+  // proyectado (retirado del backlog, o excluido por alcance) → cerrar.
+  for (const [id, num] of Object.entries(map)) {
+    if (!enConjunto.has(id)) plan.push({ w: { id }, num, accion: 'cerrar-sobrante', estado: 'closed' });
+  }
 
-  console.log(`[proyectar] export ${DRY ? '(DRY-RUN)' : ''} · ${plan.length} WP · repo=${REPO || '(cwd)'}`);
+  const nCierres = plan.filter((p) => p.accion === 'cerrar-sobrante').length;
+  console.log(`[proyectar] export ${DRY ? '(DRY-RUN)' : ''} · alcance=${alcance} · ${proyectados.length} proyectado(s), ${nCierres} a cerrar · repo=${REPO || '(cwd)'}`);
   for (const p of plan) {
     const etiqueta = `${p.accion} ${p.w.id} → ${p.estado}${p.num ? ` (#${p.num})` : ''}`;
     if (DRY) {
       console.log(`  · ${etiqueta}`);
+      continue;
+    }
+    if (p.accion === 'cerrar-sobrante') {
+      try {
+        gh(['issue', 'close', String(p.num), '--comment', 'Cerrado por proyección: el WP ya no está en el conjunto proyectado del backlog (fuente de verdad).']);
+      } catch {}
+      delete map[p.w.id];
+      console.log(`  ✓ cerrado sobrante ${p.w.id} → #${p.num}`);
       continue;
     }
     const title = `${p.w.id} · ${p.w.titulo}`;

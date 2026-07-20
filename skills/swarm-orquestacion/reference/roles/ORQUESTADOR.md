@@ -51,7 +51,9 @@ ficheros y piensas; el hacer es del swarm.
    vive solo en el markdown local. Si el mundo tiene proyección a un
    tracker (issues), **confirmar con el usuario** que quiere activarla en
    esta sesión; sin petición explícita, **no se proyecta**. El
-   `import`/`export` solo corre si el usuario lo pidió.
+   `import`/`export` solo corre si el usuario lo pidió. Al activar,
+   confirmar también el **alcance** (DC-20): `todos` (todo el backlog) o
+   `abiertos` (solo trabajo accionable).
 2. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
 3. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
 4. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
