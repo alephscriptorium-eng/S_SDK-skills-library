@@ -37,7 +37,60 @@ Solo el orquestador edita este fichero, en `main`.
   **Historia:** fusiona los antiguos WP-01 (docs-consumo) y WP-04
   (catálogo) por decisión DC-3.
 
-## Ola 2 — candidatos (sin abrir)
+## Ola 2 — higiene de método y verificación (planificados)
+
+- ⬜ **WP-05 · Efimeralidad y fuente de verdad única** — cerrar el
+  anti-patrón vivido: carpetas de IDE (`.claude`/`.cursor`/`.github`) y
+  **memorias internas** de agentes acumulan info efímera que solo conoce
+  ese agente, se pierde al cerrar sesión, y hace que los agentes tomen su
+  memoria como fuente de verdad sin verificar contra el plan. Bloquea el
+  trabajo multi-IDE/multi-equipo. Interpretar y trasladar profesionalmente
+  (no copiar literal).
+  **Skills:** `swarm-orquestacion` (+ regla) y `vigilancia` (+ check) ·
+  **Rama:** `wp/05-efimeralidad` · **Eje(s):** ceguera + III (dedup de
+  fuente de verdad: una sola, el plan).
+  **CA:**
+  - `swarm-orquestacion`: **regla 15 (Fuente de verdad única + efimeralidad)**
+    en `reference/reglas-metodo-v04.md` y resumen en `SKILL.md`: el plan
+    trazado (git) es la única fuente de verdad; memoria interna del agente
+    y carpetas de IDE = scratch efímero, no compartible ni citable como
+    verdad; verificar SIEMPRE contra el plan, no contra recuerdos.
+  - Al **cierre de sesión/ola**: las carpetas de IDE no dejan markdowns de
+    info (identificadores tipo «U148», estado, decisiones). Si el entorno
+    necesita `config`/`tasks`/`mcp` funcional, se conserva ESO — sin texto
+    de sesión. Añadir el ítem a la checklist de cierre de ola.
+  - `vigilancia`: check que **eleva residuo de info** en carpetas de IDE
+    ajenas (p. ej. `*.md` no-config bajo `.claude`/`.cursor`) y refuerza
+    «persistir a disco trazado, no a memoria de chat» en `ESTACION.md`.
+  - Semver: contrato de ambos skills ampliado → bump **minor** del paquete
+    + entrada en `CHANGELOG.md`.
+  - Ceguera 0 (árbol + `git log -p`) en la cara pública tocada.
+
+- ⬜ **WP-06 · Gate de verificación de sitio (enlaces + verdad)** — cada
+  deploy tuvo enlaces rotos porque `ignoreDeadLinks:false` **no** cubre
+  hrefs en componentes `.vue` (catálogo/páginas por skill), ni externos,
+  ni anclas. Falta además verificar que la info del sitio es cierta.
+  **Skill:** `site-web` · **Rama:** `wp/06-verificar-sitio` · **Eje(s):**
+  III (gate de dedup/verdad) + ceguera + IV (segundo cliente: el gate lo
+  ejercita el propio portal del mundo-fuente).
+  **CA:**
+  - `site-web`: script `scripts/verificar-sitio.sh` (o `.mjs`) que tras
+    `docs:build` rastrea `dist/` y verifica **todos** los `<a href>`:
+    internos resuelven a fichero en `dist` (respetando `base` + `cleanUrls`),
+    anclas `#id` existen en la página destino, externos `http(s)` devuelven
+    estado sano (online; offline → listados para revisión). Exit ≠ 0 si hay
+    roto interno/ancla.
+  - **Verdad de contenido** (C8 reforzado): paso explícito que verifica que
+    afirmaciones/versión/comandos del sitio casan con su fuente (p. ej.
+    versión mostrada == `package.json`; comandos ejecutados en su canal).
+  - Gate añadido a `reference/protocolo-ghpages.md` (checklist de
+    publicación) y como filtro del pipeline (p. ej. «C10 · enlaces»).
+  - Se **estrena** sobre el portal de este mundo-fuente (segundo cliente):
+    el propio catálogo/páginas por skill pasan el gate.
+  - Semver: contrato de `site-web` ampliado → bump **minor** del paquete +
+    `CHANGELOG.md`.
+
+## Ola 3 — candidatos (sin abrir)
 
 - ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al
   cuerpo de cada `SKILL.md` un puntero a `/guide/consumo`, si el custodio
