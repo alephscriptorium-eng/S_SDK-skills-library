@@ -63,6 +63,11 @@ orquestador antes de entregar (no duplicar).
   tasks, servidores MCP) **no** es residuo y no se toca. Corolario del
   propio vigía: persiste TODO veredicto a disco trazado (`OUT_DIR`), nunca
   solo en memoria de chat.
+- **CHANGELOG ↔ backlog cerrado (práctica del swarm):** el vigía cruza que
+  cada WP ✅ del plan está reflejado en el `CHANGELOG.md` (formato estándar,
+  derivado del backlog, no inventado). Desfase = anomalía a elevar.
+  Herramienta: `verificar-changelog.mjs` del swarm (o grep de los WP ✅
+  contra el CHANGELOG). Especialmente antes de un release.
 
 ## Ciclo de sprint
 

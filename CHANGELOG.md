@@ -1,37 +1,39 @@
 # Changelog
 
-## Unreleased — destinado a 0.4.0
+Formato [Keep a Changelog](https://keepachangelog.com/es/1.1.0/);
+versionado [SemVer](https://semver.org/lang/es/). Las entradas se
+**derivan del backlog cerrado** (`plan/BACKLOG.md`) — se copian los WP ✅,
+no se inventa texto. Gate:
+`skills/swarm-orquestacion/scripts/verificar-changelog.mjs`.
 
-Contrato ampliado (minor). **Publicación pendiente** (ops/CI): hasta
-publicar, la versión fijada vigente para consumo sigue siendo `0.3.0`; por
-eso `package.json` no se bumpea aún (evita anunciar una versión que el
-registry no resuelve).
+## [0.3.1] — 2026-07-20
 
-### `swarm-orquestacion` — regla 15 (WP-05)
+Consolidación de las olas 1–2 del plan (portal + higiene de método +
+verificación + enlaces al back). Entradas copiadas de los WP ✅ del
+backlog. **Publicación** (bump efectivo de `package.json` + `npm publish`
++ C8 de 0.3.1) = paso ops/CI final.
 
-- **Fuente de verdad única y efimeralidad**
-  (`reference/reglas-metodo-v04.md`): el plan trazado en git es la única
-  verdad; la memoria interna del agente y las carpetas de IDE
-  (`.claude`/`.cursor`/…) son scratch efímero. Se conserva la config
-  funcional (settings/tasks/MCP); se prohíbe el texto de info de sesión
-  (markdowns, identificadores). Verificar contra el plan, no contra el
-  recuerdo. Checklist de cierre de ola extendida.
+### Added
 
-### `vigilancia` — residuo de info (WP-05)
+- **WP-01 · Portal de consumo + catálogo** — guía de consumo canónica
+  (`docs/guide/consumo.md`), catálogo con filtrado y página autogenerada
+  por skill (`/skills/<dir>`).
+- **WP-06 · Gate de verificación de sitio** —
+  `skills/site-web/scripts/verificar-sitio.mjs`: valida enlaces
+  internos/anclas/externos + verdad de contenido sobre el `dist/`
+  construido (cubre los hrefs de componentes `.vue`).
+- **WP-07 · CHANGELOG estándar vinculado al backlog** —
+  `skills/swarm-orquestacion/scripts/verificar-changelog.mjs` + práctica
+  de método + doctrina de vigía.
+- **WP-08 · Enlaces al back (DevOps)** — enlaces al repo/registry/CI por
+  página y página «Proyecto» (`docs/proyecto.md`).
 
-- El vigía **eleva** markdowns de info bajo carpetas de IDE como anomalía
-  (`scripts/watcher.sh`, doctrina en `reference/ESTACION.md`). La config
-  funcional no es residuo.
+### Changed
 
-### `site-web` — gate de verificación de sitio (WP-06)
-
-- `scripts/verificar-sitio.mjs`: sobre el `dist/` construido valida todos
-  los `<a href>` (internos → fichero respetando `base`+`cleanUrls`, anclas
-  `#id`, externos → warning) más verdad de contenido opcional por
-  manifiesto. Cubre los hrefs de componentes `.vue` que el
-  `ignoreDeadLinks` de VitePress no revisa — origen de los enlaces rotos
-  en deploys previos. Falla ante roto interno/ancla (DC-5). Integrado en
-  `reference/protocolo-ghpages.md`.
+- **WP-05 · Efimeralidad y fuente de verdad única** — `swarm-orquestacion`
+  regla 15 (`reference/reglas-metodo-v04.md`): el plan trazado es la única
+  verdad; carpetas de IDE y memoria interna son scratch efímero (se
+  conserva la config funcional). Check de residuo en `vigilancia`.
 
 ## 0.3.0 — 2026-07-19
 

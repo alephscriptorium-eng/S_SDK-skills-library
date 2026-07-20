@@ -52,6 +52,26 @@ Extiende la de v0.3 con el ítem de efimeralidad:
                               no citada como fuente — verificado el plan
 ```
 
+## Práctica · CHANGELOG estándar vinculado al backlog
+
+Aplicación de C9 (no listas que se pudren): el `CHANGELOG.md` **no se
+inventa**, se **deriva** del backlog cerrado. Disciplina:
+
+- **Formato FOSS estándar** (Keep a Changelog): `## [x.y.z] — fecha` con
+  secciones `Added` / `Changed` / `Fixed` (u homónimos). Sin prosa libre
+  por agente.
+- **Contenido = WP ✅ del plan.** Cada entrada de una versión copia los WP
+  cerrados de esa release (id + título del BACKLOG), no textos improvisados.
+  Un WP ✅ que no está en el CHANGELOG es un desfase.
+- **Gate pre-publish:** `scripts/verificar-changelog.mjs` — falla si falta
+  la sección de la versión a publicar, o si un WP ✅ del BACKLOG no está
+  referenciado en el CHANGELOG. Correrlo antes de `npm publish` (y en CI).
+- **El vigía** lo cruza en su pulso (ver skill `vigilancia`): el CHANGELOG
+  refleja lo cerrado del plan, o se eleva como anomalía.
+
+**Regla:** el CHANGELOG es un espejo del backlog cerrado, no un cuaderno
+personal.
+
 ## Relación con v0.2 / v0.3
 
 `reglas-metodo-v02.md` (12 reglas) y `reglas-metodo-v03.md` (14 reglas +

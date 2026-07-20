@@ -103,3 +103,4 @@ histórico.)
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` en un destino |
 | `scripts/comprobar-ceguera.sh` | grep de ceguera sobre este skill |
+| `scripts/verificar-changelog.mjs` | gate pre-publish: CHANGELOG estándar refleja el backlog cerrado |
