@@ -68,13 +68,17 @@ se edita, no se versiona, se regenera con `npm ci`.
 
 ## 3. Adaptadores por runner
 
-Algunos runners exigen que los skills vivan en un directorio propio del
-repo. El patrón general: **script de sincronización idempotente** desde
-`node_modules` hacia el directorio del runner, ejecutado tras cada
-`npm install`. La copia sincronizada es un artefacto derivado — nunca se
-edita a mano.
+La fuente de verdad **runner-agnóstica** es siempre
+`node_modules/@alephscript/skills-scriptorium/skills/` (paso 2). Algunos
+runners, además, exigen leer los skills desde un directorio **propio del
+runner** — cuyo nombre lo define **ese runner**, no este paquete
+(`.claude/skills/` es el namespace de Claude Code; otro runner usa el
+suyo). El patrón general: **script de sincronización idempotente** desde
+`node_modules` hacia el directorio del runner, en `postinstall`. La copia
+sincronizada es un artefacto **derivado** — nunca se edita a mano, y **se
+ignora en git** (ver abajo).
 
-### Claude Code (`.claude/skills/`)
+### Claude Code (`.claude/skills/` — namespace de Claude Code)
 
 Ejemplo de `scripts/sync-skills.mjs` en el repo consumidor:
 
@@ -105,10 +109,14 @@ Enganche en el `package.json` consumidor:
 }
 ```
 
-Decisión del mundo: versionar la copia sincronizada (reproducible sin
-`npm install`) o ignorarla en git (menos ruido). En ambos casos la
-fuente sigue siendo el paquete fijado; ante cualquier divergencia, la
-copia se regenera, no se corrige.
+**Recomendado: gitignorar la copia** (`.claude/skills/` en el
+`.gitignore` del consumidor). Es un artefacto derivado de un paquete
+**fijado**: se regenera en `postinstall`, así que no hace falta
+commitearla — y así el repo no arrastra la carpeta de **un** IDE (si
+alguien lo abre con otro runner no ve cruft ajeno) ni duplica el método
+(dedup). La reproducibilidad la garantiza la versión exacta, no la copia
+commiteada. Ante cualquier divergencia, la copia se regenera, no se
+corrige.
 
 ### Otros IDEs / runners
 

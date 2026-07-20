@@ -61,10 +61,12 @@ ahí directamente.
 ### 3. Adaptadores por runner
 
 Runners que exigen un directorio propio (p. ej. Claude Code y su
-`.claude/skills/`) **sincronizan por script idempotente** desde
-`node_modules` — nunca se edita la copia a mano; se regenera tras cada
-`npm install`. Patrón general para otros IDEs: mismo script, otro
-destino. Ver [docs/guide/consumo.md](docs/guide/consumo.md).
+`.claude/skills/` — **namespace del runner**, no de este paquete)
+**sincronizan por script idempotente** desde `node_modules` — nunca se
+edita la copia a mano; se regenera tras cada `npm install` y se
+**gitignora** (artefacto derivado). La fuente runner-agnóstica es
+`node_modules/.../skills/`. Patrón general para otros IDEs: mismo script,
+otro destino. Ver [docs/guide/consumo.md](docs/guide/consumo.md).
 
 ### 4. Dedup: referencia versionada + calibración local
 
