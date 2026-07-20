@@ -19,6 +19,18 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   antiguos WP-01 (docs-consumo) y WP-04 (catálogo) en un solo WP-01
   (Portal). Motivo: evitar repetir el procedimiento N veces (anti-dedup)
   manteniendo descubrimiento y contrato por skill.
+- **DC-4 · Política de efimeralidad (cierra DA-3, para WP-05).** Se
+  **permiten** los ficheros de **configuración funcional** del IDE
+  (settings, tasks, servidores MCP, cualquier config). Lo que se prohíbe y
+  se limpia es el **texto de información**: markdowns/notas con estado de
+  sesión, identificadores (tipo «U148»), decisiones; y tomar las
+  **memorias internas** del agente como fuente de verdad. Vigilancia eleva
+  los markdowns de info como residuo; la config **no** es residuo.
+- **DC-5 · Rigor del gate de enlaces (cierra DA-4, para WP-06).** El gate
+  **falla** (exit ≠ 0) ante enlace **interno o ancla** roto; los
+  **externos** son *warning* listado (un 404 externo transitorio no
+  bloquea el deploy). Corre en CI (`docs.yml`) tras build **y** disponible
+  en local pre-deploy.
 
 ## Abiertas
 
@@ -32,12 +44,4 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   skills ya apuntan a `/guide/consumo`. ¿Debe el propio `SKILL.md`
   (frontmatter + cuerpo) llevar también el puntero, o se mantiene el
   README como único punto de entrada por skill? → custodio decide.
-- **DA-3 · Política exacta de efimeralidad (WP-05).** Qué se conserva en
-  carpetas de IDE: ¿solo `config`/`tasks`/`mcp` funcional y cero markdowns
-  de info, o se toleran notas si van a un `plan/` trazado? ¿Vigilancia
-  **eleva** el residuo (anomalía) o solo el orquestador lo limpia en el
-  cierre? → custodio decide antes de abrir WP-05.
-- **DA-4 · Rigor del gate de enlaces (WP-06).** ¿El gate **falla** el
-  build ante un externo 404, o solo ante roto interno/ancla (externos =
-  warning)? ¿Corre en CI (`docs.yml`) tras build, o solo local pre-deploy?
-  → custodio decide antes de abrir WP-06.
+_(ninguna abierta ahora; DA-3 y DA-4 cerradas como DC-4/DC-5)_
