@@ -113,6 +113,19 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   v0.4 desde la regla 15), distinta de la versión del **paquete** (0.3.2).
   Arreglo de verdad de contenido.
 
+- **DC-19 · El export auto-cierra lo que no está en el conjunto proyectado
+  (WP-12; custodio).** Tras procesar el conjunto elegido, todo issue del
+  `sync-map` cuyo WP **no** esté en ese conjunto se **cierra** (con
+  comentario) y sale del map. Cubre huérfanos (WP retirado del backlog) sin
+  intervención manual. Modelo unificado: «proyectá el conjunto; cerrá lo
+  que sobra».
+- **DC-20 · Alcance de proyección configurable al activar (WP-12;
+  custodio).** `--alcance todos|abiertos` (default **todos** =
+  retrocompatible). `abiertos` proyecta solo `⬜`/`🔶` (trabajo accionable);
+  los `✅` **no** se proyectan y sus issues se cierran (vía DC-19). El
+  alcance se elige **en el momento de activar** la proyección; el
+  orquestador lo confirma junto al modo en el ritual de inicio.
+
 ## Abiertas
 
 _(ninguna abierta; DA-1/DA-2 cerradas como DC-16/DC-17; DA-3/DA-4 como DC-4/DC-5.)_

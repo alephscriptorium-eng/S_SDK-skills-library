@@ -198,9 +198,22 @@ Solo el orquestador edita este fichero, en `main`.
     entradas.
   - `verificar-sitio.mjs` verde; ceguera 0.
 
-## Ola 5 — candidatos (sin abrir)
+## Ola 5 — refinamientos de proyección (release 0.3.3)
 
-_(ninguno abierto ahora.)_
+- 🔶 **WP-12 · Proyección: auto-cierre de huérfanos + modo de alcance** —
+  dos refinamientos del exportador (WP-09), unificados en una lógica:
+  «proyectá el conjunto elegido; cerrá lo que ya no esté en él».
+  **Skill:** `swarm-orquestacion` · **Rama:** `main` · **Eje(s):** ceguera.
+  **CA:**
+  - **Auto-cierre (DC-19):** todo issue del `sync-map` cuyo WP no esté en
+    el conjunto proyectado se cierra (con comentario) y sale del map.
+    Verificable: retirar un WP + re-export → su issue se cierra solo.
+  - **Alcance configurable (DC-20):** `--alcance todos|abiertos` (default
+    `todos`). `abiertos` proyecta solo `⬜`/`🔶`; los `✅` se cierran.
+  - `reference/proyeccion-issues.md` + `roles/ORQUESTADOR.md`: el alcance
+    se confirma al activar (ritual de inicio).
+  - Dry-run cubre ambos (preview sin API); ceguera 0.
+  - Semver: contrato ampliado → **0.3.3** (`CHANGELOG` + gate).
 
 ## Retirados por decisión
 
