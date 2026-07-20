@@ -162,8 +162,32 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   WP-08 como **config de tema + placeholders**, no texto por página.
   Corrección de generador defectuoso = regenerar la pipeline con fuente
   única, no parchear página a página.
+- **DC-25 · Intake feedback consumidor — Punto 4 (parser de proyección
+  demasiado estricto).** Tras cerrar Ola 6, el mismo mundo consumidor
+  elevó un **4º punto** (nacido al cablear WP-09 sobre un backlog real,
+  no visible en el intake original DC-21): el parser de
+  `proyectar-backlog.mjs` solo reconoce `- <estado> **WP-XX · título**`
+  (el `·` es obligatorio, ID+título dentro del mismo `**…**`). Un backlog
+  vivo mezcla `- <estado> **WP-XX** (prosa)` / `**WP-XX** — prosa`, y esos
+  WP **no se parsean** → la proyección los omite **en silencio** (0
+  proyectados sin aviso). **Verificado NO resuelto en 0.3.4** (parser sin
+  cambios; regex `:62` sigue exigiendo `·`). **Pendiente de triaje/GO**
+  (ver §Abiertas): opciones = flexibilizar el parser (aceptar ID fuera del
+  bold + título tras `·`/`—`/`(`), **o** documentar el contrato de formato
+  como requisito duro y verificarlo (fallar ruidoso, no silencioso). No
+  auto-ejecuta.
 
 ## Abiertas
 
-_(ninguna abierta; DA-1/DA-2 → DC-16/DC-17; DA-3/DA-4 → DC-4/DC-5;
+- **Punto 4 (DC-25) · parser de proyección** — recibido del consumidor,
+  **pendiente de triaje/GO del custodio**. No resuelto en 0.3.4. Candidato
+  a WP en el próximo lote (o al re-planear el reset). No bloquea lo
+  publicado (0.3.4 estable); solo limita la proyección en backlogs de
+  formato mixto.
+- **Reset anticipado por el custodio (0 uso)** — mencionado como intención;
+  **alcance sin definir**. No es WP hasta que el custodio fije qué resetea
+  (versionado, estructura, o solo el número). Registrar aquí para que no se
+  pierda.
+
+_(Resueltas: DA-1/DA-2 → DC-16/DC-17; DA-3/DA-4 → DC-4/DC-5;
 DC-22..24 ratificadas por GO 2026-07-20.)_

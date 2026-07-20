@@ -266,3 +266,24 @@ No cuentan para el gate de CHANGELOG; sus issues de proyección se cierran.
   el puntero vive solo en README + portal; el `SKILL.md` no lo lleva.
 - **WP-03 · Default de la copia sincronizada** — **resuelto** por DC-16
   (gitignorar), implementado en WP-11 (`docs/guide/consumo.md` §3).
+
+## Estado — Ola 6 cerrada (2026-07-20)
+
+> **Olas 1–6 ✅.** Publicado **0.3.4** (registry `latest`; retarget del
+> 0.4.0 previsto — DC-22; el artefacto de historial `chore(release): 0.4.0`
+> quedó reconciliado por `chore(release): 0.3.4`, sin efecto en lo
+> publicado). Gates verdes: gobierno (`--role gobierno`, 12 WP ✅) y sitio
+> (`verificar-sitio` @0.3.4).
+>
+> **Feedback del consumidor (DC-21):** 3/4 puntos **resueltos**
+> (WP-13/14/15 → DC-22/23/24). **Punto 4 (parser de proyección)** llegó
+> después, **pendiente de triaje** (DC-25 · §Abiertas) — no resuelto en
+> 0.3.4.
+>
+> **Proyección backlog→Issues:** implementada **local-only** (WP-09/10);
+> **GO de proyección real a un tracker = pendiente del custodio**.
+>
+> **Reset anticipado** (custodio, 0 uso): alcance sin definir (§Abiertas).
+>
+> Estado declarado: **IDLE** — esperando: triaje del Punto 4 · GO de
+> proyección real · definición del reset. Ninguno bloquea 0.3.4 publicado.
