@@ -1,20 +1,10 @@
 # Proyecto
 
-`@alephscript/skills-scriptorium` es FOSS y vive en abierto. Desde aquí
-llegás al **back** de todo lo que ves en el portal: código, paquete, CI y
-publicación. Cada skill del [catálogo](/catalogo) enlaza además a su
-fuente concreta en el repo.
-
-## Infraestructura
-
-| pieza | enlace |
-| ----- | ------ |
-| Repositorio | [github.com/alephscriptorium-eng/S_SDK-skills-library](https://github.com/alephscriptorium-eng/S_SDK-skills-library) |
-| Paquete (registry propio) | [npm.scriptorium.escrivivir.co](https://npm.scriptorium.escrivivir.co) |
-| CI / Actions | [Actions del repo](https://github.com/alephscriptorium-eng/S_SDK-skills-library/actions) |
-| Pages (este sitio) | [skills.s-sdk.escrivivir.co](https://skills.s-sdk.escrivivir.co) |
-| CHANGELOG | [CHANGELOG.md](https://github.com/alephscriptorium-eng/S_SDK-skills-library/blob/main/CHANGELOG.md) |
-| Contribuir / issues | [Issues](https://github.com/alephscriptorium-eng/S_SDK-skills-library/issues) |
+`@alephscript/skills-scriptorium` es FOSS y vive en abierto. Los enlaces
+vivos al **back** (repo, registry, CI, Pages, CHANGELOG, issues) están en
+el **footer y nav del tema** — fuente única de configuración, no repetida
+por página. Cada skill del [catálogo](/catalogo) deriva además su enlace
+«ver fuente» de esa misma base.
 
 ## Flujo DevOps
 
@@ -26,7 +16,8 @@ código (repo)  →  paquete (registry, versión fijada)  →  CI (Actions)  →
 - El **paquete** se publica al registry propio con versión exacta — ver
   [Consumo](/guide/consumo).
 - La **CI** (GitHub Actions) construye y despliega el portal a Pages.
-- El **portal** (este sitio) introduce y enlaza de vuelta al back.
+- El **portal** (este sitio) introduce y enlaza de vuelta al back desde
+  footer/nav.
 
 ## Instalar
 

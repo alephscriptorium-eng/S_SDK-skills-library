@@ -92,13 +92,13 @@ No hardcodear el dominio de otro mundo en plantillas del skill: usá
 ## Enlaces al back (DevOps) — B11
 
 El portal vive **en la forja** (GitHub Pages): aprovechar la cercanía para
-que el visitante FOSS salte de lo que ve a su back en un clic. Método:
+que el visitante FOSS salte de lo que ve a su back en un clic. Método
+(DC-24): **fuente única en config de tema**, no texto por página.
 
-- **Por página**, enlace a su **parte tec**: el recurso que la origina en
-  el repo (`{{REPO}}/tree/{{RAMA}}/<ruta>`), y el canal C8 pertinente
-  (registry `{{REGISTRY}}`, release, tarball).
-- **Página dedicada** «Proyecto / DevOps» que agrega los enlaces de infra
-  **no repartidos** en el resto del sitio:
+- Declarar **una vez** en `themeConfig` (p. ej. `back` + `backLinks`) con
+  placeholders; renderizar vía **footer** y/o **nav** (y `socialLinks` si
+  aplica). Nunca un bloque markdown/HTML repetido por página.
+- Placeholders canónicos:
 
   | enlace | destino (parametrizable) |
   | ------ | ------------------------ |
@@ -109,9 +109,15 @@ que el visitante FOSS salte de lo que ve a su back en un clic. Método:
   | CHANGELOG | `{{REPO}}/blob/{{RAMA}}/CHANGELOG.md` |
   | Contribuir / issues | `{{REPO}}/issues` |
 
-- No hardcodear estas URLs en el **skill**: van con placeholders; el
-  **mundo** las materializa en su página. Cubre el flujo devops (código →
-  registry → CI → Pages) para que el back sea alcanzable desde el front.
+- Enlaces contextuales a **parte tec** (p. ej.
+  `{{REPO}}/tree/{{RAMA}}/<ruta>`) se **derivan** de `{{REPO}}` del tema;
+  no reintroducen la tabla de infra.
+- Página dedicada «Proyecto / DevOps»: prosa del flujo (código → registry
+  → CI → Pages); las URLs viven en footer/nav, no duplicadas en el cuerpo.
+- No hardcodear estas URLs en el **skill**: placeholders en plantilla; el
+  **mundo** las materializa en su `config` de tema.
+- Generador que emitía bloques por página: **regenerar** desde la fuente
+  única del tema; no parchear página a página.
 
 ## Gate de verificación (enlaces + verdad de contenido)
 

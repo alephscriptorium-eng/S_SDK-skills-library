@@ -26,7 +26,7 @@ features:
   - title: Protocolo ≠ datos
     details: El skill lleva el método; instancias/ guarda fixtures de-identificadas.
   - title: Proyecto
-    details: Repo, registry propio, CI y CHANGELOG — el back FOSS a un clic desde el front.
+    details: Flujo DevOps (código → registry → CI → Pages). Enlaces vivos al back en footer/nav del tema.
     link: /proyecto
     linkText: Ver proyecto
 ---

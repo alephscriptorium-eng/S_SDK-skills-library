@@ -2,19 +2,20 @@
 import { computed } from 'vue';
 import { useData, withBase } from 'vitepress';
 
-const { params } = useData();
+const { params, theme } = useData();
 const p = computed(() => params.value || {});
 const tags = computed(() =>
   p.value.tags ? String(p.value.tags).split(',').filter(Boolean) : []
 );
 
-const REPO =
-  'https://github.com/alephscriptorium-eng/S_SDK-skills-library/tree/main/skills';
-const REGISTRY = 'https://npm.scriptorium.escrivivir.co';
+/** Derivado de themeConfig.back (fuente única B11 / DC-24). */
+const back = computed(() => theme.value?.back || {});
+const skillsTree = computed(() => back.value.skillsTree || '');
+const registry = computed(() => back.value.registry || '');
 
 const install = computed(
   () =>
-    `npm install --save-exact @alephscript/skills-scriptorium@${p.value.pkg} \\\n  --registry ${REGISTRY}`
+    `npm install --save-exact @alephscript/skills-scriptorium@${p.value.pkg} \\\n  --registry ${registry.value}`
 );
 const rutaFuente = computed(
   () => `node_modules/@alephscript/skills-scriptorium/skills/${p.value.skill}/`
@@ -55,7 +56,13 @@ const rutaFuente = computed(
     </p>
 
     <div class="sk-links">
-      <a class="sk-link" :href="`${REPO}/${p.skill}`" target="_blank" rel="noreferrer">ver fuente ↗</a>
+      <a
+        v-if="skillsTree"
+        class="sk-link"
+        :href="`${skillsTree}/${p.skill}`"
+        target="_blank"
+        rel="noreferrer"
+      >ver fuente ↗</a>
       <a class="sk-link" :href="withBase('/guide/activar')">activar (resumen)</a>
     </div>
   </div>
