@@ -5,7 +5,7 @@
 | agente | worker swarm WP-15 |
 | fecha | 2026-07-20 |
 | rama | `wp/15-back-links-tema` |
-| commits | _(hash tras commit)_ |
+| commits | `10477cc` |
 | eje(s) CA | III (dedup: una fuente de back-links) + ceguera |
 | estado propuesto | listo para revisión |
 
