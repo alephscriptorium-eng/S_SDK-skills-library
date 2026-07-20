@@ -215,7 +215,7 @@ Solo el orquestador edita este fichero, en `main`.
   - Dry-run cubre ambos (preview sin API); ceguera 0.
   - Semver: contrato ampliado → **0.3.3** (`CHANGELOG` + gate).
 
-## Ola 6 — feedback de consumidor (release 0.4.0) · en curso
+## Ola 6 — feedback de consumidor (release 0.4.0) · cerrada
 
 Origen: feedback externo de un mundo consumidor (DC-21). GO del custodio
 (2026-07-20): abre WP-13/14/15 (🔶) y ratifica DC-22..24. Modo sesión:
@@ -223,9 +223,9 @@ Origen: feedback externo de un mundo consumidor (DC-21). GO del custodio
 Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último** (corte
 0.4.0).
 
-- 🔶 **WP-13 · Doctrina semver + reconciliación 0.4.0** (Punto 1, DC-22).
+- ✅ **WP-13 · Doctrina semver + reconciliación 0.4.0** (Punto 1, DC-22).
   **Skill:** pack (README/CHANGELOG) + `swarm-orquestacion` · **Rama:**
-  `wp/13-semver-doctrina` · **Eje(s):** ceguera.
+  `main` · **Eje(s):** ceguera.
   **Brief:** `plan/BRIEFS/WP-13-semver-doctrina.md`.
   **CA:**
   - README/CHANGELOG fijan la doctrina: cambio de **regla de método** =

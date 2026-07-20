@@ -7,7 +7,7 @@
 | rama | `wp/13-semver-doctrina` |
 | commits | `13a2916` (obra) · `d0b3222` (hash en reporte) |
 | eje(s) CA | ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | aceptado ✅ (mergeado) |
 
 ## Qué se hizo
 
@@ -95,9 +95,8 @@ Verificado:
 - `verificar-changelog.mjs --version 0.4.0` → OK.
 - C8 `npm view @0.4.0`: ⏳ (declarado; publish ops fuera de sesión).
 
-**Merge:** NO ejecutar aún. Cadencia Ola 6: esperar ✅ WP-14 y WP-15;
-WP-13 **último** (corte 0.4.0). Al merge final, volcar ids WP-14/15 en
-`[0.4.0]`. BACKLOG no marcado ✅ en esta revisión (local-only / orden).
+**Merge (orquestador):** integrado en `main` por ff-only → `a51508c`
+(2026-07-20). WP-14/15 volcados en `[0.4.0]`. Ola 6 cerrada.
 
 Nits no bloqueantes: ancla skill README usa «v0.4» (raíz/badge «v0.4.0»);
 tabla de commits del reporte omite `be02d47`.
