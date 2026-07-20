@@ -7,7 +7,7 @@
 | rama | `wp/14-changelog-gobierno` |
 | commits | _(ver `git log` de la rama)_ |
 | eje(s) CA | ceguera + IV (monorepo / N changelogs de paquete) |
-| estado propuesto | listo para revisión |
+| estado propuesto | aceptado ✅ (mergeado) |
 
 ## Qué se hizo
 
@@ -98,4 +98,4 @@ Verificado:
 - Ceguera 0; `grep` marco en diff/`git log -p` del skill → 0 hits.
 - Eje IV: fixture con N CHANGELOG de paquete + rutas parametrizadas (evidencia en reporte + reproducción).
 
-**Merge (orquestador):** puede integrar a `main` cuando no haya conflictos con hermanos; **WP-13 último** (corte 0.4.0). No marcar BACKLOG ✅ hasta el merge.
+**Merge (orquestador):** integrado en `main` por ff-only → `9c1d4a1` (2026-07-20). **WP-13 último** (corte 0.4.0).

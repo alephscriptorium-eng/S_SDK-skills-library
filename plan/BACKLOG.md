@@ -235,8 +235,8 @@ Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último** (corte
     acumulada (regla 15 + gates 0.3.x). El badge v0.4 queda con relación
     documentada al paquete.
 
-- 🔶 **WP-14 · verificar-changelog: gobierno vs paquete** (Punto 2, DC-23).
-  **Skill:** `swarm-orquestacion` · **Rama:** `wp/14-changelog-gobierno` ·
+- ✅ **WP-14 · verificar-changelog: gobierno vs paquete** (Punto 2, DC-23).
+  **Skill:** `swarm-orquestacion` · **Rama:** `main` ·
   **Eje(s):** ceguera + IV (consumidor monorepo como 2º cliente).
   **Brief:** `plan/BRIEFS/WP-14-changelog-gobierno.md`.
   **CA:**
