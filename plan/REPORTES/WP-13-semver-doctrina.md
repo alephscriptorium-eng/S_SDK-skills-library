@@ -5,7 +5,7 @@
 | agente | swarm-worker WP-13 |
 | fecha | 2026-07-20 |
 | rama | `wp/13-semver-doctrina` |
-| commits | `13a291679630ffcdce0549973a3830c251ec1cd8` |
+| commits | `13a2916` (obra) · `d0b3222` (hash en reporte) |
 | eje(s) CA | ceguera |
 | estado propuesto | listo para revisión |
 
