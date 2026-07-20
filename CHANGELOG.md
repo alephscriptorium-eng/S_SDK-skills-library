@@ -26,6 +26,15 @@ Entrada copiada del WP ✅ del backlog.
   modo al inicio de sesión (default local-only); el vigía eleva proyección
   no declarada. Doble candado con el gate de ceguera.
 
+### Changed
+
+- **WP-11 · Portal/consumo: badge v0.4 + copia gitignorada** — el catálogo
+  muestra la versión de método de `swarm-orquestacion` (v0.4.0, DC-18); el
+  doc de consumo aclara que `.claude/skills/` es namespace de Claude Code
+  y recomienda **gitignorar** la copia sincronizada (fuente =
+  `node_modules/.../skills/`; DC-16). Puntero de consumo solo en README +
+  portal (DC-17).
+
 ## [0.3.1] — 2026-07-20
 
 Consolidación de las olas 1–2 del plan (portal + higiene de método +

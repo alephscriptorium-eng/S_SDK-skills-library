@@ -183,7 +183,7 @@ Solo el orquestador edita este fichero, en `main`.
     proyección no declarada.
   - Ceguera 0.
 
-- 🔶 **WP-11 · Cerrar DA-1/DA-2 + badge de método v0.4** — resolver las
+- ✅ **WP-11 · Cerrar DA-1/DA-2 + badge de método v0.4** — resolver las
   decisiones pendientes del portal/consumo (DC-16..DC-18), dentro de 0.3.2.
   **Skill:** `site-web` (doc) · **mundo-fuente** (portal) · **Rama:** `main`
   · **Eje(s):** ceguera + III (dedup).
