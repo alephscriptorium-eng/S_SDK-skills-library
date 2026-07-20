@@ -104,3 +104,4 @@ histórico.)
 | `scripts/montar-plan.sh` | genera `plan/` en un destino |
 | `scripts/comprobar-ceguera.sh` | grep de ceguera sobre este skill |
 | `scripts/verificar-changelog.mjs` | gate pre-publish: CHANGELOG estándar refleja el backlog cerrado |
+| `scripts/proyectar-backlog.mjs` | proyección del backlog a issues (export/import; sin sync; gate ceguera) — ver `reference/proyeccion-issues.md` |
