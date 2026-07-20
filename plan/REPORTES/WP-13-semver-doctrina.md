@@ -84,4 +84,20 @@ $ npm view @alephscript/skills-scriptorium@0.4.0 … version
 
 ## Revisión del orquestador
 
-_(la rellena el orquestador: aceptado ✅ / devuelto con lista numerada)_
+**Aceptado ✅** (2026-07-20, rol REVIEWER / `REVISION.md`).
+
+Verificado:
+- Diff `main...wp/13-semver-doctrina` solo en ALCANCE_DIFF (+ reporte).
+- CA doctrina DC-22 en README + CHANGELOG; `package.json` → `0.4.0`;
+  badge método en `docs/.vitepress/skills-meta.js` intacto (`0.4.0`, DC-18).
+- Eje ceguera: `comprobar-ceguera.sh` → 0; `git diff` / `git log -p` del
+  alcance → 0 hits (medida `grep -c`).
+- `verificar-changelog.mjs --version 0.4.0` → OK.
+- C8 `npm view @0.4.0`: ⏳ (declarado; publish ops fuera de sesión).
+
+**Merge:** NO ejecutar aún. Cadencia Ola 6: esperar ✅ WP-14 y WP-15;
+WP-13 **último** (corte 0.4.0). Al merge final, volcar ids WP-14/15 en
+`[0.4.0]`. BACKLOG no marcado ✅ en esta revisión (local-only / orden).
+
+Nits no bloqueantes: ancla skill README usa «v0.4» (raíz/badge «v0.4.0»);
+tabla de commits del reporte omite `be02d47`.
