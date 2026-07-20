@@ -10,8 +10,8 @@ no se inventa texto. Gate:
 
 Consolidación de las olas 1–2 del plan (portal + higiene de método +
 verificación + enlaces al back). Entradas copiadas de los WP ✅ del
-backlog. **Publicación** (bump efectivo de `package.json` + `npm publish`
-+ C8 de 0.3.1) = paso ops/CI final.
+backlog. `package.json` en 0.3.1; **queda `npm publish` + verificación C8
+de 0.3.1** = paso ops/CI final (fuera de esta sesión).
 
 ### Added
 

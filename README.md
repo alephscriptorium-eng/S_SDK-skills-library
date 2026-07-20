@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.3.0`).
+Release notes: `CHANGELOG.md` (actual `0.3.1`).
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -36,7 +36,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.3.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.3.1 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
@@ -79,9 +79,9 @@ emmanuel WP-I60.
 La referencia fijada debe **resolver** contra el registry:
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.3.0 \
+npm view @alephscript/skills-scriptorium@0.3.1 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.3.0, exit 0
+# → 0.3.1, exit 0
 ```
 
 ## Desarrollo local (no es consumo)
@@ -96,7 +96,7 @@ npm install /ruta/absoluta/al/repo-skills-library
 # simulación sin registry (pack → install en temporal)
 cd /ruta/al/repo-skills-library && npm pack
 TMP=$(mktemp -d) && cd "$TMP" && npm init -y
-npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.0.tgz
+npm install /ruta/al/repo-skills-library/alephscript-skills-scriptorium-0.3.1.tgz
 ls node_modules/@alephscript/skills-scriptorium/skills/
 ```
 

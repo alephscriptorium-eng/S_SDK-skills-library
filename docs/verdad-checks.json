@@ -1,7 +1,7 @@
 [
   {
-    "descripcion": "La versión de instalación mostrada es la del paquete publicado (0.3.0), no una sin publicar",
-    "patron": "@alephscript/skills-scriptorium@0\\.3\\.0"
+    "descripcion": "La versión de instalación mostrada casa con package.json (release 0.3.1)",
+    "patron": "@alephscript/skills-scriptorium@0\\.3\\.1"
   },
   {
     "descripcion": "Ningún comando de instalación usa @latest (el consumo exige versión fijada)",
