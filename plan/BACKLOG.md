@@ -215,14 +215,18 @@ Solo el orquestador edita este fichero, en `main`.
   - Dry-run cubre ambos (preview sin API); ceguera 0.
   - Semver: contrato ampliado → **0.3.3** (`CHANGELOG` + gate).
 
-## Ola 6 — feedback de consumidor (release 0.4.0) · listo para GO
+## Ola 6 — feedback de consumidor (release 0.4.0) · en curso
 
-Origen: feedback externo de un mundo consumidor (DC-21). Tres WP; el GO del
-custodio los abre (🔶) y ratifica DC-22..24.
+Origen: feedback externo de un mundo consumidor (DC-21). GO del custodio
+(2026-07-20): abre WP-13/14/15 (🔶) y ratifica DC-22..24. Modo sesión:
+**local-only** (sin proyección a issues). Briefs: `plan/BRIEFS/`.
+Cadencia de merge del lote: WP-14 y WP-15 al ✅; **WP-13 último** (corte
+0.4.0).
 
-- ⬜ **WP-13 · Doctrina semver + reconciliación 0.4.0** (Punto 1, DC-22).
-  **Skill:** pack (README/CHANGELOG) + `swarm-orquestacion` · **Eje(s):**
-  ceguera.
+- 🔶 **WP-13 · Doctrina semver + reconciliación 0.4.0** (Punto 1, DC-22).
+  **Skill:** pack (README/CHANGELOG) + `swarm-orquestacion` · **Rama:**
+  `wp/13-semver-doctrina` · **Eje(s):** ceguera.
+  **Brief:** `plan/BRIEFS/WP-13-semver-doctrina.md`.
   **CA:**
   - README/CHANGELOG fijan la doctrina: cambio de **regla de método** =
     minor; patch = sin cambio de contrato; «versión de método» (badge) y
@@ -231,18 +235,20 @@ custodio los abre (🔶) y ratifica DC-22..24.
     acumulada (regla 15 + gates 0.3.x). El badge v0.4 queda con relación
     documentada al paquete.
 
-- ⬜ **WP-14 · verificar-changelog: gobierno vs paquete** (Punto 2, DC-23).
-  **Skill:** `swarm-orquestacion` · **Eje(s):** ceguera + IV (consumidor
-  monorepo como 2º cliente).
+- 🔶 **WP-14 · verificar-changelog: gobierno vs paquete** (Punto 2, DC-23).
+  **Skill:** `swarm-orquestacion` · **Rama:** `wp/14-changelog-gobierno` ·
+  **Eje(s):** ceguera + IV (consumidor monorepo como 2º cliente).
+  **Brief:** `plan/BRIEFS/WP-14-changelog-gobierno.md`.
   **CA:**
   - La práctica y el gate distinguen **CHANGELOG de gobierno** (uno/mundo,
     WP-id-keyed) de **CHANGELOG de paquete** (N, changesets/semver).
   - El gate es **opt-in/parametrizable** (rutas + declaración de rol); no
     asume changelog único. Documentado como adoptable en monorepos.
 
-- ⬜ **WP-15 · Back-links a nivel de tema** (Punto 3, DC-24).
-  **Skill:** `site-web` + mundo-fuente (portal) · **Eje(s):** III (dedup) +
-  ceguera.
+- 🔶 **WP-15 · Back-links a nivel de tema** (Punto 3, DC-24).
+  **Skill:** `site-web` + mundo-fuente (portal) · **Rama:**
+  `wp/15-back-links-tema` · **Eje(s):** III (dedup) + ceguera.
+  **Brief:** `plan/BRIEFS/WP-15-back-links-tema.md`.
   **CA:**
   - `metodo-mecanismo.md` (B11) + `protocolo-ghpages.md`: back-links =
     config de tema + placeholders únicos (footer/nav), **no** texto por
