@@ -90,7 +90,49 @@ Solo el orquestador edita este fichero, en `main`.
   - Semver: contrato de `site-web` ampliado → bump **minor** del paquete +
     `CHANGELOG.md`.
 
-## Ola 3 — candidatos (sin abrir)
+## Ola 3 — CHANGELOG disciplinado y enlaces al back
+
+- 🔶 **WP-07 · CHANGELOG estándar vinculado al backlog** — hoy cada agente
+  apunta texto libre en el CHANGELOG. Restringirlo: formato FOSS estándar
+  (Keep a Changelog), contenido **derivado del backlog cerrado** (el
+  agente copia los WP ✅, no inventa texto), y un mecanismo que asegura que
+  el swarm lo mantiene al día y **corresponde con lo cerrado del plan**.
+  Extiende C9 (no listas que se pudren; generar de fuente).
+  **Skills:** `swarm-orquestacion` (regla/práctica + gate) y `vigilancia`
+  (check) · **Rama:** `main` (solo-secuencial) · **Eje(s):** III (una
+  fuente: el backlog) + ceguera.
+  **CA:**
+  - `swarm-orquestacion`: práctica «CHANGELOG estándar vinculado al
+    backlog» en el método + `scripts/verificar-changelog.mjs`: falla si
+    (a) falta la sección de la versión a publicar, o (b) un WP ✅ del
+    BACKLOG no aparece referenciado en el CHANGELOG.
+  - `vigilancia`: el vigía incluye en su pulso que cada WP ✅ del plan está
+    reflejado en el CHANGELOG; eleva el desfase como anomalía.
+  - **Inicialización (dogfood):** reescribir el CHANGELOG actual en formato
+    estándar como release **0.3.1** (DC-7), con los WP cerrados de las olas
+    1–2 copiados del backlog.
+  - Ceguera 0.
+
+- 🔶 **WP-08 · Enlaces al back (DevOps) en el portal** — aprovechar que el
+  portal vive en GitHub Pages: cada página ofrece enlace a su **parte tec**
+  (repo en github.com, registry propio, CI) y una **sección dedicada** que
+  agrega los enlaces de infra no repartidos, para que el navegante FOSS
+  llegue rápido al back. Cubre el flujo devops. Extiende B9/B10 (conector
+  entre portales, vía de contribución) y C8 (canal real).
+  **Skill:** `site-web` (método + protocolo) · **mundo-fuente** (portal) ·
+  **Rama:** `main` · **Eje(s):** IV (2º cliente: el portal) + ceguera.
+  **CA:**
+  - `site-web`: patrón «enlaces al back» en `reference/metodo-mecanismo.md`
+    + sección en `reference/protocolo-ghpages.md` (contexto GitHub/Pages);
+    plantilla de página «Proyecto/DevOps».
+  - **mundo-fuente:** página `docs/proyecto.md` que agrega repo + registry
+    + CI/Actions + Pages + CHANGELOG + contribuir; enlazada en nav; enlaces
+    al back presentes por página (fuente ya existe en skill; añadir donde
+    falte).
+  - `verificar-sitio.mjs` verde sobre el portal ampliado (enlaces nuevos).
+  - Ceguera 0.
+
+## Ola 4 — candidatos (sin abrir)
 
 - ⬜ **WP-02 · Puntero de consumo en `SKILL.md`** — según DA-2. Añadir al
   cuerpo de cada `SKILL.md` un puntero a `/guide/consumo`, si el custodio

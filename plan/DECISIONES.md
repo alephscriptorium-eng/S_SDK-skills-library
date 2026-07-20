@@ -31,6 +31,23 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   **externos** son *warning* listado (un 404 externo transitorio no
   bloquea el deploy). Corre en CI (`docs.yml`) tras build **y** disponible
   en local pre-deploy.
+- **DC-6 · CHANGELOG estándar vinculado al backlog (WP-07).** Formato FOSS
+  estándar (Keep a Changelog: `## [x.y.z] — fecha` + Added/Changed/Fixed).
+  Contenido **derivado del backlog cerrado**: el agente copia los WP ✅ del
+  plan, **no inventa texto**. Verificación: gate `verificar-changelog.mjs`
+  pre-publish (falla si falta la sección de la versión o si un WP ✅ no está
+  en el CHANGELOG) **y** doctrina de vigía. Aplicación de C9 (no listas que
+  se pudren; generar de fuente).
+- **DC-7 · Versión del release actual = 0.3.1 (custodio).** Pese a que
+  WP-05/06 amplían contrato (por política, minor → 0.4.0), el custodio
+  decide consolidar olas 1–2 como **0.3.1** (patch). Se respeta la decisión
+  del custodio sobre la política; queda registrada la excepción. El publish
+  (bump efectivo + `npm publish` + C8 de 0.3.1) es ops/CI.
+- **DC-8 · Enlaces al back en el portal (WP-08).** Cada página del portal
+  ofrece enlace a su **parte tec** (repo github.com, registry propio, CI);
+  una **página dedicada** («Proyecto/DevOps») agrega los enlaces de infra
+  no repartidos (repo, registry, Actions, Pages, CHANGELOG, contribuir).
+  Objetivo: el navegante FOSS llega al back rápido (flujo devops).
 
 ## Abiertas
 
