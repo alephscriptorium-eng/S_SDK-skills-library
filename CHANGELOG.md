@@ -12,6 +12,22 @@ contrato. La «versión de método» (badge del catálogo) y el «semver del
 paquete» son ejes distintos; la correspondencia se declara en el
 `README.md` raíz.
 
+## [0.4.0] — 2026-07-21
+
+Minor: dos reglas de método nuevas (16–17). Badge de método
+`swarm-orquestacion` → **v0.5.0**. Entradas copiadas de los WP ✅ del
+backlog (Ola 7: WP-16/17).
+
+### Added
+
+- **WP-16 · Reglas 16–17 (run-id verde + sync-map post-apply)** —
+  `swarm-orquestacion` contrato v0.5: regla 16 (cierre de ola cita run-id
+  VERDE de CI/+Release por cada repo tocado) y regla 17 (sync-map
+  post-apply; mapa especulativo = devolución).
+  `reference/reglas-metodo-v05.md` + checklist/roles/proyección.
+- **WP-17 · Release 0.4.0 + regenerar portal** — publish canal real;
+  portal `skills.s-sdk.escrivivir.co` regenerado (badge v0.5.0).
+
 ## [0.3.4] — 2026-07-20
 
 Reconciliación de la expansión de contrato acumulada (regla 15 + gates

@@ -287,3 +287,36 @@ No cuentan para el gate de CHANGELOG; sus issues de proyección se cierran.
 >
 > Estado declarado: **IDLE** — esperando: triaje del Punto 4 · GO de
 > proyección real · definición del reset. Ninguno bloquea 0.3.4 publicado.
+
+## Ola 7 — reglas 16–17 (release 0.4.0) · feedback consumidor
+
+Micro-lote gobierno+obra: dos reglas de método destiladas de clases
+reincidentes en mundos consumidores (cierre sin run-id; sync-map
+especulativo). Semver **minor** (DC-22: cambio de regla de método). Badge
+de método `swarm-orquestacion` → **v0.5.0**.
+
+- ✅ **WP-16 · Reglas 16–17 (run-id verde + sync-map post-apply)** —
+  `swarm-orquestacion` gana `reference/reglas-metodo-v05.md` (reglas 16 y
+  17), resumen en `SKILL.md` (reglas de oro 12–13), checklist en
+  `ciclo.md` / `ORQUESTADOR.md`, y nota post-apply en
+  `proyeccion-issues.md`. Badge catálogo → v0.5.0.
+  **Rama:** `main` (micro-lote gobierno+obra) · **Eje(s):** ceguera + III
+  (dedup: el método vive en el skill, no en PRACTICAS de un solo mundo).
+  **CA:**
+  - Regla 16: cierre de ola cita run-id VERDE de CI (+ Release/homólogo)
+    por cada repo tocado; sin cita = ola no cerrada.
+  - Regla 17: sync-map se commitea post-apply; mapa especulativo =
+    devolución.
+  - Ceguera árbol = 0 sobre ficheros tocados.
+  - Contrato ampliado → bump **minor** del paquete (WP-17).
+  **Reporte:** `plan/REPORTES/WP-16-reglas-16-17.md`.
+
+- ✅ **WP-17 · Release 0.4.0 + regenerar portal** — `package.json` →
+  **0.4.0**; CHANGELOG/README; `npm publish` canal real; `workflow_dispatch`
+  Docs → `skills.s-sdk.escrivivir.co` regenerado.
+  **Rama:** `main` · **Eje(s):** IV (canal real) + ceguera.
+  **CA:**
+  - `npm view @alephscript/skills-scriptorium@0.4.0` resuelve.
+  - Portal HTTP 200; badge método v0.5.0 visible en catálogo/skill.
+  - Ceguera 0.
+  **Reporte:** `plan/REPORTES/WP-17-release-040.md`.
