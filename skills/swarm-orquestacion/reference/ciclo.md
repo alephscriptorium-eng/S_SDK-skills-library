@@ -35,11 +35,13 @@ Misma rama; solo lo pedido; actualizar reporte a `devuelto-corregido`.
 ## 5. Cierre de ola (orquestador)
 
 Antes de declarar la ola cerrada, ejecutar el checklist de
-`reference/reglas-metodo-v04.md`: stash vacío · `plan/` limpio · ramas
+`reference/reglas-metodo-v05.md`: stash vacío · `plan/` limpio · ramas
 `wp/*` mergeadas borradas o justificadas · `git status` explicado ·
 worktrees huérfanos removidos · **carpetas de IDE sin markdowns de info de
 sesión (solo config funcional) y memoria interna no citada como fuente
-(regla 15)**.
+(regla 15)** · **run-id VERDE de CI (+ Release/homólogo) citado por cada
+repo tocado (regla 16)** · **si hubo proyección: sync-map post-apply, sin
+IDs especulativos (regla 17)**.
 
 ## 6. Activación de mundo (regla 13)
 
@@ -69,6 +71,8 @@ Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 | Ceguera solo del árbol; fuga en commit intermedio | Regla 14: `git log -p` + squash |
 | `grep | head && echo OK` como evidencia | Regla 14 práctica: `grep -c` / `grep -q` |
 | Info de sesión en carpeta de IDE / memoria como verdad | Regla 15: solo config funcional; el plan trazado es la única verdad |
+| Cerrar ola sin run-id verde de CI/Release | Regla 16: citar run-id por cada repo tocado |
+| Commitear sync-map con IDs de issue inventados | Regla 17: apply → mapa real → commit |
 
 ## Señal de worker vivo
 

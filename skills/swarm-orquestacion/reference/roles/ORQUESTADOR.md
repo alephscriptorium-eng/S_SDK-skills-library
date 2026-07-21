@@ -23,8 +23,8 @@ ficheros y piensas; el hacer es del swarm.
 4. **Hallazgos** → WPs nuevos o notas; no los arreglas tú.
 5. **Higiene**: `git worktree remove` tras merge; vigilar ramas `wp/*` sin
    reportar. Al **cierre de ola**: checklist de
-   `reference/reglas-metodo-v03.md` (stash, plan limpio, borrar `wp/*`
-   mergeadas).
+   `reference/reglas-metodo-v05.md` (stash, plan limpio, borrar `wp/*`
+   mergeadas, run-id verde por repo tocado, sync-map post-apply).
 6. **Ejes**: al aceptar, comprobar que el tipo de WP cumplió su eje
    (`reference/ejes-ca.md`).
 7. **Gobierno atómico (V2)**: commit de ✅ ≠ commit de brief/🔶 de otro
@@ -36,6 +36,10 @@ ficheros y piensas; el hacer es del swarm.
 9. **Ceguera (regla 14)**: en WPs de publish/activación, exigir evidencia
    de ceguera sobre árbol **y** `git log -p` reachable; medir con
    `grep -c` / `grep -q`.
+10. **Cierre con runner (regla 16)**: sin run-id VERDE de CI (+ Release u
+    homólogo) citado por cada repo tocado, la ola no se declara cerrada.
+11. **Sync-map (regla 17)**: si hubo proyección, el mapa entra a git
+    **después** del apply real; nunca con IDs especulativos.
 
 ## Qué no haces
 

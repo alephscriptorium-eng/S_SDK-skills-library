@@ -38,6 +38,10 @@ Determinista e idempotente:
 - `plan/.sync-map.json` (`WP-XX → nº issue`) — git-tracked — permite
   crear/actualizar. Marcador oculto `<!-- proyeccion:WP-XX -->` en el
   body para resiliencia si se pierde el mapa.
+- **Post-apply (regla 17):** el mapa **nunca** se commitea con números
+  de issue antes de que existan en el tracker. Orden: export real
+  (crear/actualizar) → mapa refleja IDs reales → commit mapa + acta.
+  Mapa especulativo = devolución.
 - **Mapeo (DC-14):** `✅` → issue **closed**; `⬜`/`🔶` → **open**. Sin
   labels.
 - **Alcance configurable (DC-20):** `--alcance todos` (default; proyecta

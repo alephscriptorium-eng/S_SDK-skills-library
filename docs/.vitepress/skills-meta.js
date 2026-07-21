@@ -8,7 +8,7 @@ export default {
     categoria: 'Orquestación',
     tags: ['swarm', 'roles', 'ciclo', 'CA', 'ceguera'],
     estado: 'estable',
-    version: '0.4.0',
+    version: '0.5.0',
   },
   'site-web': {
     categoria: 'Publicación',

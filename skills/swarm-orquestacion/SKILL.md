@@ -77,15 +77,19 @@ ejemplo: `examples/`.
     config funcional del entorno; se prohíbe el texto de info de sesión
     (markdowns, identificadores). Verificar contra el plan, no contra el
     recuerdo.
+12. Cierre con runner (regla 16): al cerrar ola, citar run-id VERDE de CI
+    y de Release (u homólogo) del tip de **cada repo tocado**.
+13. Sync-map post-apply (regla 17): el mapa de proyección se commitea
+    **después** de que los issues existan; mapa especulativo = devolución.
 
-## Método v0.4 (costuras)
+## Método v0.5 (costuras)
 
-Quince reglas de borde + práctica V2 + checklist de cierre extendida +
+Diecisiete reglas de borde + práctica V2 + checklist de cierre extendida +
 práctica de medida (`grep -c` / `grep -q`, nunca `grep | head && echo
-OK`): `reference/reglas-metodo-v04.md` (regla 15) sobre
-`reference/reglas-metodo-v03.md` (1–14). Resumen operativo en
-`reference/ciclo.md` y ritual del orquestador. (v0.2 y v0.3 quedan como
-histórico.)
+OK`): `reference/reglas-metodo-v05.md` (reglas 16–17) sobre
+`reference/reglas-metodo-v04.md` (15) y `reglas-metodo-v03.md` (1–14).
+Resumen operativo en `reference/ciclo.md` y ritual del orquestador.
+(v0.2–v0.4 quedan como histórico.)
 
 ## Recursos
 
@@ -95,7 +99,8 @@ histórico.)
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo (+ ceguera 13/14) |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
-| `reference/reglas-metodo-v04.md` | **vigente**: regla 15 (fuente de verdad única) + checklist ola extendida |
+| `reference/reglas-metodo-v05.md` | **vigente**: reglas 16–17 (run-id verde + sync-map post-apply) + checklist |
+| `reference/reglas-metodo-v04.md` | histórico v0.4: regla 15 + checklist (base de v0.5) |
 | `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola (base de v0.4) |
 | `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
