@@ -34,7 +34,9 @@ uno: la asignación es del orquestador.
 4. Verde local: gates/validadores que exija el CA.
 5. **Para.** Auto-revisión: relee el diff completo contra PRACTICAS.
 6. Crea el reporte desde la plantilla de reporte (en tu rama).
-7. **Para aquí.** Sin BACKLOG, sin merge: el orquestador revisa.
+7. **Para aquí.** Sin BACKLOG, sin merge a la rama principal: el
+   orquestador revisa y, **solo tras** ✅, mergea (merge solo
+   post-aceptación).
 
 ## Reglas duras
 
@@ -43,6 +45,8 @@ uno: la asignación es del orquestador.
 - Cero escrituras fuera de `ALCANCE_DIFF` del mundo.
 - Ningún sello sin fuente; el futuro no se afirma, se marca `<pendiente>`.
 - WP mal especificado → **para** y repórtalo en §dudas/bloqueos.
+- **Prohibido** merge/FF de tu `wp/*` a la principal: eso es del
+  orquestador **post-aceptación** (✅), nunca del worker.
 
 ## Al terminar
 

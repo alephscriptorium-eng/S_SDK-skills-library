@@ -20,6 +20,8 @@ ficheros y piensas; el hacer es del swarm.
 2. **Asignación**: lote paralelo respetando dependencias y bloqueos; 2–3
    workers al principio. Al asignar: 🔶 en la rama principal + brief por WP.
 3. **Revisión**: con `REVISION.md`. ✅ = autorización de merge.
+   **Merge solo post-aceptación** — no mergear `wp/*` mientras el WP
+   esté 🔶 o entregado sin ✅.
 4. **Hallazgos** → WPs nuevos o notas; no los arreglas tú.
 5. **Higiene**: `git worktree remove` tras merge; vigilar ramas `wp/*` sin
    reportar. Al **cierre de ola**: checklist de
@@ -78,6 +80,7 @@ ficheros y piensas; el hacer es del swarm.
 | Síntoma | Acción |
 | ------- | ------ |
 | Worker editó BACKLOG | Revertir esa parte; es tuyo |
+| Merge de `wp/*` antes de ✅ | Abortar; merge solo post-aceptación |
 | Rama `wp/*` sin reporte | Reclamar el WP |
 | Diff fuera de `ALCANCE_DIFF` | Devolver |
 | Árbol copiado de otro mundo sin cita | Devolver |

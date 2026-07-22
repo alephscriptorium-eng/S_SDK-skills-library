@@ -29,6 +29,9 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
 1. `REVISION.md` + reporte + diff.
 2. Verificar CA y eje(s).
 3. ✅ → BACKLOG ✅ + merge + limpiar worktree.
+   **Merge solo post-aceptación:** la rama `wp/*` entra a la principal
+   **únicamente tras** el ✅. Prohibido merge prematuro (pre-STOP /
+   pre-aceptación) aunque el tip «parezca listo» o haya CI parcial.
    **Commit de aceptación solo:** no abrir brief/🔶 de otro WP en el
    mismo commit (V2 — `reference/reglas-metodo-v03.md`).
 4. Devuelto → comentarios numerados; mismo worker con `CORRECCION.md`.
@@ -64,6 +67,7 @@ Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 | Patrón | Mitigación |
 | ------ | ---------- |
 | Relanzar worker «muerto» por falta de commits | Señal = mtime del worktree, no cadencia de commits |
+| Merge de `wp/*` a principal antes del ✅ | **Merge solo post-aceptación** (caso fundante C05) |
 | Dos workers en el mismo dir de entrega | Dirs/ramas distintos; brief declara conflicto |
 | Aceptar extracción sin consumidor | Eje I en el BRIEF |
 | Demoler y dejar lógica huérfana | Eje II: destino por símbolo |

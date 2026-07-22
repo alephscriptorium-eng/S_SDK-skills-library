@@ -14,6 +14,17 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+### Notes
+
+- **Lección · merge solo post-aceptación (caso fundante C05)** —
+  La rama `wp/*` entra a la principal **únicamente tras** el ✅ del
+  orquestador. Merge prematuro (pre-STOP / pre-aceptación) queda
+  tipificado como anti-patrón en
+  `skills/swarm-orquestacion/reference/ciclo.md` (+ refuerzo
+  WORKER / ORQUESTADOR). Origen: acta ciudad-real C05 (CI rojo en tip
+  pre-cadena version+hotfix). Sin reopen S01 / S03 / S07. Publish
+  `0.5.1` vs defer a próxima ola = **decisión PO**.
+
 ## [0.5.0] — 2026-07-22
 
 Minor (DC-22): corte publicable sprint-skills-bosque (B-1 + B-2 + B-3
