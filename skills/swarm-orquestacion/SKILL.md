@@ -19,6 +19,9 @@ consumidor). No nombra mundos reales ni el marco.
 - Operar un lote de WPs: asignar → implementar → revisar → merge.
 - Exigir los **cinco ejes** como criterios de aceptación según el tipo de WP
   (ver `reference/ejes-ca.md`).
+- Operar **varios orquestadores** en paralelo sobre territorios
+  emparentados: contrato en
+  `reference/convivencia-multi-orquestador.md`.
 
 ## Parámetros del mundo
 
@@ -81,15 +84,21 @@ ejemplo: `examples/`.
     y de Release (u homólogo) del tip de **cada repo tocado**.
 13. Sync-map post-apply (regla 17): el mapa de proyección se commitea
     **después** de que los issues existan; mapa especulativo = devolución.
+14. Convivencia multi-orquestador: partición de obra/gobierno, V2 por
+    carril, vigía único `Rn-<carril>`, higiene pre-despacho y e2e por
+    vías permitidas — ver
+    `reference/convivencia-multi-orquestador.md` (fuente única).
 
-## Método v0.5 (costuras)
+## Método v0.6 (costuras)
 
-Diecisiete reglas de borde + práctica V2 + checklist de cierre extendida +
-práctica de medida (`grep -c` / `grep -q`, nunca `grep | head && echo
-OK`): `reference/reglas-metodo-v05.md` (reglas 16–17) sobre
-`reference/reglas-metodo-v04.md` (15) y `reglas-metodo-v03.md` (1–14).
-Resumen operativo en `reference/ciclo.md` y ritual del orquestador.
-(v0.2–v0.4 quedan como histórico.)
+Diecisiete reglas de borde (v0.5) + **contrato de convivencia
+multi-orquestador** (fuente única:
+`reference/convivencia-multi-orquestador.md`). Base: v0.5
+(`reglas-metodo-v05.md` → v04 → v03). Resumen operativo en
+`reference/ciclo.md` y ritual del orquestador.
+(v0.2–v0.5 quedan como histórico de reglas numeradas; no se crea
+`reglas-metodo-v06.md` — el incremento de método es el contrato de
+convivencia.)
 
 ## Recursos
 
@@ -99,7 +108,8 @@ Resumen operativo en `reference/ciclo.md` y ritual del orquestador.
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo (+ ceguera 13/14) |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
-| `reference/reglas-metodo-v05.md` | **vigente**: reglas 16–17 (run-id verde + sync-map post-apply) + checklist |
+| `reference/convivencia-multi-orquestador.md` | **fuente única**: convivencia multi-orquestador (método v0.6) |
+| `reference/reglas-metodo-v05.md` | reglas 16–17 (run-id verde + sync-map post-apply) + checklist |
 | `reference/reglas-metodo-v04.md` | histórico v0.4: regla 15 + checklist (base de v0.5) |
 | `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola (base de v0.4) |
 | `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |

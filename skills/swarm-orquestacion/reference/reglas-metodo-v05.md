@@ -67,5 +67,9 @@ Extiende la de v0.4:
 ## Relación con v0.2 / v0.3 / v0.4
 
 `reglas-metodo-v02.md`, `v03.md` y `v04.md` quedan como histórico. Este
-fichero (v0.5) es el contrato vigente: 1–15 (vía v0.4) + 16–17 + checklist
-extendido.
+fichero (v0.5) es el contrato vigente de reglas 1–17: 1–15 (vía v0.4) +
+16–17 + checklist extendido.
+
+**Método v0.6** (badge del skill) añade el contrato de convivencia
+multi-orquestador sin nuevas reglas numeradas aquí: fuente única
+`reference/convivencia-multi-orquestador.md`.

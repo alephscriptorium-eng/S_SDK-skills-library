@@ -2,8 +2,10 @@
 
 Skill de protocolo de swarm (roles + ciclo + cinco ejes de CA).
 
-**Versión de método** de este skill: **v0.4** (regla 15;
-`reference/reglas-metodo-v04.md`). Es el eje del badge del catálogo
+**Versión de método** de este skill: **v0.6** (convivencia
+multi-orquestador; fuente única
+`reference/convivencia-multi-orquestador.md`, sobre reglas 1–17 en
+`reference/reglas-metodo-v05.md`). Es el eje del badge del catálogo
 (DC-18), distinto del **semver del paquete** npm. Política y
 correspondencia (método = minor del paquete; patch sin cambio de
 contrato): `README.md` raíz del paquete (DC-22).

@@ -12,6 +12,19 @@ contrato. La «versión de método» (badge del catálogo) y el «semver del
 paquete» son ejes distintos; la correspondencia se declara en el
 `README.md` raíz.
 
+## [Unreleased]
+
+### Added
+
+- **WP-S01 · Convivencia multi-orquestador (método v0.6)** —
+  contrato de método: partición de obra/gobierno, V2 por carril, vigía
+  único con rondas `Rn-<carril>`, higiene pre-despacho, e2e por vías
+  permitidas y freeze mutuo ante locks. Fuente única:
+  `skills/swarm-orquestacion/reference/convivencia-multi-orquestador.md`
+  (+ enlaces en SKILL, ciclo, ORQUESTADOR, README del skill). Caso
+  fundante 2026-07-22 como lección abstracta. Sin bump de
+  `package.json` (corte publicable = otro WP).
+
 ## [0.4.0] — 2026-07-21
 
 Minor: dos reglas de método nuevas (16–17). Badge de método
