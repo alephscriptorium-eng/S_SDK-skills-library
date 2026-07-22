@@ -1,6 +1,9 @@
 node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+.claude/skills/
+.cursor/skills/
+.openai/skills/
 *.tgz
 .DS_Store
 Thumbs.db

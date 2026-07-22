@@ -14,6 +14,35 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-07-23
+
+Minor (DC-22: cambio de contrato de método): pack marca parametrizado,
+sync como bin multi-runtime, convención cantera/backstage, lecciones
+vNext.
+
+### Added
+
+- **LIB-070 · BRAND-2** — params `BRAND_BANNER` / `BRAND_FOOTER` /
+  `BRAND_LICENSE` / `BRAND_FAVICON` en skill `site-web` (Layout +
+  config head + estilos DE-8 + `pack-marca.md`). CA medible
+  `scripts/verificar-pesos-web.mjs` (umbral web). ADVERTENCIA:
+  licencia canónica ≠ lore.
+- **LIB-070 · issue #16** — bin `alephscript-skills-sync` con adapters
+  `--runtime` claude · cursor · openai. Consumidor ejemplo sin script
+  local (`examples/consumidor-sync/`).
+- **LIB-070 · issue #17** — layout BACKSTAGE_GIT + convención
+  `cantera/` (`vigilancia/reference/BACKSTAGE-GIT.md`); cruce
+  site-web «cantera custodiada»; nota migración `fuentes/` →
+  `cantera/`; worktree por rol.
+- **LIB-070 · lecciones vNext** — documentadas en
+  `swarm-orquestacion/reference/lecciones-vnext.md` (sucesión vigía ·
+  checkout declarado · worktree por rol · raíz por constelación).
+
+### Changed
+
+- Semver del paquete `0.6.1` → `0.7.0`; pins de consumo/docs alineados;
+  guía de consumo apunta al bin (no script local duplicado).
+
 ## [0.6.1] — 2026-07-22
 
 Patch (DC-22: bugfix de plantilla / sin ampliar contrato de otros

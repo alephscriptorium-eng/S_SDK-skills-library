@@ -104,6 +104,14 @@ orquestador antes de entregar (no duplicar).
    declarar gates externos pendientes.
 4. **Invariante:** un WP ✅ jamás se reabre — trabajo nuevo = WP nuevo.
 
+## Layout BACKSTAGE_GIT · `cantera/`
+
+El backstage (pulsos/addendas + depósitos custodiados) tiene layout
+recomendado propio: ver `reference/BACKSTAGE-GIT.md`. Convención:
+**`cantera/`** = depósitos custodiados; no confundir con `_fuentes/`
+(FS atlas = checkouts de lectura). Un worktree por rol. Migración
+legacy: `fuentes/` → `cantera/`.
+
 ## Herramienta
 
 `scripts/watcher.sh` (intervalo configurable) → `watch.log` +
