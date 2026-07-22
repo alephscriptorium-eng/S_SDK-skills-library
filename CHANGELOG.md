@@ -16,6 +16,13 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ### Added
 
+- **WP-S03 · estación viva** —
+  skill `skills/estacion-viva/`: boot 7 fases (cargar → estado desde
+  bitácora → watcher de sesión con whitelist `.claude/skills/` →
+  pulso → GAME_MCP + peercard + `player-mcp-kit@0.1.3` registry →
+  debug → salida dual PO/scrum). Params `WORLD_ROOT` · `GAME_MCP` ·
+  `OUT_DIR`. Fixture tick-cero + `reproduce-boot.sh`. Sin bump de
+  `package.json` (corte publicable = S07).
 - **WP-S06 · Mapa de proyección (ritual docs)** —
   guía pública `docs/guide/mapa.md` (proyección ≠ sync, mapa
   post-apply, local-only, ceguera por env); nav/sidebar + enlace desde
