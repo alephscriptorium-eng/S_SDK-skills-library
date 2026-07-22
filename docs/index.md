@@ -37,6 +37,7 @@ features:
 npm install
 npm run docs:dev
 npm run docs:build
+npm run docs:verificar
 ```
 
-Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.3.3`.
+Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.4.0`.

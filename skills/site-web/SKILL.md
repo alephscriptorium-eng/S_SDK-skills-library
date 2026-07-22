@@ -90,8 +90,10 @@ Si marketing pide «otra iteración de backtracking»:
 6. Mitigar los 7 frágiles documentados en el protocolo.
 7. **Gate de verificación**: correr `scripts/verificar-sitio.mjs` sobre el
    `dist/` (enlaces internos + anclas + externos + verdad de contenido)
-   antes del deploy. Falla ante roto interno/ancla; cubre los hrefs de
-   componentes `.vue` que `ignoreDeadLinks` no ve.
+   antes del deploy — preferible vía `npm run docs:verificar` si el
+   `package.json` del mundo lo define. Falla ante roto interno/ancla;
+   cubre los hrefs de componentes `.vue` que `ignoreDeadLinks` no ve.
+   La plantilla `docs.yml.tpl` engancha el paso en CI tras el build.
 
 ## Recursos
 

@@ -129,6 +129,9 @@ donde reaparecen enlaces rotos tras el deploy. Mitigación de serie:
 
 ```bash
 npm run docs:build
+# Preferible si el package.json del mundo define el script:
+npm run docs:verificar
+# Equivalente directo:
 node <skill>/scripts/verificar-sitio.mjs --dist docs/.vitepress/dist --base /
 ```
 
@@ -140,8 +143,9 @@ node <skill>/scripts/verificar-sitio.mjs --dist docs/.vitepress/dist --base /
   noDebeAparecer?}`), valida que el HTML generado dice lo que debe (p. ej.
   que la versión mostrada casa con `package.json`). Refuerza C8.
 
-Engancharlo en CI tras `docs:build` (mismo job, antes del deploy) y
-tenerlo disponible en local pre-deploy.
+Engancharlo en CI tras `docs:build` (mismo job, antes del upload del
+artifact / deploy) — plantilla `docs.yml.tpl` incluye el paso
+`npm run docs:verificar` — y tenerlo disponible en local pre-deploy.
 
 ## Checklist de publicación
 

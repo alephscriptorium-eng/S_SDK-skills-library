@@ -21,10 +21,5 @@ código (repo)  →  paquete (registry, versión fijada)  →  CI (Actions)  →
 
 ## Instalar
 
-```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.3.3 \
-  --registry https://npm.scriptorium.escrivivir.co
-```
-
-Descubrí qué hay en el [catálogo](/catalogo) y cómo activarlo en
-[Consumo](/guide/consumo).
+Procedimiento canónico (versión exacta + registry + C8): una sola fuente
+en [Consumo](/guide/consumo). Descubrí qué hay en el [catálogo](/catalogo).
