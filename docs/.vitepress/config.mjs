@@ -61,6 +61,7 @@ export default defineConfig({
       { text: 'Catálogo', link: '/catalogo' },
       { text: 'Consumo', link: '/guide/consumo' },
       { text: 'Activar', link: '/guide/activar' },
+      { text: 'Mapa', link: '/guide/mapa' },
       { text: 'Proyecto', link: '/proyecto' },
       { text: 'Repo', link: BACK.repo }
     ],
@@ -72,6 +73,7 @@ export default defineConfig({
           { text: 'Catálogo de skills', link: '/catalogo' },
           { text: 'Consumir el paquete', link: '/guide/consumo' },
           { text: 'Activar un skill', link: '/guide/activar' },
+          { text: 'Mapa de proyección', link: '/guide/mapa' },
           { text: 'Proyecto (flujo DevOps)', link: '/proyecto' }
         ]
       }

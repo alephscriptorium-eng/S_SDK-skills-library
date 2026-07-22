@@ -23,3 +23,9 @@ código (repo)  →  paquete (registry, versión fijada)  →  CI (Actions)  →
 
 Procedimiento canónico (versión exacta + registry + C8): una sola fuente
 en [Consumo](/guide/consumo). Descubrí qué hay en el [catálogo](/catalogo).
+
+## Mapa de proyección
+
+Si el mundo proyecta su backlog a issues, el ritual (proyección ≠ sync,
+mapa post-apply, local-only por defecto) está en
+[Mapa de proyección](/guide/mapa).
