@@ -35,6 +35,14 @@ paquete» son ejes distintos; la correspondencia se declara en el
   `site-web`; consumo canónico `@0.4.0`; badge swarm v0.6; plantilla CI
   engancha `docs:verificar`.
 
+### Notes
+
+- **Lección 3ª (R14-bosque / caso fundante post-idle)** — checklist
+  cierre de ola += (1) gobierno commiteado **ANTES** del aviso de gate;
+  (2) barrido `reflog`/`fsck` tras worker separado o cierre post-idle
+  (dangling ≠ obra perdida si delta trivial). S02 ya tipifica clase
+  huérfano; este caso funda el ritual de higiene. Sin reopen S02.
+
 ## [0.4.0] — 2026-07-21
 
 Minor: dos reglas de método nuevas (16–17). Badge de método
