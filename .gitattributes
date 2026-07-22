@@ -1,0 +1,8 @@
+# Encoding hygiene (S05b): avoid ANSI/double-UTF8 from PowerShell
+# Get-Content/Set-Content without -Encoding utf8 on Windows.
+# Force UTF-8 in the working tree for portal JS sidecars.
+docs/.vitepress/*.js text working-tree-encoding=UTF-8 eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.md text eol=lf
+*.vue text eol=lf

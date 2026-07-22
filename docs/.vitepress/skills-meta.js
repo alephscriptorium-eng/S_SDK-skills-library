@@ -1,17 +1,17 @@
-// Metadatos curados del catÃ¡logo (marco-agnÃ³stico).
-// El `name` + `description` los aporta el propio SKILL.md â€” NO se duplican
-// aquÃ­. Este sidecar solo aÃ±ade lo que el frontmatter estÃ¡ndar no lleva:
-// categorÃ­a, tags y estado. Crece al aÃ±adir skills; una entrada ausente
+// Metadatos curados del catálogo (marco-agnóstico).
+// El `name` + `description` los aporta el propio SKILL.md — NO se duplican
+// aquí. Este sidecar solo añade lo que el frontmatter estándar no lleva:
+// categoría, tags y estado. Crece al añadir skills; una entrada ausente
 // cae en valores por defecto ('Sin clasificar' / 'estable').
 export default {
   'swarm-orquestacion': {
-    categoria: 'OrquestaciÃ³n',
+    categoria: 'Orquestación',
     tags: ['swarm', 'roles', 'ciclo', 'CA', 'ceguera', 'convivencia'],
     estado: 'estable',
     version: '0.6.0',
   },
   'site-web': {
-    categoria: 'PublicaciÃ³n',
+    categoria: 'Publicación',
     tags: ['vitepress', 'pages', 'copy', 'zine'],
     estado: 'estable',
   },
