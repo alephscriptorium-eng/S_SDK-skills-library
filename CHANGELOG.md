@@ -16,6 +16,10 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ### Added
 
+- **WP-S06 · Mapa de proyección (ritual docs)** —
+  guía pública `docs/guide/mapa.md` (proyección ≠ sync, mapa
+  post-apply, local-only, ceguera por env); nav/sidebar + enlace desde
+  Proyecto. Sin tocar `skills/` (∥ estacion-viva).
 - **WP-S01 · Convivencia multi-orquestador (método v0.6)** —
   contrato de método: partición de obra/gobierno, V2 por carril, vigía
   único con rondas `Rn-<carril>`, higiene pre-despacho, e2e por vías
