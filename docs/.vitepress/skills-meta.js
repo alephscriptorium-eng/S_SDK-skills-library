@@ -25,6 +25,12 @@ export default {
     tags: ['boot', 'bitacora', 'watcher', 'GAME_MCP', 'peercard', 'PO/scrum'],
     estado: 'estable',
   },
+  holarquia: {
+    categoria: 'Método',
+    tags: ['holones', 'leyes', 'junturas', 'DS-5', 'notaria'],
+    estado: 'estable',
+    version: '0.1.0',
+  },
   'plantilla-skill': {
     categoria: 'Plantilla',
     tags: ['stub', 'scaffold'],

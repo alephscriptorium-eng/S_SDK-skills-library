@@ -1,4 +1,4 @@
----
+﻿---
 layout: home
 hero:
   name: Skills Library
@@ -40,4 +40,4 @@ npm run docs:build
 npm run docs:verificar
 ```
 
-Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.5.1`.
+Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.6.0`.

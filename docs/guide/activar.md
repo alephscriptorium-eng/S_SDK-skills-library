@@ -1,4 +1,4 @@
-# Activar un skill
+﻿# Activar un skill
 
 El paquete `@alephscript/skills-scriptorium` expone skills bajo `skills/`.
 Un mundo los **activa** (instala + apunta el runtime); no copia el método.
@@ -10,7 +10,7 @@ Un mundo los **activa** (instala + apunta el runtime); no copia el método.
 ## Desde registry (versión exacta)
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.5.1 \
+npm install --save-exact @alephscript/skills-scriptorium@0.6.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
