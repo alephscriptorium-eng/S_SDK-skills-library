@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.6.1`).
+Release notes: `CHANGELOG.md` (actual `0.7.0`).
 
 ### Semver del paquete vs versión de método
 
@@ -46,11 +46,12 @@ Política del semver del paquete:
 - **major**: ruptura de layout del skill o del frontmatter
   (`name` + `description`).
 
-Correspondencia actual: el paquete **0.6.1** corrige la piel fanzine de
-`site-web` (issue #15) sobre el corte **0.6.0** que añadió el skill
-**holarquia**. El badge de método de `swarm-orquestacion` es **v0.6.0**;
-el de `holarquia` es **v0.1.0** (ejes distintos — el badge no «es» el
-semver del paquete).
+Correspondencia actual: el paquete **0.7.0** añade pack marca + bin
+sync multi-runtime + cantera/backstage + lecciones vNext (LIB-070)
+sobre el corte **0.6.1** (piel fanzine #15 / skill **holarquia** en
+0.6.0). El badge de método de `swarm-orquestacion` es **v0.6.0**; el de
+`holarquia` es **v0.1.0** (ejes distintos — el badge no «es» el semver
+del paquete).
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -59,7 +60,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.6.1 \
+npm install --save-exact @alephscript/skills-scriptorium@0.7.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
@@ -81,15 +82,20 @@ node_modules/@alephscript/skills-scriptorium/skills/<nombre>/SKILL.md
 Cualquier runner/IDE que sepa leer un path arbitrario de skills apunta
 ahí directamente.
 
-### 3. Adaptadores por runner
+### 3. Adaptadores por runner (bin del paquete)
 
-Runners que exigen un directorio propio (p. ej. Claude Code y su
-`.claude/skills/` — **namespace del runner**, no de este paquete)
-**sincronizan por script idempotente** desde `node_modules` — nunca se
-edita la copia a mano; se regenera tras cada `npm install` y se
-**gitignora** (artefacto derivado). La fuente runner-agnóstica es
-`node_modules/.../skills/`. Patrón general para otros IDEs: mismo script,
-otro destino. Ver [docs/guide/consumo.md](docs/guide/consumo.md).
+Runners que exigen un directorio propio sincronizan con el **bin** del
+paquete (issue #16) — no con un script local duplicado:
+
+```bash
+npx alephscript-skills-sync --runtime claude   # → .claude/skills/
+npx alephscript-skills-sync --runtime cursor   # → .cursor/skills/
+npx alephscript-skills-sync --runtime openai   # → .openai/skills/
+```
+
+O en el `package.json` consumidor: `"skills:sync": "alephscript-skills-sync --runtime claude"`.
+Idempotente; regenera tras `npm install`; se **gitignore** el espejo
+(artefacto derivado). Detalle: [docs/guide/consumo.md](docs/guide/consumo.md).
 
 ### 4. Dedup: referencia versionada + calibración local
 
@@ -104,9 +110,9 @@ emmanuel WP-I60.
 La referencia fijada debe **resolver** contra el registry:
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.3.4 \
+npm view @alephscript/skills-scriptorium@0.7.0 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.3.4, exit 0  (<pendiente> hasta npm publish)
+# → 0.7.0, exit 0
 ```
 
 ## Desarrollo local (no es consumo)

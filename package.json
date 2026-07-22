@@ -1,23 +1,29 @@
 {
   "name": "@alephscript/skills-scriptorium",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": false,
   "description": "Skills library — método marco-agnóstico en formato skill estándar (SKILL.md + recursos)",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
+  "bin": {
+    "alephscript-skills-sync": "./bin/alephscript-skills-sync.mjs"
+  },
   "files": [
     "skills/",
+    "bin/",
     "README.md",
     "LICENSE.md",
     "CHANGELOG.md"
   ],
   "scripts": {
+    "skills:sync": "node ./bin/alephscript-skills-sync.mjs --runtime claude",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:verificar": "node skills/site-web/scripts/verificar-sitio.mjs --dist docs/.vitepress/dist --base /",
-    "docs:verificar-piel": "node skills/site-web/scripts/verificar-piel-fanzine.mjs --dist docs/.vitepress/dist"
+    "docs:verificar-piel": "node skills/site-web/scripts/verificar-piel-fanzine.mjs --dist docs/.vitepress/dist",
+    "docs:verificar-pesos": "node skills/site-web/scripts/verificar-pesos-web.mjs --dir docs/public --max-kb 150"
   },
   "devDependencies": {
     "vitepress": "^1.6.4"

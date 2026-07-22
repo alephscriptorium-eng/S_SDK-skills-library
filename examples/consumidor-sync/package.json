@@ -1,0 +1,12 @@
+{
+  "name": "ejemplo-consumidor-skills-sync",
+  "private": true,
+  "description": "Fixture LIB-070/#16: consumidor SIN script local de sync — usa el bin del paquete",
+  "scripts": {
+    "skills:sync": "alephscript-skills-sync --runtime claude",
+    "postinstall": "alephscript-skills-sync --runtime claude"
+  },
+  "devDependencies": {
+    "@alephscript/skills-scriptorium": "0.7.0"
+  }
+}

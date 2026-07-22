@@ -371,6 +371,39 @@ details .detail-body .cmd { font-size: 0.64rem; }
   margin: 10px 0 6px;
 }
 
+/* Pack marca (BRAND-2 / LIB-070) — DE-8 desde patrón portal N0-04.
+   Marca = parámetro; este CSS solo estila hooks del Layout. */
+.brand-banner {
+  margin: 0 0 10px;
+  border: 3px solid #000;
+  overflow: hidden;
+  line-height: 0;
+}
+.brand-banner__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: cover;
+  object-position: center;
+}
+.brand-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.35rem;
+  align-items: baseline;
+  justify-content: center;
+}
+.brand-footer__license {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.brand-footer__spdx {
+  opacity: 0.75;
+  font-size: 0.85em;
+}
+
 @media print {
   body { padding: 0; max-width: none; }
   .cutout::before { border-color: #999; }

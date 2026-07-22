@@ -61,9 +61,14 @@ orquestación): `reference/ESTACION.md`.
 ## Recursos
 
 - `reference/ESTACION.md` — protocolo abstraído + multi-carril + supuestos
+- `reference/BACKSTAGE-GIT.md` — layout backstage · convención `cantera/` ·
+  worktree por rol · migración `fuentes/` → `cantera/`
 - `reference/ADDENDA-DOS-CARAS.md` — formato §interna / §WP + carril + ceguera
 - `examples/` — fixtures sintéticas mínimas (sin datos de mundo real)
 - `../../instancias/ejemplo-M/` — corpus-instancia de-identificado (bitácora /
   revisiones / addendas / handoffs sintéticos; ceguera = 0)
 - `scripts/watcher.sh` — muestreo parametrizado (no usa `git status`)
 - `scripts/comprobar-ceguera.sh` — ceguera sobre este skill
+
+Sucesión de vigía (estación viva · sin PASS no 🔶): ver también
+`swarm-orquestacion` · `reference/lecciones-vnext.md`.

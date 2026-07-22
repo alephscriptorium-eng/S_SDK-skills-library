@@ -37,9 +37,14 @@ Leé primero la calibración local (si existe). Mínimo:
 | `mundo.registry` | URL del registry | anuncios de canal real (C8) |
 | `mundo.ceguera` | regex | prueba delta 5 del mundo |
 | `mundo.lexico_no` | regex | filtro C1 |
+| `mundo.brand.banner` | path bajo `public/` | `BRAND_BANNER` |
+| `mundo.brand.footer` | texto de colofón | `BRAND_FOOTER` |
+| `mundo.brand.license` | ruta zine `/licencia` | `BRAND_LICENSE` |
+| `mundo.brand.favicon` | `favicon.ico` + `.png` | `BRAND_FAVICON` |
 
 Nunca hardcodees rutas absolutas de otro árbol ni nombres de mundos ajenos
-en la copy pública ni en plantillas del skill.
+en la copy pública ni en plantillas del skill. Pack marca completo:
+`reference/pack-marca.md`.
 
 ## Separación método / datos
 
@@ -115,11 +120,16 @@ Si marketing pide «otra iteración de backtracking»:
    `main`).
 3. `docs/public/CNAME` = dominio del mundo (frágil #1).
 4. **Piel fanzine**: copia-release de `fanzine.css` + `Layout.vue` +
-   `theme-index.js` (cabecera de procedencia). Tipografía local; cero
-   CDN / fuentes web. No sustituir por solo `custom.css` (regla 13).
-5. Checklist DNS → Pages + Enforce HTTPS.
-6. Mitigar los 7 frágiles documentados en el protocolo.
-7. **Gate de verificación**: correr `scripts/verificar-sitio.mjs` sobre el
+   `theme-index.js` (cabecera de procedencia DE-8). Tipografía local;
+   cero CDN / fuentes web. No sustituir por solo `custom.css` (regla 13).
+5. **Pack marca (BRAND-\*)**: cablear banner / footer / license / favicon
+   como parámetros (`reference/pack-marca.md`). Derivados `*-web.png`
+   **<150KB** — CA:
+   `node skills/site-web/scripts/verificar-pesos-web.mjs --dir docs/public`.
+   ADVERTENCIA: licencia canónica (puntero) ≠ lore AIPL.
+6. Checklist DNS → Pages + Enforce HTTPS.
+7. Mitigar los 7 frágiles documentados en el protocolo.
+8. **Gate de verificación**: correr `scripts/verificar-sitio.mjs` sobre el
    `dist/` (enlaces internos + anclas + externos + verdad de contenido)
    **y** `scripts/verificar-piel-fanzine.mjs` (CA estructural) antes del
    deploy — preferible vía `npm run docs:verificar` si el `package.json`
@@ -144,6 +154,7 @@ repo».
 - `reference/metodo-sistema.md` — BASE-2 abstraída
 - `reference/metodo-mecanismo.md` — BASE-3 (backtracking, C8/C9, §E)
 - `reference/protocolo-ghpages.md` — Pages + 7 frágiles + credenciales publish
+- `reference/pack-marca.md` — BRAND_* · DE-8 · pesos · licencia ≠ lore
 - `reference/plantillas/` — ficheros listos para copiar al mundo
   (incl. `fanzine.css`, `Layout.vue.tpl`, `theme-index.js.tpl`)
 - `examples/mundo-limpio/` — fixture inventada (sin datos de mundo real)
@@ -153,6 +164,10 @@ repo».
   externos (warning) + verdad de contenido; falla ante roto interno/ancla
 - `scripts/verificar-piel-fanzine.mjs` — CA estructural C8: home con
   piel fanzine y sin shell DefaultTheme
+- `scripts/verificar-pesos-web.mjs` — CA medible: assets web < umbral KB
+
+Cantera custodiada (datos en backstage privado, tip pineado): ver
+skill `vigilancia` · `reference/BACKSTAGE-GIT.md`.
 
 ## Prueba de ceguera (antes de publicar el skill)
 

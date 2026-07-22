@@ -17,11 +17,11 @@ cuándo absorber un bump — una actualización implícita en un `npm
 install` rutinario cambiaría el protocolo bajo los pies del orquestador.
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.6.1 \
+npm install --save-exact @alephscript/skills-scriptorium@0.7.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
-`--save-exact` es obligatorio: sin él, npm guarda `"^0.6.1"` en
+`--save-exact` es obligatorio: sin él, npm guarda `"^0.7.0"` en
 `package.json` y la fijación es ilusoria.
 
 Alternativa equivalente — registry por scope en el `.npmrc` del repo
@@ -33,14 +33,14 @@ save-exact=true
 ```
 
 ```bash
-npm install @alephscript/skills-scriptorium@0.6.1
+npm install @alephscript/skills-scriptorium@0.7.0
 ```
 
 Resultado esperado en el `package.json` consumidor:
 
 ```json
 "dependencies": {
-  "@alephscript/skills-scriptorium": "0.6.1"
+  "@alephscript/skills-scriptorium": "0.7.0"
 }
 ```
 
@@ -78,53 +78,38 @@ suyo). El patrón general: **script de sincronización idempotente** desde
 sincronizada es un artefacto **derivado** — nunca se edita a mano, y **se
 ignora en git** (ver abajo).
 
-### Claude Code (`.claude/skills/` — namespace de Claude Code)
+### Bin del paquete (issue #16) — sin script local
 
-Ejemplo de `scripts/sync-skills.mjs` en el repo consumidor:
+Desde `@0.7.0` el espejo lo hace el **bin** del paquete. No mantener
+`scripts/sync-*.mjs` duplicado en el consumidor.
 
-```js
-// Sincroniza skills activados desde node_modules → .claude/skills.
-// Idempotente: borra y recopia; la copia nunca se edita a mano.
-import { cpSync, rmSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
-
-const SRC = 'node_modules/@alephscript/skills-scriptorium/skills';
-const DST = '.claude/skills';
-const ACTIVADOS = ['swarm-orquestacion', 'vigilancia']; // los que el mundo activa
-
-mkdirSync(DST, { recursive: true });
-for (const skill of ACTIVADOS) {
-  rmSync(join(DST, skill), { recursive: true, force: true });
-  cpSync(join(SRC, skill), join(DST, skill), { recursive: true });
-}
-console.log(`sync ok → ${DST} (${ACTIVADOS.join(', ')})`);
+```bash
+npx alephscript-skills-sync --runtime claude   # → .claude/skills/
+npx alephscript-skills-sync --runtime cursor   # → .cursor/skills/
+npx alephscript-skills-sync --runtime openai   # → .openai/skills/
 ```
 
 Enganche en el `package.json` consumidor:
 
 ```json
 "scripts": {
-  "sync-skills": "node scripts/sync-skills.mjs",
-  "postinstall": "node scripts/sync-skills.mjs"
+  "skills:sync": "alephscript-skills-sync --runtime claude",
+  "postinstall": "alephscript-skills-sync --runtime claude"
 }
 ```
 
-**Recomendado: gitignorar la copia** (`.claude/skills/` en el
-`.gitignore` del consumidor). Es un artefacto derivado de un paquete
-**fijado**: se regenera en `postinstall`, así que no hace falta
-commitearla — y así el repo no arrastra la carpeta de **un** IDE (si
-alguien lo abre con otro runner no ve cruft ajeno) ni duplica el método
-(dedup). La reproducibilidad la garantiza la versión exacta, no la copia
-commiteada. Ante cualquier divergencia, la copia se regenera, no se
-corrige.
+Fixture: `examples/consumidor-sync/` (sin script local).
+
+**Recomendado: gitignorar la copia** (`.claude/skills/`, `.cursor/skills/`,
+etc.). Artefacto derivado: se regenera en `postinstall`. La
+reproducibilidad la garantiza la versión exacta, no la copia
+commiteada.
 
 ### Otros IDEs / runners
 
-Mismo patrón con otro destino (p. ej. el directorio de prompts o de
-"custom instructions" que el runner lea): script idempotente
-`node_modules → <destino-del-runner>`, ejecutado en `postinstall`. Si el
-runner acepta paths arbitrarios, se omite el adaptador y se usa el paso
-2 tal cual.
+Si el runner no está en la tabla de adapters, abrir issue o apuntar
+directo a `node_modules/.../skills/` (paso 2). Añadir runtime = adapter
+pequeño en el paquete, sin tocar consumidores.
 
 ## 4. Dedup en el consumidor: referencia versionada + calibración local
 
@@ -154,9 +139,9 @@ Criterio de cierre: la versión fijada **resuelve** contra el registry
 desde el entorno del consumidor.
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.6.1 \
+npm view @alephscript/skills-scriptorium@0.7.0 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.6.1
+# → 0.7.0
 # exit 0 ← la referencia fijada existe y resuelve
 ```
 

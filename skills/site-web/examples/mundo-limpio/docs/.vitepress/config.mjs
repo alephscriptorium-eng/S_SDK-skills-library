@@ -16,6 +16,11 @@ export default defineConfig({
   lang: 'es',
   base: resolveDocsBase(),
   cleanUrls: true,
+  // BRAND_FAVICON — fixture: paths declarados (sin inventar bytes de icono)
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+  ],
   themeConfig: {
     nav: [{ text: 'Portada', link: '/' }],
     sidebar: [{ text: 'Nexo Atlas', items: [{ text: 'Portada', link: '/' }] }]

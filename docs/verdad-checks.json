@@ -1,7 +1,7 @@
 [
   {
-    "descripcion": "La versión de instalación mostrada casa con package.json (release 0.6.1)",
-    "patron": "@alephscript/skills-scriptorium@0\\.6\\.1"
+    "descripcion": "La versión de instalación mostrada casa con package.json (release 0.7.0)",
+    "patron": "@alephscript/skills-scriptorium@0\\.7\\.0"
   },
   {
     "descripcion": "Ningún comando de instalación usa @latest (el consumo exige versión fijada)",

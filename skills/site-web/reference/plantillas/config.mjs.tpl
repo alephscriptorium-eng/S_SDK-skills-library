@@ -41,6 +41,11 @@ export default defineConfig({
   base: resolveDocsBase(),
   cleanUrls: true,
   ignoreDeadLinks: false,
+  // BRAND_FAVICON — paths bajo docs/public/ (pack-marca.md)
+  head: [
+    ['link', { rel: 'icon', href: '{{BRAND_FAVICON_ICO}}', sizes: 'any' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '{{BRAND_FAVICON_PNG}}' }]
+  ],
   themeConfig: {
     // B11: back-links = config de tema (footer/nav), no texto por página
     back: BACK,

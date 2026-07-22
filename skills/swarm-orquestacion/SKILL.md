@@ -108,6 +108,7 @@ convivencia.)
 | `reference/ejes-ca.md` | cinco ejes → CA por tipo (+ ceguera 13/14) |
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
+| `reference/lecciones-vnext.md` | sucesión vigía · checkout declarado · worktree por rol · raíz por constelación |
 | `reference/convivencia-multi-orquestador.md` | **fuente única**: convivencia multi-orquestador (método v0.6) |
 | `reference/reglas-metodo-v05.md` | reglas 16–17 (run-id verde + sync-map post-apply) + checklist |
 | `reference/reglas-metodo-v04.md` | histórico v0.4: regla 15 + checklist (base de v0.5) |

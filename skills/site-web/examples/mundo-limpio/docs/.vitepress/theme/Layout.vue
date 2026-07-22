@@ -1,9 +1,10 @@
-<!-- Procedencia: plantilla skill site-web · Layout fanzine
-     Fecha: 2026-07-22 · mundo=nexo-atlas
-     Home con piel real (stamp/washi/callout). Sin shell DefaultTheme. -->
+<!-- Procedencia: plantilla skill site-web · Layout fanzine + pack marca
+     Fecha: 2026-07-23 · mundo=nexo-atlas
+     Home con piel real (stamp/washi/callout). Sin shell DefaultTheme.
+     BRAND_* parametrizados (fixture inventada — sin assets de mundo real). -->
 <script setup>
 import DefaultTheme from 'vitepress/theme'
-import { useData } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 import { computed } from 'vue'
 
 const { Layout: DefaultLayout } = DefaultTheme
@@ -17,10 +18,30 @@ const isFanzineHome = computed(() => {
     (fm.layout === 'home' && fm.piel !== 'default')
   )
 })
+
+const bannerSrc = computed(() => {
+  const b = frontmatter.value?.brandBanner
+  return b ? withBase(b) : null
+})
+const licenciaHref = computed(() =>
+  withBase(frontmatter.value?.brandLicense || '/licencia')
+)
+const footerText = computed(
+  () => frontmatter.value?.footer || frontmatter.value?.brandFooter || 'nexo-atlas'
+)
 </script>
 
 <template>
   <div v-if="isFanzineHome" class="zine-shell">
+    <div v-if="bannerSrc" class="brand-banner" role="banner">
+      <img
+        :src="bannerSrc"
+        :alt="footerText"
+        class="brand-banner__img"
+        width="1190"
+        height="auto"
+      />
+    </div>
     <header class="header">
       <div class="stamp">{{ frontmatter.stamp || 'ZINE' }}</div>
       <h1>{{ frontmatter.title || 'Portal' }}</h1>
@@ -35,8 +56,10 @@ const isFanzineHome = computed(() => {
     <main class="zine-main">
       <Content />
     </main>
-    <footer v-if="frontmatter.footer" class="footer">
-      {{ frontmatter.footer }}
+    <footer class="footer brand-footer">
+      <span class="brand-footer__mark">{{ footerText }}</span>
+      <span aria-hidden="true"> · </span>
+      <a class="brand-footer__license" :href="licenciaHref">Licencia</a>
     </footer>
   </div>
   <DefaultLayout v-else />
