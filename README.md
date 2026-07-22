@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.6.0`).
+Release notes: `CHANGELOG.md` (actual `0.6.1`).
 
 ### Semver del paquete vs versión de método
 
@@ -46,12 +46,11 @@ Política del semver del paquete:
 - **major**: ruptura de layout del skill o del frontmatter
   (`name` + `description`).
 
-Correspondencia actual: el paquete **0.6.0** añade el skill
-**holarquia** (método de cadena de holones) sobre el corte
-sprint-skills-bosque (`0.5.x`: convivencia v0.6, vigilancia multi-carril,
-portal, mapa, estacion-viva). El badge de método de
-`swarm-orquestacion` es **v0.6.0**; el de `holarquia` es **v0.1.0**
-(ejes distintos — el badge no «es» el semver del paquete).
+Correspondencia actual: el paquete **0.6.1** corrige la piel fanzine de
+`site-web` (issue #15) sobre el corte **0.6.0** que añadió el skill
+**holarquia**. El badge de método de `swarm-orquestacion` es **v0.6.0**;
+el de `holarquia` es **v0.1.0** (ejes distintos — el badge no «es» el
+semver del paquete).
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -60,7 +59,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.6.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.6.1 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 

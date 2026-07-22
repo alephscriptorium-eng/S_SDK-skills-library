@@ -14,6 +14,24 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.6.1] — 2026-07-22
+
+Patch (DC-22: bugfix de plantilla / sin ampliar contrato de otros
+skills): defecto recurrente issue #15 — la «piel zine» era solo
+variables sobre DefaultTheme.
+
+### Fixed
+
+- **N0-02 · site-web piel fanzine** — eleva `fanzine.css` + `Layout.vue`
+  (+ `theme-index.js`) a assets/plantillas del skill; documenta regla 13
+  **variables ≠ piel**; añade CA estructural
+  `scripts/verificar-piel-fanzine.mjs` (home con stamp/washi/callout y
+  sin shell VP). Fixture `examples/mundo-limpio` actualizada.
+
+### Changed
+
+- Semver del paquete `0.6.0` → `0.6.1`; pins de consumo/docs alineados.
+
 ## [0.6.0] — 2026-07-22
 
 Minor (DC-22): skill nuevo de método — contrato ampliado.

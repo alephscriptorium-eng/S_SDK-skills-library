@@ -1,6 +1,10 @@
 /* Procedencia: copia-release desde {{RUTA_FUENTE}}
    Fecha: {{FECHA}} · mundo={{MUNDO_ID}}
-   Piel zine: tipografía local, monocromo, sin CDN ni fuentes web. */
+   ⚠ VARIABLES ≠ PIEL (regla 13 / agente fresco):
+   Este fichero solo aporta tokens opcionales sobre páginas que aún usan
+   DefaultTheme. NO constituye la piel fanzine. La piel real es
+   fanzine.css + Layout.vue (clases stamp / washi / callout en portada).
+   Si solo aplicás este CSS, el sitio conserva el shell VPNav/Layout. */
 
 :root {
   --zine-ink: #000000;
