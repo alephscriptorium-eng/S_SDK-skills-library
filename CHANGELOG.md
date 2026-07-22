@@ -14,6 +14,12 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-22
+
+Minor (DC-22): corte publicable sprint-skills-bosque (B-1 + B-2 + B-3
+mapa). Incluye skill `estacion-viva`. Portal regenerado a consumo
+`@0.5.0`. Broche **WP-S07**.
+
 ### Added
 
 - **WP-S03 · estación viva** —
@@ -21,8 +27,7 @@ paquete» son ejes distintos; la correspondencia se declara en el
   bitácora → watcher de sesión con whitelist `.claude/skills/` →
   pulso → GAME_MCP + peercard + `player-mcp-kit@0.1.3` registry →
   debug → salida dual PO/scrum). Params `WORLD_ROOT` · `GAME_MCP` ·
-  `OUT_DIR`. Fixture tick-cero + `reproduce-boot.sh`. Sin bump de
-  `package.json` (corte publicable = S07).
+  `OUT_DIR`. Fixture tick-cero + `reproduce-boot.sh`.
 - **WP-S06 · Mapa de proyección (ritual docs)** —
   guía pública `docs/guide/mapa.md` (proyección ≠ sync, mapa
   post-apply, local-only, ceguera por env); nav/sidebar + enlace desde
@@ -33,8 +38,7 @@ paquete» son ejes distintos; la correspondencia se declara en el
   permitidas y freeze mutuo ante locks. Fuente única:
   `skills/swarm-orquestacion/reference/convivencia-multi-orquestador.md`
   (+ enlaces en SKILL, ciclo, ORQUESTADOR, README del skill). Caso
-  fundante 2026-07-22 como lección abstracta. Sin bump de
-  `package.json` (corte publicable = otro WP).
+  fundante 2026-07-22 como lección abstracta.
 - **WP-S02 · Vigilancia pulso multi-carril** —
   etiquetas `Rn-<carril>`, higiene §8, freeze por `index.lock`,
   `SIBLING_ROOT` opcional, supuestos blandos de shape S01 y
@@ -43,8 +47,16 @@ paquete» son ejes distintos; la correspondencia se declara en el
 ### Changed
 
 - **WP-S05 · Portal skills / docs consumo** — portal alineado al método
-  `site-web`; consumo canónico `@0.4.0`; badge swarm v0.6; plantilla CI
-  engancha `docs:verificar`.
+  `site-web`; consumo canónico (en su día `@0.4.0`; este corte
+  regenera a `@0.5.0`); badge swarm v0.6; plantilla CI engancha
+  `docs:verificar`.
+- **WP-S07 · Broche release 0.5.0** — bump paquete, portal + catálogo
+  (entrada `estacion-viva`), Release + publish registry, regla 16.
+
+### Fixed
+
+- **WP-S05b · Encoding UTF-8 catálogo** — sidecar `skills-meta` /
+  catálogo sin mojibake; Docs CI verde.
 
 ### Notes
 

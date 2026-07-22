@@ -20,6 +20,11 @@ export default {
     tags: ['read-only', 'watcher', 'CI', 'addenda', 'multi-carril'],
     estado: 'estable',
   },
+  'estacion-viva': {
+    categoria: 'Estación',
+    tags: ['boot', 'bitacora', 'watcher', 'GAME_MCP', 'peercard', 'PO/scrum'],
+    estado: 'estable',
+  },
   'plantilla-skill': {
     categoria: 'Plantilla',
     tags: ['stub', 'scaffold'],

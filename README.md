@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.4.0`).
+Release notes: `CHANGELOG.md` (actual `0.5.0`).
 
 ### Semver del paquete vs versión de método
 
@@ -36,7 +36,7 @@ Dos ejes distintos (DC-22); no se confunden:
 | Eje | Dónde se ve | Qué versiona |
 | --- | ----------- | ------------ |
 | **Semver del paquete** | `package.json` / npm (`@alephscript/skills-scriptorium@X.Y.Z`) | Contrato publicable del tarball |
-| **Versión de método** | Badge del catálogo por skill (p. ej. `swarm-orquestacion` **v0.5.0**) | Contrato de reglas del skill concreto |
+| **Versión de método** | Badge del catálogo por skill (p. ej. `swarm-orquestacion` **v0.6.0**) | Contrato de reglas del skill concreto |
 
 Política del semver del paquete:
 
@@ -46,9 +46,11 @@ Política del semver del paquete:
 - **major**: ruptura de layout del skill o del frontmatter
   (`name` + `description`).
 
-Correspondencia actual: el paquete **0.4.0** publica Ola 7 (reglas 16–17 /
-método v0.5). El badge de método de `swarm-orquestacion` es **v0.5.0**
-(ejes distintos — el badge no «es» el semver del paquete).
+Correspondencia actual: el paquete **0.5.0** publica el corte
+sprint-skills-bosque (convivencia v0.6, vigilancia multi-carril,
+portal, mapa, **estacion-viva**). El badge de método de
+`swarm-orquestacion` es **v0.6.0** (ejes distintos — el badge no «es»
+el semver del paquete).
 
 ### 1. Dependencia con versión exacta fijada
 
@@ -57,7 +59,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.4.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.5.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 

@@ -10,7 +10,7 @@ Un mundo los **activa** (instala + apunta el runtime); no copia el método.
 ## Desde registry (versión exacta)
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.4.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.5.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
