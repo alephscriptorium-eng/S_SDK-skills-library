@@ -95,12 +95,23 @@ Si marketing pide «otra iteración de backtracking»:
    cubre los hrefs de componentes `.vue` que `ignoreDeadLinks` no ve.
    La plantilla `docs.yml.tpl` engancha el paso en CI tras el build.
 
+### D · Credenciales de publish por repo
+
+Antes del primer publish de paquete (tag → workflow): sembrar secrets
+con nombres **EXACTOS** `NPM_USERNAME` + `NPM_PASSWORD` (alternativa
+`NPM_TOKEN` si el workflow del repo lo espera). Siembra web
+(Settings → Secrets and variables → Actions → New repository secret) o
+CLI (`gh secret set NPM_USERNAME -R <org>/<repo>`; ídem `NPM_PASSWORD`).
+El script generador de la credencial lo declara la calibración del mundo.
+Detalle: `reference/protocolo-ghpages.md` § «Credenciales de publish por
+repo».
+
 ## Recursos
 
 - `reference/metodo-argumento.md` — BASE-1 abstraída
 - `reference/metodo-sistema.md` — BASE-2 abstraída
 - `reference/metodo-mecanismo.md` — BASE-3 (backtracking, C8/C9, §E)
-- `reference/protocolo-ghpages.md` — Pages + 7 frágiles
+- `reference/protocolo-ghpages.md` — Pages + 7 frágiles + credenciales publish
 - `reference/plantillas/` — ficheros listos para copiar al mundo
 - `examples/mundo-limpio/` — fixture inventada (sin datos de mundo real)
 - `scripts/ceguera.sh` — grep de ceguera sobre `skills/site-web/`

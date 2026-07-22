@@ -147,8 +147,42 @@ Engancharlo en CI tras `docs:build` (mismo job, antes del upload del
 artifact / deploy) — plantilla `docs.yml.tpl` incluye el paso
 `npm run docs:verificar` — y tenerlo disponible en local pre-deploy.
 
+## Credenciales de publish por repo
+
+Antes del primer `publish` (tag `v*` → workflow de paquete), el repo
+debe tener sembrados los secrets que el workflow declara. Nombres
+**EXACTOS** (case-sensitive):
+
+| secret | rol |
+| ------ | --- |
+| `NPM_USERNAME` | usuario del registry (basic-auth) |
+| `NPM_PASSWORD` | `_password` ya en base64 (sin comillas); **no** JWT/`_authToken` |
+| `NPM_TOKEN` | **alternativa** solo si el workflow del repo lo espera en lugar del par username/password |
+
+El script generador de la credencial lo declara la calibración del mundo
+(placeholder: no vive hardcodeado en este skill).
+
+### Siembra (mini-guía)
+
+**Web:** Settings → Secrets and variables → Actions → New repository
+secret → crear `NPM_USERNAME` y `NPM_PASSWORD` (o `NPM_TOKEN` si aplica).
+
+**CLI:**
+
+```bash
+gh secret set NPM_USERNAME -R <org>/<repo>
+gh secret set NPM_PASSWORD -R <org>/<repo>
+# si el workflow espera token:
+# gh secret set NPM_TOKEN -R <org>/<repo>
+```
+
+Verificación previa al primer tag: `gh secret list -R <org>/<repo>` debe
+listar los nombres exigidos (sin revelar valores).
+
 ## Checklist de publicación
 
+- [ ] Secrets de publish sembrados (`NPM_USERNAME` + `NPM_PASSWORD`, o
+  `NPM_TOKEN` si el workflow lo espera) — ver sección anterior
 - [ ] `npm ci` + `docs:build` verdes en local
 - [ ] `verificar-sitio.mjs` verde: enlaces internos + anclas resuelven
   (externos = warning); verdad de contenido consistente

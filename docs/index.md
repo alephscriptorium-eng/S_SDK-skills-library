@@ -40,4 +40,4 @@ npm run docs:build
 npm run docs:verificar
 ```
 
-Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.5.0`.
+Dominio: `skills.s-sdk.escrivivir.co` · paquete `@alephscript/skills-scriptorium@0.5.1`.

@@ -14,16 +14,27 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-07-22
+
+Patch (DC-22: sin cambio de contrato). Residual R-1 + R-2a (docs
+publish/vigía). Sin reopen S03 / S07.
+
 ### Notes
 
-- **Lección · merge solo post-aceptación (caso fundante C05)** —
+- **R-1 · Lección merge solo post-aceptación (caso fundante C05)** —
   La rama `wp/*` entra a la principal **únicamente tras** el ✅ del
-  orquestador. Merge prematuro (pre-STOP / pre-aceptación) queda
-  tipificado como anti-patrón en
+  orquestador. Merge prematuro (pre-STOP / pre-aceptación) tipificado
+  como anti-patrón en
   `skills/swarm-orquestacion/reference/ciclo.md` (+ refuerzo
   WORKER / ORQUESTADOR). Origen: acta ciudad-real C05 (CI rojo en tip
-  pre-cadena version+hotfix). Sin reopen S01 / S03 / S07. Publish
-  `0.5.1` vs defer a próxima ola = **decisión PO**.
+  pre-cadena version+hotfix). Obra tip `a50787d`.
+
+- **R-2a · Credenciales de publish + pulso secrets (docs)** —
+  `site-web`: sección «credenciales de publish por repo»
+  (`NPM_USERNAME` + `NPM_PASSWORD`; alt. `NPM_TOKEN` si el workflow lo
+  espera) + mini-guía de siembra web/CLI. `vigilancia`: check de pulso
+  `gh secret list -R` en todo repo nuevo a publicar (caso fundante
+  **GL 2026-07-22**). Ceguera delta 5 = 0.
 
 ## [0.5.0] — 2026-07-22
 

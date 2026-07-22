@@ -67,6 +67,13 @@ orquestador antes de entregar (no duplicar).
 - **Pulso CI:** el pulso incluye SIEMPRE el último run de CI de la rama
   principal del mundo (`gh run list -L2` u equivalente). Los smokes locales
   de workers no sustituyen al runner limpio.
+- **Pulso secrets de publish:** en todo **repo nuevo** que vaya a publicar
+  paquete (tag `v*` → workflow), el pulso incluye
+  `gh secret list -R <org>/<repo>` y verifica que existan los nombres que
+  el workflow exige (`NPM_USERNAME` + `NPM_PASSWORD`, o `NPM_TOKEN` si
+  aplica). Ausencia = anomalía **antes** del primer tag — no tras el
+  fallo de CI. Caso fundante: **GL 2026-07-22** (publish roto por secrets
+  no sembrados; el check de pulso lo habría pillado en PRE).
 - **Residuo de info en carpetas de IDE (regla 15 del swarm):**
   markdowns/notas de sesión bajo `.claude/`, `.cursor/` u otras carpetas
   de herramienta son una **fuente de verdad paralela y efímera** — se
@@ -154,6 +161,7 @@ paralelo, obra + gobierno, o partición de prefijos):
 | `index.lock` / `HEAD.lock` | `.git/` del root vigilado | 1 ciclo = ok; ≥2–3 = freeze + elevar |
 | worktree `locked` | `.git/worktrees/*/locked` | igual que locks |
 | CI principal | canal del mundo (`gh` u otro) | último run de la rama principal |
+| secrets publish | `gh secret list -R <org>/<repo>` | nombres exigidos presentes (repo nuevo / primer publish) |
 | higiene §8 | territorio del carril a despachar | 0 huérfanos conocidos |
 
 ### Territorio hermano + gobierno
@@ -173,5 +181,7 @@ paralelo, obra + gobierno, o partición de prefijos):
 2. Locks en obra y en gobierno (si hay hermano).
 3. Huérfanos / stale / residuo IDE en el root correspondiente.
 4. CI de la rama principal del mundo de obra (si aplica).
-5. Si lock ≥2–3 ciclos → freeze pushes gobierno ambos carriles + addenda.
-6. Si eleva: addenda dos caras con `Rn-<carril>` y ceguera = 0 en §WP.
+5. Si el mundo de obra es **repo nuevo a publicar**: `gh secret list -R`
+   → nombres de publish presentes (caso fundante GL 2026-07-22).
+6. Si lock ≥2–3 ciclos → freeze pushes gobierno ambos carriles + addenda.
+7. Si eleva: addenda dos caras con `Rn-<carril>` y ceguera = 0 en §WP.
