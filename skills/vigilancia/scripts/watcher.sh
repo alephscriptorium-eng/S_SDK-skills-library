@@ -6,15 +6,21 @@
 #
 # Uso:
 #   WORLD_ROOT=/ruta/al/repo OUT_DIR=/ruta/salida [INTERVAL=45] ./watcher.sh
+#   SIBLING_ROOT=/ruta/hermano  # opcional: pulso locks/worktrees del hermano
 #   ./watcher.sh /ruta/al/repo /ruta/salida [INTERVAL]
+#
+# Multi-carril: un proceso = un WORLD_ROOT. Territorio hermano = otra
+# instancia o SIBLING_ROOT (solo lectura; líneas con prefijo sibling:).
+# Ver reference/ESTACION.md «Pulso multi-carril».
 set -u
 
 WORLD_ROOT="${WORLD_ROOT:-${1:-}}"
 OUT_DIR="${OUT_DIR:-${2:-}}"
 INTERVAL="${INTERVAL:-${3:-45}}"
+SIBLING_ROOT="${SIBLING_ROOT:-}"
 
 if [ -z "$WORLD_ROOT" ] || [ -z "$OUT_DIR" ]; then
-  echo "uso: WORLD_ROOT=<repo> OUT_DIR=<salida> [INTERVAL=45] $0" >&2
+  echo "uso: WORLD_ROOT=<repo> OUT_DIR=<salida> [INTERVAL=45] [SIBLING_ROOT=<hermano>] $0" >&2
   echo "  o: $0 <WORLD_ROOT> <OUT_DIR> [INTERVAL]" >&2
   exit 2
 fi
@@ -24,9 +30,39 @@ if [ ! -d "$WORLD_ROOT/.git" ] && [ ! -f "$WORLD_ROOT/.git" ]; then
   exit 2
 fi
 
+if [ -n "$SIBLING_ROOT" ]; then
+  if [ ! -d "$SIBLING_ROOT/.git" ] && [ ! -f "$SIBLING_ROOT/.git" ]; then
+    echo "SIBLING_ROOT no parece un repo git: $SIBLING_ROOT" >&2
+    exit 2
+  fi
+fi
+
 mkdir -p "$OUT_DIR"
 LOG="$OUT_DIR/watch.log"
 ANOM="$OUT_DIR/anomalias.log"
+
+# Pulso mínimo de un root hermano (locks + conteo worktrees). Solo lectura.
+pulse_sibling() {
+  local root="$1"
+  local ts="$2"
+  local reg real locks wtlocks reg_n real_n
+  reg="$(git -C "$root" worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2}')"
+  reg_n="$(printf '%s\n' "$reg" | grep -c . )"
+  real=""
+  if [ -d "$root/.worktrees" ]; then
+    real="$(ls -1 "$root/.worktrees" 2>/dev/null)"
+  fi
+  real_n="$(printf '%s\n' "$real" | grep -c . )"
+  locks="$(find "$root/.git" -maxdepth 3 \( -name 'index.lock' -o -name 'HEAD.lock' \) 2>/dev/null | tr '\n' ' ')"
+  wtlocks=""
+  if [ -d "$root/.git/worktrees" ]; then
+    wtlocks="$(find "$root/.git/worktrees" -maxdepth 2 -name 'locked' 2>/dev/null | tr '\n' ' ')"
+  fi
+  echo "[$ts] sibling: wt_reg=$reg_n wt_dir=$real_n locks='${locks}${wtlocks}'" >> "$LOG"
+  if [ -n "${locks// /}" ] || [ -n "${wtlocks// /}" ]; then
+    echo "[$ts] !!LOCK sibling: ${locks}${wtlocks}" | tee -a "$ANOM" >> "$LOG"
+  fi
+}
 
 prev_wt=""
 while true; do
@@ -102,6 +138,11 @@ while true; do
 
   line="[$ts] wt_reg=$reg_n wt_dir=$real_n mtime[$mts ] ajenos[$foreign ] locks='${locks}${wtlocks}'"
   echo "$line" >> "$LOG"
+
+  # Territorio hermano (opcional): solo locks + conteos
+  if [ -n "$SIBLING_ROOT" ]; then
+    pulse_sibling "$SIBLING_ROOT" "$ts"
+  fi
 
   # --- Anomalías ---
   # a) carpeta en .worktrees sin registro (huérfano)
