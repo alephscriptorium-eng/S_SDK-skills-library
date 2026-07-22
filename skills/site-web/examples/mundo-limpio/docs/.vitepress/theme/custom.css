@@ -1,6 +1,6 @@
 /* Procedencia: plantilla skill site-web (custom.css.tpl)
-   Fecha: 2026-07-19 · mundo=nexo-atlas
-   Piel zine mínima de ejemplo — tipografía local, sin CDN. */
+   Fecha: 2026-07-22 · mundo=nexo-atlas
+   ⚠ VARIABLES ≠ PIEL: tokens opcionales. La piel real es fanzine.css + Layout.vue. */
 
 :root {
   --zine-ink: #000000;

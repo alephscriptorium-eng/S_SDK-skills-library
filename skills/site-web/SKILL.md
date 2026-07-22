@@ -2,7 +2,7 @@
 name: site-web
 description: >-
   Método de copy + protocolo de publicación web (VitePress, Pages, piel
-  zine). Parametriza «el mundo»; separa método (aquí) de datos (cantera /
+  fanzine). Parametriza «el mundo»; separa método (aquí) de datos (cantera /
   entrega del consumidor). Sin nombres de mundo real ni del marco.
 ---
 
@@ -22,7 +22,7 @@ Cuando el agente deba:
    fundacionales.
 2. Empaquetar reemplazos verbatim para un swarm consumidor (§E).
 3. Montar o auditar el pipeline de docs → GitHub Pages (CNAME, base,
-   workflow, piel zine).
+   workflow, piel fanzine).
 
 ## Parámetros del mundo (calibración)
 
@@ -49,11 +49,41 @@ skill (método)          mundo (datos / instancia)
 BASE-1/2/3 plantilla  →  cantera/  (inventarios, snapshots)
 protocolo ghpages     →  entrega/  (paquete §E vigente)
 filtros C1–C9         →  decisiones vivas del marketing local
-piel zine (patrón)    →  custom.css copia-release del mundo
+piel fanzine (asset)  →  theme/ copia-release del mundo
 ```
 
 `CANTERA` y `ENTREGA-*` de un mundo concreto **no** entran en este skill.
 Son instancia: el consumidor las mantiene fuera.
+
+## Regla 13 · variables ≠ piel (agente fresco)
+
+**Defectos recurrentes** (dos instancias de familia): aplicar solo
+`custom.css` con tokens (`--zine-ink`, Courier) sobre `DefaultTheme`
+**no** es la piel fanzine. El sitio conserva el shell
+`Layout` / `VPNav` / `VPNavBar` / `VPSidebar` y fuentes del tema por
+defecto.
+
+| qué | es piel | no es piel |
+| --- | ------- | ---------- |
+| `fanzine.css` + `Layout.vue` (clases `stamp` / `washi` / `callout`) | sí | |
+| solo variables CSS / tipografía sobre DefaultTheme | | **no** |
+
+Plantillas canónicas:
+
+- `reference/plantillas/fanzine.css` — asset de piel (copia-release)
+- `reference/plantillas/Layout.vue.tpl` — home sin shell DefaultTheme
+- `reference/plantillas/theme-index.js.tpl` — entry que monta Layout + CSS
+- `reference/plantillas/custom.css.tpl` — **solo tokens opcionales**
+
+CA estructural obligatorio (anti-regresión): tras `docs:build`,
+
+```bash
+node skills/site-web/scripts/verificar-piel-fanzine.mjs --dist <dist>
+```
+
+La home del `dist/` debe contener `stamp` / `washi` / `callout` y **no**
+el shell DefaultTheme. Referencia de familia (lectura): portal pub con
+`assets/fanzine.css` + esas clases.
 
 ## Pasos
 
@@ -84,14 +114,16 @@ Si marketing pide «otra iteración de backtracking»:
 2. Workflow `docs.yml` (npm ci, paths `docs/**`, concurrency, deploy solo
    `main`).
 3. `docs/public/CNAME` = dominio del mundo (frágil #1).
-4. Piel zine: copia-release con cabecera de procedencia; tipografía local;
-   cero CDN / fuentes web.
+4. **Piel fanzine**: copia-release de `fanzine.css` + `Layout.vue` +
+   `theme-index.js` (cabecera de procedencia). Tipografía local; cero
+   CDN / fuentes web. No sustituir por solo `custom.css` (regla 13).
 5. Checklist DNS → Pages + Enforce HTTPS.
 6. Mitigar los 7 frágiles documentados en el protocolo.
 7. **Gate de verificación**: correr `scripts/verificar-sitio.mjs` sobre el
    `dist/` (enlaces internos + anclas + externos + verdad de contenido)
-   antes del deploy — preferible vía `npm run docs:verificar` si el
-   `package.json` del mundo lo define. Falla ante roto interno/ancla;
+   **y** `scripts/verificar-piel-fanzine.mjs` (CA estructural) antes del
+   deploy — preferible vía `npm run docs:verificar` si el `package.json`
+   del mundo lo define. Falla ante roto interno/ancla o home sin piel;
    cubre los hrefs de componentes `.vue` que `ignoreDeadLinks` no ve.
    La plantilla `docs.yml.tpl` engancha el paso en CI tras el build.
 
@@ -113,11 +145,14 @@ repo».
 - `reference/metodo-mecanismo.md` — BASE-3 (backtracking, C8/C9, §E)
 - `reference/protocolo-ghpages.md` — Pages + 7 frágiles + credenciales publish
 - `reference/plantillas/` — ficheros listos para copiar al mundo
+  (incl. `fanzine.css`, `Layout.vue.tpl`, `theme-index.js.tpl`)
 - `examples/mundo-limpio/` — fixture inventada (sin datos de mundo real)
 - `scripts/ceguera.sh` — grep de ceguera sobre `skills/site-web/`
 - `scripts/generar-sitio.sh` — scaffold parametrizado a un dir destino
 - `scripts/verificar-sitio.mjs` — gate de enlaces (dist) + anclas +
   externos (warning) + verdad de contenido; falla ante roto interno/ancla
+- `scripts/verificar-piel-fanzine.mjs` — CA estructural C8: home con
+  piel fanzine y sin shell DefaultTheme
 
 ## Prueba de ceguera (antes de publicar el skill)
 

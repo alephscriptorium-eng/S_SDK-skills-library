@@ -63,17 +63,25 @@ workflow, o un push que toque `docs/**`.
 No hardcodear el dominio de otro mundo en plantillas del skill: usá
 `{{DOMINIO}}`.
 
-## Piel zine
+## Piel fanzine (variables ≠ piel)
 
+- **Piel real** = asset `plantillas/fanzine.css` + `Layout.vue.tpl` +
+  `theme-index.js.tpl`. La home publicada lleva clases `stamp` /
+  `washi` / `callout` y **no** el shell DefaultTheme
+  (`Layout` / `VPNav*`). Ver regla 13 en `SKILL.md`.
+- `custom.css.tpl` = **solo tokens opcionales**. Aplicarlo solo sobre
+  `DefaultTheme` **no** cumple la piel (defecto recurrente issue #15).
 - Tipografía local del sistema (p. ej. Courier); monocromo; sin CDN ni
   `@import` de fuentes web.
-- Si se incluye CSS de referencia: **copia-release** con cabecera:
+- Copia-release con cabecera:
 
 ```css
 /* Procedencia: copia-release desde {{RUTA_FUENTE_RELATIVA_O_CITA}}
    Fecha: {{FECHA}} · mundo={{MUNDO_ID}} */
 ```
 
+- CA estructural tras build:
+  `node …/verificar-piel-fanzine.mjs --dist {{DOCS}}/.vitepress/dist`
 - No meter rutas absolutas de árboles ajenos en la cara pública del skill;
   la cita vive en el CSS del **mundo** consumidor.
 
@@ -186,6 +194,8 @@ listar los nombres exigidos (sin revelar valores).
 - [ ] `npm ci` + `docs:build` verdes en local
 - [ ] `verificar-sitio.mjs` verde: enlaces internos + anclas resuelven
   (externos = warning); verdad de contenido consistente
+- [ ] `verificar-piel-fanzine.mjs` verde: home con stamp/washi/callout
+  y sin shell DefaultTheme
 - [ ] CNAME presente y equal a dominio vivo
 - [ ] Workflow parsea; deploy solo en `main`
 - [ ] Ceguera del mundo = 0 en copy pública
