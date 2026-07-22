@@ -24,6 +24,16 @@ paquete» son ejes distintos; la correspondencia se declara en el
   (+ enlaces en SKILL, ciclo, ORQUESTADOR, README del skill). Caso
   fundante 2026-07-22 como lección abstracta. Sin bump de
   `package.json` (corte publicable = otro WP).
+- **WP-S02 · Vigilancia pulso multi-carril** —
+  etiquetas `Rn-<carril>`, higiene §8, freeze por `index.lock`,
+  `SIBLING_ROOT` opcional, supuestos blandos de shape S01 y
+  `scripts/comprobar-ceguera.sh` del skill vigilancia.
+
+### Changed
+
+- **WP-S05 · Portal skills / docs consumo** — portal alineado al método
+  `site-web`; consumo canónico `@0.4.0`; badge swarm v0.6; plantilla CI
+  engancha `docs:verificar`.
 
 ## [0.4.0] — 2026-07-21
 
