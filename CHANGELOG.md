@@ -14,6 +14,26 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-07-22
+
+Minor (DC-22): skill nuevo de método — contrato ampliado.
+
+### Added
+
+- **IB-21 · Skill `holarquia`** — destilación de método: dos leyes
+  (ceguera ascendente, acceso descendente), crecimiento por junturas,
+  plantilla de holón, DS-5 (apuntar no contener), acuerdo de agente
+  (memoria→codebase · no inventar observaciones · notaría
+  describir-no-prescribir). Cara pública marco-agnóstica; ceguera del
+  skill veta marcas de marco (el vocabulario de método es propio).
+  Recursos: `reference/plantilla-holon.md`, `junturas.md`,
+  `acuerdo-agente.md`, ejemplo sintético, `comprobar-ceguera.sh`.
+
+### Changed
+
+- Semver del paquete `0.5.1` → `0.6.0`; portal/catálogo/verdad-checks
+  alineados al corte; badge de método del skill `holarquia` = `0.1.0`.
+
 ## [0.5.1] — 2026-07-22
 
 Patch (DC-22: sin cambio de contrato). Residual R-1 + R-2a (docs

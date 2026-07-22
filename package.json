@@ -1,6 +1,6 @@
 {
   "name": "@alephscript/skills-scriptorium",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": false,
   "description": "Skills library — método marco-agnóstico en formato skill estándar (SKILL.md + recursos)",
   "type": "module",
