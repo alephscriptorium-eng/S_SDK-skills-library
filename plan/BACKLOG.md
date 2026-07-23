@@ -339,8 +339,8 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   · **Brief:** `plan/BRIEFS/WP-19-salida-dual-nota-frontera.md` ·
   **Reporte:** `plan/REPORTES/WP-19-salida-dual-nota-frontera.md`.
 
-- 🔶 **WP-20 · operador-rooms (peercard/ACL/salud)** — skill nuevo
-  <pendiente>; definir alcance exacto antes de abrir 🔶.
+- ✅ **WP-20 · operador-rooms (peercard/ACL/salud)** — skill nuevo
+  <pendiente>; definir alcance exacto antes de abrir ✅.
   **Skill:** `<pendiente>` · **Rama:** `wp/20-operador-rooms-peercard-acl-salud`
   · **Brief:** `plan/BRIEFS/WP-20-operador-rooms-peercard-acl-salud.md` ·
   **Reporte:** `plan/REPORTES/WP-20-operador-rooms-peercard-acl-salud.md`.
