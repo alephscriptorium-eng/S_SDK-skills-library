@@ -320,3 +320,35 @@ de método `swarm-orquestacion` → **v0.5.0**.
   - Portal HTTP 200; badge método v0.5.0 visible en catálogo/skill.
   - Ceguera 0.
   **Reporte:** `plan/REPORTES/WP-17-release-040.md`.
+
+## Sprint GO DA-S17 / DA-S20
+
+Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
+(`@alephscript/skills-scriptorium@0.8.0`).
+
+- 🔶 **WP-18 · parser IDs mixtos + fallo ruidoso** — <pendiente> fallo
+  ruidoso para entradas de formato mixto; no omitir en silencio.
+  **Skill:** `swarm-orquestacion` · **Rama:** `wp/18-parser-ids-mixtos-fallo-ruidoso`
+  · **Brief:** `plan/BRIEFS/WP-18-parser-ids-mixtos-fallo-ruidoso.md` ·
+  **Reporte:** `plan/REPORTES/WP-18-parser-ids-mixtos-fallo-ruidoso.md`.
+
+- 🔶 **WP-19 · salida dual + nota frontera (NO merge)** — <pendiente> cara
+  PO/scrum y nota de frontera local; no autoriza merge.
+  **Skill:** `vigilancia` / `estacion-viva` · **Rama:** `wp/19-salida-dual-nota-frontera`
+  · **Brief:** `plan/BRIEFS/WP-19-salida-dual-nota-frontera.md` ·
+  **Reporte:** `plan/REPORTES/WP-19-salida-dual-nota-frontera.md`.
+
+- ⬜ **WP-20 · operador-rooms (peercard/ACL/salud)** — skill nuevo
+  <pendiente>; definir alcance exacto antes de abrir 🔶.
+  **Skill:** `<pendiente>` · **Rama:** `wp/20-operador-rooms-peercard-acl-salud`
+  · **Brief:** `plan/BRIEFS/WP-20-operador-rooms-peercard-acl-salud.md` ·
+  **Reporte:** `plan/REPORTES/WP-20-operador-rooms-peercard-acl-salud.md`.
+
+- ⬜ **WP-21 · intake prueba-de-dos → skill** — skill nuevo <pendiente>;
+  definir contrato exacto antes de abrir 🔶.
+  **Skill:** `<pendiente>` · **Rama:** `wp/21-intake-prueba-de-dos-skill`
+  · **Brief:** `plan/BRIEFS/WP-21-intake-prueba-de-dos-skill.md` ·
+  **Reporte:** `plan/REPORTES/WP-21-intake-prueba-de-dos-skill.md`.
+
+- release · **minor post ✅ A+B** · `<pendiente>` (no entra al lote hasta
+  que pase el gate `Rn-LIB`).
