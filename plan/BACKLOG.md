@@ -332,8 +332,9 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   · **Brief:** `plan/BRIEFS/WP-18-parser-ids-mixtos-fallo-ruidoso.md` ·
   **Reporte:** `plan/REPORTES/WP-18-parser-ids-mixtos-fallo-ruidoso.md`.
 
-- 🔶 **WP-19 · salida dual + nota frontera (NO merge)** — <pendiente> cara
-  PO/scrum y nota de frontera local; no autoriza merge.
+- ✅ **WP-19 · salida dual + nota frontera (NO merge)** — aceptado sin merge;
+  calibración local; rama/worktree retenidos según PRACTICAS. Referencia de
+  commits: `d06aa97` + `a48ce15` en la rama WP, no en `main`.
   **Skill:** `vigilancia` / `estacion-viva` · **Rama:** `wp/19-salida-dual-nota-frontera`
   · **Brief:** `plan/BRIEFS/WP-19-salida-dual-nota-frontera.md` ·
   **Reporte:** `plan/REPORTES/WP-19-salida-dual-nota-frontera.md`.
