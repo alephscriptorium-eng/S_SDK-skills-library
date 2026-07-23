@@ -7,7 +7,7 @@
 | rama | `main` |
 | commits | `7bca458` (obra) + cierre |
 | eje(s) CA | III (una fuente: el backlog) + ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

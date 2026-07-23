@@ -7,7 +7,7 @@
 | rama | `wp/18-parser-ids-mixtos-fallo-ruidoso` |
 | commits | `ec86019` |
 | eje(s) CA | III + ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 
@@ -82,4 +82,6 @@ Error: [proyectar] encabezado WP no interpretable en línea 3: - ⬜ **WP-XX** p
 
 ## Revisión del orquestador
 
-_(la rellena el orquestador: aceptado ✅ / devuelto con lista numerada)_
+**Aceptado ✅** — WP-18 quedó integrado en `origin/main` @ `eb64459`; el
+tip de obra fue `ec86019` y el parser ya falla ruidosamente ante formatos
+mixtos no interpretable.

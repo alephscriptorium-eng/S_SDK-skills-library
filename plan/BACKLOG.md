@@ -275,10 +275,9 @@ No cuentan para el gate de CHANGELOG; sus issues de proyección se cierran.
 > publicado). Gates verdes: gobierno (`--role gobierno`, 12 WP ✅) y sitio
 > (`verificar-sitio` @0.3.4).
 >
-> **Feedback del consumidor (DC-21):** 3/4 puntos **resueltos**
-> (WP-13/14/15 → DC-22/23/24). **Punto 4 (parser de proyección)** llegó
-> después, **pendiente de triaje** (DC-25 · §Abiertas) — no resuelto en
-> 0.3.4.
+> **Feedback del consumidor (DC-21):** 4/4 puntos **cerrados**
+> (WP-13/14/15 → DC-22/23/24; WP-18 → DC-25). El parser de proyección
+> quedó resuelto por WP-18 y ya no está pendiente de triaje.
 >
 > **Proyección backlog→Issues:** implementada **local-only** (WP-09/10);
 > **GO de proyección real a un tracker = pendiente del custodio**.

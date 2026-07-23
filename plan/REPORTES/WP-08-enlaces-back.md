@@ -7,7 +7,7 @@
 | rama | `main` |
 | commits | `d205e78` (obra) + cierre |
 | eje(s) CA | IV (2º cliente: el portal) + ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

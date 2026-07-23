@@ -7,7 +7,7 @@
 | rama | `main` |
 | commits | `0597e51` (obra) + cierre |
 | eje(s) CA | III (una fuente de verdad) + ceguera + IV (2º cliente) |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

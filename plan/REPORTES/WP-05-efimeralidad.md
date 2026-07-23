@@ -7,7 +7,7 @@
 | rama | `main` (commit directo; solo-secuencial, sin worktree) |
 | commits | `990a24c` (obra) + este cierre |
 | eje(s) CA | ceguera + III (fuente de verdad única) |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

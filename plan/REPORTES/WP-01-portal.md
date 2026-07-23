@@ -7,7 +7,7 @@
 | rama | `wp/01-portal` (destino merge: `main`) |
 | commits | ver `git log` de la rama (gobierno → obra → aceptación) |
 | eje(s) CA | IV (contrato de consumo) + III (dedup) + ceguera transversal |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

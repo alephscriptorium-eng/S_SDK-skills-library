@@ -7,7 +7,7 @@
 | rama | `main` |
 | commits | `8653064` (obra) + cierre |
 | eje(s) CA | ceguera + III (dedup) |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

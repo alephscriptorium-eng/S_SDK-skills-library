@@ -7,7 +7,7 @@
 | rama | `main` |
 | commits | `6970df1` (obra) + cierre |
 | eje(s) CA | ceguera (evitar cara pública accidental) |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 

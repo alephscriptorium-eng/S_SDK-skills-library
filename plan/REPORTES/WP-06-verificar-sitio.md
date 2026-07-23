@@ -7,7 +7,7 @@
 | rama | `main` (commit directo; solo-secuencial, sin worktree) |
 | commits | `fd9dafb` (obra) + este cierre |
 | eje(s) CA | III (gate de verdad) + IV (2º cliente: mundo-fuente) + ceguera |
-| estado propuesto | listo para revisión |
+| estado propuesto | mergeado ✅ |
 
 ## Qué se hizo
 
