@@ -10,5 +10,5 @@ El espejo de skills lo hace el **bin del paquete**, no un
 ```
 
 Adapters: `--runtime claude` · `cursor` · `openai`. Tras instalar
-`@alephscript/skills-scriptorium@0.7.0`, borrar cualquier script local
+`@alephscript/skills-scriptorium@0.8.0`, borrar cualquier script local
 PORT duplicado.

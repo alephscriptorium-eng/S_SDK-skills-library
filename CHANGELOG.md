@@ -14,6 +14,34 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-07-23
+
+Minor (DC-22: cambio de contrato de método): piel declarada (dos
+canónicas) + mapas de territorio con invariante territorio==mapa.
+
+### Added
+
+- **LIB-080 · issue #18** — parámetro `piel:` en `site-web` con
+  canónicos `familia-vp` (**DEFAULT**) y `fanzine` (**OPT-IN**).
+  Plantillas `familia-vp.css` + `theme-index-familia-vp.js.tpl`.
+  Regla 13 reescrita: «piel declarada, dos canónicas, pro por
+  defecto». CA estructural `verificar-piel.mjs` («piel DECLARADA
+  renderiza»). CA contraste `verificar-contraste-piel.mjs` + fix
+  composición VP (remap pares brand/hover; triage #18).
+- **LIB-080 · issue #19** — `montar-plan` genera
+  `plan/MAPA-RAIZ.md` / `MAPA-REPO.md` / `MAPA-TALLER.md` con regla
+  al pie y filas semilla. `vigilancia` prescribe pulso
+  territorio==mapa (`ESTACION.md` +
+  `scripts/verificar-territorio-mapa.sh`).
+
+### Changed
+
+- Semver del paquete `0.7.0` → `0.8.0`; pins de consumo/docs alineados.
+- `verificar-piel-fanzine.mjs` pasa a alias de
+  `verificar-piel.mjs --piel fanzine`.
+- Layout fanzine solo con declaración explícita (ya no por defecto en
+  `layout: home`).
+
 ## [0.7.0] — 2026-07-23
 
 Minor (DC-22: cambio de contrato de método): pack marca parametrizado,

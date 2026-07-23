@@ -7,6 +7,6 @@
     "postinstall": "alephscript-skills-sync --runtime claude"
   },
   "devDependencies": {
-    "@alephscript/skills-scriptorium": "0.7.0"
+    "@alephscript/skills-scriptorium": "0.8.0"
   }
 }
