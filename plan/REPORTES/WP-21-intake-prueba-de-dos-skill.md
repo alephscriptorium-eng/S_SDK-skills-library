@@ -33,9 +33,15 @@ intake de ejemplo y resultado esperado.
 
 ```text
 $ git log -p -- skills/intake-prueba-de-dos
-(sin salida)
+commit 07ff5dda5bfd025639fb3d1aa935caf2b94c2633
+diff --git a/skills/intake-prueba-de-dos/README.md b/skills/intake-prueba-de-dos/README.md
+--- /dev/null
++++ b/skills/intake-prueba-de-dos/README.md
+@@ -0,0 +1,14 @@
++# intake-prueba-de-dos
+...
 
-$ rg -n "Cursor|Claude|BACKLOG|plan/|skills-library" skills/intake-prueba-de-dos
+$ rg -n "BACKLOG|plan/|skills-library|Claude" skills/intake-prueba-de-dos
 (sin coincidencias; exit 1)
 
 $ git status --short --branch
