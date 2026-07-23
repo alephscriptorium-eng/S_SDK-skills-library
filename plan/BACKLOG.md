@@ -351,5 +351,6 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   · **Brief:** `plan/BRIEFS/WP-21-intake-prueba-de-dos-skill.md` ·
   **Reporte:** `plan/REPORTES/WP-21-intake-prueba-de-dos-skill.md`.
 
-- release · **minor post ✅ A+B** · `<pendiente>` (R2-LIB: FAIL; no
-  publicable todavía).
+- release · **minor post ✅ A+B** · tip `735989e` · tag `v0.9.0` · Docs
+  `30041973425` ✅ · Publish `30041973372` ✅ · registry `0.9.0` ·
+  R2-LIB: PASS.
