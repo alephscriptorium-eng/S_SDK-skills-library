@@ -1,4 +1,4 @@
-# WP-<id> · <slug> — reporte
+# WP-`id` · `slug` — reporte
 
 | dato | valor |
 | ---- | ----- |

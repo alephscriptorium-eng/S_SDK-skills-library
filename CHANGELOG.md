@@ -14,6 +14,27 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-07-23
+
+Minor (DC-22: cambio de contrato de método): parser mixto con fallo
+ruidoso, skill `operador-rooms` e intake `prueba-de-dos`.
+
+### Added
+
+- **WP-18 · parser IDs mixtos + fallo ruidoso** — `proyectar-backlog.mjs`
+  acepta encabezados mixtos de WP y aborta ruidosamente en líneas `WP-`
+  no interpretable.
+- **WP-20 · operador-rooms (peercard/ACL/salud)** — skill nuevo para
+  operar rooms con contratos explícitos de identidad, autorización y
+  estado.
+- **WP-21 · intake-prueba-de-dos** — skill nuevo con contrato mínimo,
+  puntero de consumo y fixture sintética.
+
+### Changed
+
+- Semver del paquete `0.8.0` → `0.9.0`; pins de consumo/docs alineados.
+- `plan/BACKLOG.md` marca la minor post `✅ A+B`.
+
 ## [0.8.0] — 2026-07-23
 
 Minor (DC-22: cambio de contrato de método): piel declarada (dos

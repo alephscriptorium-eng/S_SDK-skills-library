@@ -27,7 +27,7 @@ posteriores del paquete.
 Agnóstico de IDE. Versión extendida (script de sincronización, patrón
 dedup completo): [docs/guide/consumo.md](docs/guide/consumo.md) ·
 [skills.s-sdk.escrivivir.co/guide/consumo](https://skills.s-sdk.escrivivir.co/guide/consumo).
-Release notes: `CHANGELOG.md` (actual `0.8.0`).
+Release notes: `CHANGELOG.md` (actual `0.9.0`).
 
 ### Semver del paquete vs versión de método
 
@@ -46,10 +46,9 @@ Política del semver del paquete:
 - **major**: ruptura de layout del skill o del frontmatter
   (`name` + `description`).
 
-Correspondencia actual: el paquete **0.8.0** añade piel declarada
-(`familia-vp` DEFAULT + `fanzine` OPT-IN · #18) y mapas de territorio
-en `montar-plan` + pulso territorio==mapa (#19 / LIB-080) sobre el
-corte **0.7.0** (pack marca · bin sync · cantera · lecciones vNext).
+Correspondencia actual: el paquete **0.9.0** añade parser mixto con
+fallo ruidoso (`#18`), `operador-rooms` (`#20`) e `intake-prueba-de-dos`
+(`#21`) sobre el corte **0.8.0** (piel declarada + mapas de territorio).
 El badge de método de `swarm-orquestacion` es **v0.6.0**; el de
 `holarquia` es **v0.1.0** (ejes distintos — el badge no «es» el semver
 del paquete).
@@ -61,7 +60,7 @@ y el mundo consumidor decide **cuándo** subir. `--save-exact` es
 obligatorio (sin él, npm guarda `^X.Y.Z`).
 
 ```bash
-npm install --save-exact @alephscript/skills-scriptorium@0.8.0 \
+npm install --save-exact @alephscript/skills-scriptorium@0.9.0 \
   --registry https://npm.scriptorium.escrivivir.co
 ```
 
@@ -111,9 +110,9 @@ emmanuel WP-I60.
 La referencia fijada debe **resolver** contra el registry:
 
 ```bash
-npm view @alephscript/skills-scriptorium@0.8.0 \
+npm view @alephscript/skills-scriptorium@0.9.0 \
   --registry=https://npm.scriptorium.escrivivir.co version
-# → 0.8.0, exit 0
+# → 0.9.0, exit 0
 ```
 
 ## Desarrollo local (no es consumo)
