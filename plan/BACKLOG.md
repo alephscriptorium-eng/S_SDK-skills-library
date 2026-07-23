@@ -324,24 +324,24 @@ de método `swarm-orquestacion` → **v0.5.0**.
 ## Sprint GO DA-S17 / DA-S20
 
 Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
-(`@alephscript/skills-scriptorium@0.8.0`).
+(`@alephscript/skills-scriptorium@0.9.0`).
 
-- ✅ **WP-18 · parser IDs mixtos + fallo ruidoso** — <pendiente> fallo
-  ruidoso para entradas de formato mixto; no omitir en silencio.
+- ✅ **WP-18 · parser IDs mixtos + fallo ruidoso** — fallo ruidoso para
+  entradas de formato mixto; commit `ec86019` en main.
   **Skill:** `swarm-orquestacion` · **Rama:** `wp/18-parser-ids-mixtos-fallo-ruidoso`
   · **Brief:** `plan/BRIEFS/WP-18-parser-ids-mixtos-fallo-ruidoso.md` ·
   **Reporte:** `plan/REPORTES/WP-18-parser-ids-mixtos-fallo-ruidoso.md`.
 
-- ✅ **WP-19 · salida dual + nota frontera (NO merge)** — aceptado sin merge;
-  calibración local; rama/worktree retenidos según PRACTICAS. Referencia de
-  commits: `d06aa97` + `a48ce15` en la rama WP, no en `main`.
+- ✅ **WP-19 · salida dual + nota frontera** — aceptado e integrado en
+  `main`; calibración local conservada sin trackear `plan/ESTACION.md`.
+  Referencia de commits: `cbc6865` + `ea9ac0f`.
   **Skill:** `vigilancia` / `estacion-viva` · **Rama:** `wp/19-salida-dual-nota-frontera`
   · **Brief:** `plan/BRIEFS/WP-19-salida-dual-nota-frontera.md` ·
   **Reporte:** `plan/REPORTES/WP-19-salida-dual-nota-frontera.md`.
 
 - ✅ **WP-20 · operador-rooms (peercard/ACL/salud)** — skill nuevo
-  <pendiente>; definir alcance exacto antes de abrir ✅.
-  **Skill:** `<pendiente>` · **Rama:** `wp/20-operador-rooms-peercard-acl-salud`
+  definido; contratos de peercard, ACL y salud en `main`.
+  **Skill:** `operador-rooms` · **Rama:** `wp/20-operador-rooms-peercard-acl-salud`
   · **Brief:** `plan/BRIEFS/WP-20-operador-rooms-peercard-acl-salud.md` ·
   **Reporte:** `plan/REPORTES/WP-20-operador-rooms-peercard-acl-salud.md`.
 
@@ -351,5 +351,5 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   · **Brief:** `plan/BRIEFS/WP-21-intake-prueba-de-dos-skill.md` ·
   **Reporte:** `plan/REPORTES/WP-21-intake-prueba-de-dos-skill.md`.
 
-- release · **minor post ✅ A+B** · `<pendiente>` (no entra al lote hasta
-  que pase el gate `Rn-LIB`).
+- release · **minor post ✅ A+B** · `<pendiente>` (R2-LIB: FAIL; no
+  publicable todavía).

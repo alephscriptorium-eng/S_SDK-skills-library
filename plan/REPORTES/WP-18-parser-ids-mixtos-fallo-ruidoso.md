@@ -5,7 +5,7 @@
 | agente | worker swarm WP-18 |
 | fecha | 2026-07-23 |
 | rama | `wp/18-parser-ids-mixtos-fallo-ruidoso` |
-| commits | `<pendiente>` |
+| commits | `ec86019` |
 | eje(s) CA | III + ceguera |
 | estado propuesto | listo para revisión |
 
@@ -67,7 +67,7 @@ Error: [proyectar] encabezado WP no interpretable en línea 3: - ⬜ **WP-XX** p
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: no se prometió nada fuera de lo verificado.
 - [x] Eje(s) aplicables evidenciado(s): parser de proyección + ceguera verificados.
 - [x] Gates ejecutados de verdad: `node --check`, dry-run real y prueba roja de fallo.
-- [ ] Commits convencionales: `<pendiente de commit>`.
+- [x] Commits convencionales: `ec86019`.
 - [x] Diff solo del alcance del WP: sin tocar `plan/BACKLOG.md` ni `plan/ESTACION.md`.
 
 ## Hallazgos fuera de alcance
