@@ -34,7 +34,11 @@ de siempre (solo el orquestador escribe BACKLOG).
 
 Determinista e idempotente:
 
-- Cada WP lleva su **ID estable** (`WP-XX`), parseado del BACKLOG.
+- Cada WP lleva su **ID estable** (`WP-XX`), parseado del BACKLOG aunque
+  el encabezado venga en formato mixto (`**WP-XX · título**`,
+  `**WP-XX** — prosa`, `WP-XX · prosa`, `WP-XX (nota)`).
+- Si el exportador ve una línea de WP que no puede interpretar, **falla
+  ruidoso** con la línea y el número de línea; no omite en silencio.
 - `plan/.sync-map.json` (`WP-XX → nº issue`) — git-tracked — permite
   crear/actualizar. Marcador oculto `<!-- proyeccion:WP-XX -->` en el
   body para resiliencia si se pierde el mapa.

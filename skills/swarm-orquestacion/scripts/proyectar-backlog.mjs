@@ -55,22 +55,53 @@ if (!existsSync(BACKLOG)) {
 }
 
 // --- parser de WPs del backlog ---
-// Item: `- <estado> **WP-XX · título**` + cuerpo hasta el próximo `- ` o `## `.
+// Acepta formas mixtas del encabezado:
+// - `- <estado> **WP-XX · título**`
+// - `- <estado> **WP-XX** (prosa)` / `— prosa` / `· título`
+// - `- <estado> WP-XX · título` / `WP-XX — prosa`
+// Si ve una línea con `WP-` pero no puede interpretarla, falla ruidoso.
 function parseBacklog(text) {
   const lines = text.split(/\r?\n/);
   const wps = [];
-  const head = /^- \s*(⬜|🔶|✅)\s*\*\*(WP-[A-Za-z0-9]+)\s*·\s*(.+?)\*\*/;
+  const itemLine = /^- \s*(⬜|🔶|✅)\s*(.+)$/;
+
+  function parseHeader(rawLine, lineNo) {
+    const item = rawLine.match(itemLine);
+    if (!item) return null;
+    const [, estado, rest] = item;
+    const header = rest.trim();
+    const parsers = [
+      { re: /^\*\*(WP-[A-Za-z0-9]+)\s*(?:·|—|-|\()\s*(.+?)\*\*(?:\s+.*)?$/, id: 1, title: 2 },
+      { re: /^\*\*(WP-[A-Za-z0-9]+)\*\*\s*(?:·|—|-|\()\s*(.+?)(?:\))?(?:\s+.*)?$/, id: 1, title: 2 },
+      { re: /^(WP-[A-Za-z0-9]+)\s*(?:·|—|-|\()\s*(.+?)(?:\))?(?:\s+.*)?$/, id: 1, title: 2 },
+      { re: /^\*\*(WP-[A-Za-z0-9]+)\*\*$/, id: 1, title: 1 },
+      { re: /^(WP-[A-Za-z0-9]+)$/, id: 1, title: 1 },
+    ];
+    for (const parser of parsers) {
+      const match = header.match(parser.re);
+      if (!match) continue;
+      const id = match[parser.id];
+      const tituloRaw = match[parser.title];
+      const titulo = (tituloRaw || id).trim();
+      return { estado, id, titulo };
+    }
+    if (/WP-[A-Za-z0-9]+/.test(header)) {
+      throw new Error(`[proyectar] encabezado WP no interpretable en línea ${lineNo + 1}: ${rawLine}`);
+    }
+    return null;
+  }
+
   for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(head);
-    if (!m) continue;
-    const [, estado, id, titulo] = m;
+    const parsed = parseHeader(lines[i], i);
+    if (!parsed) continue;
+    const { estado, id, titulo } = parsed;
     const body = [lines[i]];
     let j = i + 1;
     for (; j < lines.length; j++) {
       if (/^- \s*(⬜|🔶|✅)/.test(lines[j]) || /^#{2,3}\s/.test(lines[j])) break;
       body.push(lines[j]);
     }
-    wps.push({ id, estado, titulo: titulo.trim(), body: body.join('\n').trim() });
+    wps.push({ id, estado, titulo, body: body.join('\n').trim() });
     i = j - 1;
   }
   return wps;
