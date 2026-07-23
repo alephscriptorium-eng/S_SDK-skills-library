@@ -42,7 +42,7 @@ $ bash skills/estacion-viva/scripts/comprobar-ceguera.sh
 ceguera: 0
 raiz: /c/S_LAB/mundo-wp-19/skills/estacion-viva
 
-$ git log -p -- skills/estacion-viva skills/vigilancia | rg -n -i -e 'zeus|holon|holarqu[ií]a|script_sdk|s_sdk|juntura' >/dev/null && echo 'historial: FAIL' || echo 'historial: 0'
+$ git log -p -- skills/estacion-viva skills/vigilancia | rg -n -i -e '<patrón de ceguera redacted>' >/dev/null && echo 'historial: FAIL' || echo 'historial: 0'
 historial: 0
 ```
 
