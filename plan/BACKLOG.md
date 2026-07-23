@@ -326,7 +326,7 @@ de método `swarm-orquestacion` → **v0.5.0**.
 Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
 (`@alephscript/skills-scriptorium@0.8.0`).
 
-- 🔶 **WP-18 · parser IDs mixtos + fallo ruidoso** — <pendiente> fallo
+- ✅ **WP-18 · parser IDs mixtos + fallo ruidoso** — <pendiente> fallo
   ruidoso para entradas de formato mixto; no omitir en silencio.
   **Skill:** `swarm-orquestacion` · **Rama:** `wp/18-parser-ids-mixtos-fallo-ruidoso`
   · **Brief:** `plan/BRIEFS/WP-18-parser-ids-mixtos-fallo-ruidoso.md` ·
