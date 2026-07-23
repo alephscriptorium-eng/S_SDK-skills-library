@@ -42,3 +42,5 @@ Fase 7 del boot: de serie, dos caras de salida bajo `OUT_DIR`.
 - Ambas caras de la **cara pública del skill** siguen ceguera = 0;
   las salidas de una instancia real viven en `OUT_DIR` del consumidor
   (dato), no se commitean en este skill.
+- La nota de frontera local del worktree vive aparte, en
+  `plan/ESTACION.md`; no sustituye este contrato.

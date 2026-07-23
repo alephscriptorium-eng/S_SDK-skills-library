@@ -3,6 +3,8 @@
 Protocolo de vigilancia v1. Parametriza **el mundo** (`WORLD_ROOT`,
 `OUT_DIR`, `INTERVAL`). No incluye histórico de sesión: eso es dato de
 instancia.
+La nota de frontera local del worktree, si existe, vive en
+`plan/ESTACION.md` y se trata como calibración local.
 
 ## Parámetros canónicos
 
