@@ -345,9 +345,9 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   · **Brief:** `plan/BRIEFS/WP-20-operador-rooms-peercard-acl-salud.md` ·
   **Reporte:** `plan/REPORTES/WP-20-operador-rooms-peercard-acl-salud.md`.
 
-- 🔶 **WP-21 · intake prueba-de-dos → skill** — skill nuevo <pendiente>;
-  definir contrato exacto antes de abrir 🔶.
-  **Skill:** `<pendiente>` · **Rama:** `wp/21-intake-prueba-de-dos-skill`
+- ✅ **WP-21 · intake prueba-de-dos → skill** — aceptado; mergeado en
+  `main` por ff-only.
+  **Skill:** `intake-prueba-de-dos` · **Rama:** `wp/21-intake-prueba-de-dos-skill`
   · **Brief:** `plan/BRIEFS/WP-21-intake-prueba-de-dos-skill.md` ·
   **Reporte:** `plan/REPORTES/WP-21-intake-prueba-de-dos-skill.md`.
 
