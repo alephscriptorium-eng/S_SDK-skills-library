@@ -42,7 +42,7 @@ Cuando un agente deba:
 
 Calibración local opcional: rutas de colas del orquestador, vocabulario
 prohibido para la cara pública, canal de CI (`gh` u otro), mapa
-carril→root.
+carril→root, y `plan/ESTACION.md` como nota de frontera local.
 
 Doctrina multi-carril y supuestos de convivencia (shape del skill de
 orquestación): `reference/ESTACION.md`.

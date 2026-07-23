@@ -64,7 +64,7 @@ Detalle: `reference/BOOT.md`. Checklist ejecutable:
    `reference/WATCHER.md` (clase I71: sin whitelist ≈ miles de FP).
 5. Juego: `reference/GAME-MCP.md` — peercard firmada; kit
    `player-mcp-kit@0.1.3` desde registry (C8); prohibido sibling path.
-6. Salidas: `reference/SALIDA-DUAL.md`.
+6. Salidas: `reference/SALIDA-DUAL.md` + nota local en `plan/ESTACION.md`.
 7. Antes de entregar cara pública: `scripts/comprobar-ceguera.sh` →
    `ceguera: 0`.
 
@@ -75,6 +75,7 @@ Detalle: `reference/BOOT.md`. Checklist ejecutable:
 - `reference/WATCHER.md` — sesión + whitelist `.claude/skills/`
 - `reference/GAME-MCP.md` — peercard + registry C8
 - `reference/SALIDA-DUAL.md` — PO / scrum
+- `plan/ESTACION.md` — nota de frontera local (untracked)
 - `scripts/reproduce-boot.sh` — agente fresco reproduce el boot
 - `scripts/watcher-sesion.sh` — watcher que muere con la sesión
 - `scripts/filtro-whitelist-skills.sh` — filtra materialización

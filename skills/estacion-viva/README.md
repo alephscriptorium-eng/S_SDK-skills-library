@@ -12,6 +12,9 @@ del registry) → modo debug → salida dual PO/scrum.
 Datos de sesión (bitácoras reales, peercards firmadas, logs) →
 calibración local o `instancias/` del consumidor. Este directorio solo
 lleva método + fixture sintética (`examples/fixture-tick-cero/`).
+La nota de frontera local del worktree vive en `plan/ESTACION.md`; la
+salida dual de fase 7 se materializa en `OUT_DIR/salida-po.md` y
+`OUT_DIR/salida-scrum.md`.
 
 Doctrina de watcher / pulso: skill `vigilancia` (componer; no duplicar
 árboles). Contrato de convivencia multi-orquestador: skill
