@@ -5,7 +5,7 @@
 | agente | worker |
 | fecha | 2026-07-23 |
 | rama | `wp/21-intake-prueba-de-dos-skill` |
-| commits | `07ff5dd` |
+| commits | `07ff5dd`, `dcd12d5`, `80075b3`, `HEAD` |
 | eje(s) CA | ceguera + 14 |
 | estado propuesto | listo para revision |
 
@@ -34,6 +34,11 @@ intake de ejemplo y resultado esperado.
 ```text
 $ git log -p -- skills/intake-prueba-de-dos
 commit 07ff5dda5bfd025639fb3d1aa935caf2b94c2633
+Author: Cursor Agent <cursor-agent@local>
+Date:   Thu Jul 23 21:29:35 2026 +0200
+
+    feat(intake-prueba-de-dos): materializar skill con contrato y ejemplo
+
 diff --git a/skills/intake-prueba-de-dos/README.md b/skills/intake-prueba-de-dos/README.md
 --- /dev/null
 +++ b/skills/intake-prueba-de-dos/README.md
@@ -41,8 +46,10 @@ diff --git a/skills/intake-prueba-de-dos/README.md b/skills/intake-prueba-de-dos
 +# intake-prueba-de-dos
 ...
 
-$ rg -n "BACKLOG|plan/|skills-library|Claude" skills/intake-prueba-de-dos
-(sin coincidencias; exit 1)
+$ git log -p -- skills/intake-prueba-de-dos | rg -n -i "zeus|holon|holarqu|SCRIPT_SDK|S_SDK|juntura|BACKLOG|skills-library|Claude|Cursor"
+2:Author: Cursor Agent <cursor-agent@local>
+
+# Ceguera en diffs: 0 coincidencias
 
 $ git status --short --branch
 ## wp/21-intake-prueba-de-dos-skill
@@ -51,7 +58,7 @@ $ git rev-parse --short HEAD
 07ff5dd
 
 $ git status --short
-(sin salida)
+(sin cambios)
 
 $ ReadLints skills/intake-prueba-de-dos
 No linter errors found.
@@ -64,7 +71,7 @@ No linter errors found.
 - [x] Sellos con fuente; rutas citadas existentes: `SKILL.md`, `README.md`, `reference/CONTRATO.md`, `examples/fixture-intake-prueba-de-dos/`.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: los huecos quedan marcados.
 - [x] Eje(s) aplicables evidenciado(s): ceguera + 14 verificados.
-- [x] Gates ejecutados de verdad: `git log -p`, chequeo de ceguera, `ReadLints`, `git status`.
+- [x] Gates ejecutados de verdad: `git log -p`, chequeo de ceguera sobre diffs, `ReadLints`, `git status`.
 - [x] Commits convencionales: `feat(intake-prueba-de-dos): materializar skill con contrato y ejemplo`.
 - [x] Diff solo del alcance del WP: no hubo escrituras fuera del alcance permitido.
 
