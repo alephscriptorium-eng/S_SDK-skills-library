@@ -5,10 +5,10 @@
 | agente | worker fresco WP-22 |
 | fecha | 2026-07-24 |
 | rama | `wp/22-revision-adversarial-campos-riesgo` |
-| commits | `0054bd1`, `b9a8cc2`, `6efbc03`; commit final del reporte: ver historial de la rama |
+| commits | `0054bd1`, `b9a8cc2`, `6efbc03`, `5aabf43`, `4b49398`; commit final del reporte: ver historial de la rama |
 | eje(s) CA | III + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
-| revisor distinto del worker | `sí` — primera revisión: `DEVUELTO` |
+| revisor distinto del worker | `sí` — dos revisiones: `DEVUELTO` |
 | estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
@@ -21,7 +21,9 @@ los cuatro campos de riesgo y la de reporte los cinco campos de evidencia. El
 rol de revisión separa la contrarrevisión de la revisión ordinaria del
 orquestador. Tras la devolución, se eliminó la clasificación duplicada del
 brief y se añadió un probe persistente que rechaza una duplicación semántica
-inyectada. No se tocaron puntos de integración reservados a WP-25.
+inyectada. Tras la segunda devolución, el probe se amplió a los tres
+consumidores contractuales y el mutante se movió a `REVISION.md`. No se tocaron
+puntos de integración reservados a WP-25.
 
 ## Correcciones de la devolución numerada
 
@@ -33,6 +35,19 @@ inyectada. No se tocaron puntos de integración reservados a WP-25.
    rechazado.
 
 Corregido en commit `6efbc03`.
+
+## Correcciones de la segunda devolución numerada
+
+1. El probe ahora inspecciona `BRIEF.md`, `REVISION.md` y
+   `plantilla-reporte.md`. Extrae las seis clases de la fila canónica en vez de
+   redefinirlas, y demuestra que una copia inyectada en `REVISION.md` queda
+   rechazada.
+2. La evidencia runtime reconoce que el probe ejecuta Node e importa el
+   built-in `node:fs`; no añade ninguna dependencia npm. La instalación limpia
+   no aplica porque el built-in forma parte del runtime, no porque falte código
+   ejecutable.
+
+Corregido en commit `4b49398`.
 
 ## Archivos tocados
 
@@ -59,8 +74,11 @@ $ awk '/^```js revision-adversarial-probe$/{on=1;next} /^```$/{if(on) exit} on' 
 probe revision-adversarial: PASS
 caso normal: revisión ordinaria sin contrarrevisión obligatoria
 caso gate: contrarrevisión independiente obligatoria
-dedup semántico: PASS (fuente canónica=1; consumidores duplicados=0)
-mutante duplicado: RECHAZADO (gate-parser, seguridad-fronteras, irreversibilidad, publicacion-release, contrato-transversal, protocolo-mutable)
+dedup semántico: PASS (fuente canónica=1; consumidores=3; duplicados=0)
+mutante REVISION.md: RECHAZADO (clases=6)
+
+$ node --version
+v22.21.1
 
 $ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
 ceguera: 0
@@ -79,14 +97,14 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
 
 ### Evidencia manual
 
-- Inspección manual del diff completo `71e446a...6efbc03`: cinco ficheros,
+- Inspección manual del diff completo `71e446a...4b49398`: cinco ficheros,
   todos dentro de `ALCANCE_DIFF`; resultado conforme.
 - Comparación manual contra PRACTICAS, brief y plan: documentación rutinaria no
   fuerza contrarrevisión; un gate/parser con riesgo de falsos negativos sí.
 - Inspección manual de fronteras: el contrarrevisor no escribe, acepta, mergea,
   modifica BACKLOG, tags ni remotas; resultado conforme.
-- Inspección manual de dedup: `BRIEF.md` conserva los cuatro campos pero no
-  enumera clases ni excepciones; resultado conforme.
+- Inspección manual de dedup: los tres consumidores conservan sus contratos
+  operativos sin enumerar la clasificación; resultado conforme.
 - `ReadLints` sobre los ficheros corregidos: `No linter errors found.`
 
 ## Evidencia de riesgo y contrarrevisión
@@ -96,23 +114,24 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
     ordinaria sin contrarrevisión obligatoria.
   - `[automatizado]` WP de gate/parser — probe persistente — contrarrevisión
     independiente obligatoria.
-  - `[automatizado]` copia de las seis clases dentro del brief — mutación en
-    memoria — rechazada con las seis señales enumeradas.
+  - `[automatizado]` copia de las seis clases dentro de `REVISION.md` — mutación
+    en memoria — rechazada con `clases=6`.
   - `[manual]` intento de confundir `PASS` con aceptación — inspección del
     contrato y rol — ambos lo prohíben explícitamente.
   - `[manual]` intento de escribir durante la contrarrevisión — inspección del
     protocolo — operaciones mutables enumeradas como prohibidas.
-- `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: no aplica; el diff solo añade Markdown,
-  no carga runtime ni cambia `package.json`.
-- `INSTALACION_LIMPIA`: no aplica; no hay código ejecutable ni dependencias
-  nuevas. No se presenta esta justificación como test.
+- `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: el probe ejecuta Node e importa
+  directamente su built-in `node:fs`. Dependencias npm nuevas: cero;
+  `package.json` no cambió.
+- `INSTALACION_LIMPIA`: no aplica instalación npm: `node:fs` forma parte de
+  Node. El probe sí es código ejecutable y se verificó con Node `v22.21.1`.
 - `TEST_AUTOMATIZADO_VS_EVIDENCIA_MANUAL`:
   - Automatizado: `git diff --check`, ceguera de árbol, probe persistente de
     campos/selección/dedup semántico y ceguera de historial.
   - Manual: inspección del diff, correspondencia con el brief y fronteras
     read-only.
-- `VEREDICTO_REVISOR`: `DEVUELTO`; correcciones 1–2 aplicadas en `6efbc03`,
-  pendiente de nueva contrarrevisión read-only.
+- `VEREDICTO_REVISOR`: `DEVUELTO` por segunda vez; correcciones aplicadas en
+  `4b49398`, pendiente de nueva contrarrevisión read-only.
 
 ## Auto-revisión (PRACTICAS del mundo — con honestidad)
 
@@ -125,14 +144,15 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: el único paso futuro,
   la contrarrevisión, figura `⏳ pendiente`.
 - [x] Eje(s) aplicables evidenciado(s): el probe rechaza una duplicación
-  semántica efectiva y acredita una fuente canónica; ceguera de árbol e
-  historial = 0.
+  semántica efectiva fuera de BRIEF, inspecciona los tres consumidores y
+  acredita una fuente canónica; ceguera de árbol e historial = 0.
 - [x] Gates ejecutados de verdad: comandos exactos y resultados literales
   figuran arriba, sin placeholders.
 - [x] Commits convencionales: `feat(revision): definir contrarrevision
   adversarial selectiva`, `docs(reporte): registrar evidencia de WP-22` y
   `fix(revision): deduplicar clasificacion de riesgo`; el reporte corregido se
-  asentará con commit convencional.
+  asentó convencionalmente y la segunda corrección usa
+  `fix(revision): ampliar dedup a todos los consumidores`.
 - [x] Diff solo del alcance del WP: no se editaron BACKLOG, SKILL, ciclo,
   ORQUESTADOR, WORKER ni otros WPs.
 - [x] Riesgo y contraevidencia del brief cubiertos: caso normal y caso gate
@@ -161,4 +181,12 @@ Primera contrarrevisión independiente: **DEVUELTO**.
 2. Gate de Eje III insuficiente y clasificación semántica duplicada.
 
 Correcciones aplicadas en `6efbc03`; pendiente de nueva contrarrevisión
+read-only independiente.
+
+Segunda contrarrevisión independiente: **DEVUELTO**.
+
+1. El gate no cubría consumidores contractuales fuera de `BRIEF.md`.
+2. La evidencia negaba ejecución runtime pese al probe Node con `node:fs`.
+
+Correcciones aplicadas en `4b49398`; pendiente de nueva contrarrevisión
 read-only independiente y decisión del orquestador.
