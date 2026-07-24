@@ -3,6 +3,9 @@
 Estado: **release 0.10.0 publicado y C8 exacto PASS; gate forward Z listo
 para entrega, sin GO downstream**.
 
+Suspensión durable y reanudación:
+[`HANDOFF-SUSPENSION.md`](HANDOFF-SUSPENSION.md).
+
 ## Autoridad (custodio · 2026-07-24)
 
 - **GO de planificación:** concedido.
