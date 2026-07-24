@@ -70,3 +70,102 @@ Estos casos prueban la selección, no el contenido de un WP concreto:
 Una comprobación automatizada puede validar que la tabla conserva ambos flujos;
 la valoración de si un cambio real pertenece a una clase de riesgo sigue siendo
 evidencia manual del orquestador y debe etiquetarse como tal.
+
+## Probe persistente de contrato y dedup
+
+Desde la raíz del mundo, el siguiente comando extrae y ejecuta el probe
+versionado en esta misma referencia:
+
+```bash
+awk '/^```js revision-adversarial-probe$/{on=1;next} /^```$/{if(on) exit} on' \
+  skills/swarm-orquestacion/reference/revision-adversarial.md |
+  node --input-type=module
+```
+
+El probe comprueba los campos, ambos flujos y la ubicación única de la
+clasificación. Además inyecta en memoria una copia de la política dentro del
+brief y exige que el detector semántico la rechace; no se limita a contar un
+encabezado o marcador.
+
+```js revision-adversarial-probe
+import fs from "node:fs";
+
+const canonicalPath =
+  "skills/swarm-orquestacion/reference/revision-adversarial.md";
+const briefPath =
+  "skills/swarm-orquestacion/reference/roles/BRIEF.md";
+const canonical = fs.readFileSync(canonicalPath, "utf8");
+const brief = fs.readFileSync(briefPath, "utf8");
+
+const fields = [
+  "RIESGO_REVISION",
+  "MOTIVO_RIESGO",
+  "CONTRAEVIDENCIA_REQUERIDA",
+  "REVISOR_DISTINTO_WORKER",
+];
+for (const field of fields) {
+  if (!brief.includes(`- ${field}:`)) {
+    throw new Error(`falta campo del brief: ${field}`);
+  }
+}
+
+if (!canonical.includes("| `normal` | documentación rutinaria")) {
+  throw new Error("falta el flujo normal canónico");
+}
+if (!canonical.includes("| `independiente` | gate/parser")) {
+  throw new Error("falta el flujo independiente canónico");
+}
+
+const riskSignals = [
+  ["gate-parser", /gate\/parser\s+con\s+riesgo\s+de\s+falsos\s+negativos/i],
+  [
+    "seguridad-fronteras",
+    /seguridad,\s+permisos\s+o\s+fronteras\s+de\s+escritura/i,
+  ],
+  ["irreversibilidad", /migración\s+o\s+demolición\s+irreversible/i],
+  ["publicacion-release", /publicación\/release/i],
+  [
+    "contrato-transversal",
+    /cambio\s+transversal\s+del\s+contrato\s+del\s+método/i,
+  ],
+  [
+    "protocolo-mutable",
+    /protocolo\s+operativo\s+que\s+puede\s+autorizar\s+mutaciones/i,
+  ],
+];
+
+const semanticDuplicates = (text) =>
+  riskSignals.filter(([, pattern]) => pattern.test(text)).map(([name]) => name);
+
+const missingCanonical = riskSignals
+  .filter(([, pattern]) => !pattern.test(canonical))
+  .map(([name]) => name);
+if (missingCanonical.length > 0) {
+  throw new Error(`clasificación canónica incompleta: ${missingCanonical}`);
+}
+
+const duplicates = semanticDuplicates(brief);
+if (duplicates.length > 0) {
+  throw new Error(`clasificación duplicada en BRIEF: ${duplicates}`);
+}
+
+const mutant = `${brief}
+gate/parser con riesgo de falsos negativos; seguridad, permisos o fronteras de
+escritura; migración o demolición irreversible; publicación/release; cambio
+transversal del contrato del método; protocolo operativo que puede autorizar
+mutaciones`;
+const rejectedMutant = semanticDuplicates(mutant);
+if (rejectedMutant.length !== riskSignals.length) {
+  throw new Error(`el gate no rechazó el duplicado semántico: ${rejectedMutant}`);
+}
+
+console.log("probe revision-adversarial: PASS");
+console.log("caso normal: revisión ordinaria sin contrarrevisión obligatoria");
+console.log("caso gate: contrarrevisión independiente obligatoria");
+console.log(
+  "dedup semántico: PASS (fuente canónica=1; consumidores duplicados=0)",
+);
+console.log(
+  `mutante duplicado: RECHAZADO (${rejectedMutant.join(", ")})`,
+);
+```

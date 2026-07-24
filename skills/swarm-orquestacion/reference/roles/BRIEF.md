@@ -39,12 +39,6 @@ Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
 - Declará el **eje** si el tipo de WP lo activa (extracción, demolición,
   auditoría, contrato, mediación con swarms ajenos).
 - Paralelismo: worktree distinto por worker; dirs de entrega que no se pisen.
-- Clasificá el riesgo según
-  `../revision-adversarial.md`. La revisión independiente es selectiva: se
-  exige para gates/parsers con riesgo de falsos negativos, seguridad o
-  fronteras de escritura, cambios irreversibles, publicación/release, cambios
-  transversales del contrato del método y protocolos que autorizan mutaciones;
-  no para documentación rutinaria por el solo hecho de ser documentación.
-- Si `RIESGO_REVISION` es `independiente`, los cuatro campos son obligatorios,
-  el revisor debe ser distinto del worker y la contraevidencia debe incluir
-  algo más que el camino feliz.
+- Usá `../revision-adversarial.md` como fuente canónica única para clasificar
+  `RIESGO_REVISION` y validar los otros tres campos. Esta plantilla solo los
+  registra: no redefine clases, activadores ni excepciones.
