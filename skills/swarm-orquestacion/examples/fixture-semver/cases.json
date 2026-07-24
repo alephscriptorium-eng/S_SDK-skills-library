@@ -1,0 +1,162 @@
+[
+  {
+    "name": "verde exact",
+    "package": { "dependencies": { "alpha": "1.2.3" } },
+    "config": { "defaultPolicy": "exact", "runtimeImports": ["alpha", "node:fs"] },
+    "exit": 0,
+    "includes": ["OK:", "gate local sin red"]
+  },
+  {
+    "name": "verde caret",
+    "package": { "dependencies": { "alpha": "^2.3.4" } },
+    "config": { "defaultPolicy": "caret-semver", "runtimeImports": ["alpha/subpath"] },
+    "exit": 0,
+    "includes": ["OK:"]
+  },
+  {
+    "name": "verde major-band",
+    "package": { "dependencies": { "alpha": ">=3.4.5 <4.0.0" } },
+    "config": { "defaultPolicy": "major-band", "runtimeImports": ["alpha"] },
+    "exit": 0,
+    "includes": ["OK:"]
+  },
+  {
+    "name": "verde cero con integración",
+    "package": { "dependencies": { "alpha": ">=0.4.2 <1.0.0" } },
+    "config": {
+      "defaultPolicy": "major-band",
+      "runtimeImports": ["alpha"],
+      "integrationTested": ["alpha"]
+    },
+    "exit": 0,
+    "includes": ["WARNING:", "0.x", "OK:"]
+  },
+  {
+    "name": "cero sin integración",
+    "package": { "dependencies": { "alpha": "^0.4.2" } },
+    "config": { "defaultPolicy": "caret-semver", "runtimeImports": ["alpha"] },
+    "exit": 1,
+    "includes": ["WARNING:", "falta evidencia"]
+  },
+  {
+    "name": "tag rechazado",
+    "package": { "dependencies": { "alpha": "latest" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "wildcard rechazado",
+    "package": { "dependencies": { "alpha": "*" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "url rechazada",
+    "package": { "dependencies": { "alpha": "https://example.invalid/a.tgz" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "git rechazado",
+    "package": { "dependencies": { "alpha": "git+https://example.invalid/a.git" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "alias rechazado",
+    "package": { "dependencies": { "alpha": "npm:beta@1.2.3" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "ruta rechazada",
+    "package": { "dependencies": { "alpha": "file:../alpha" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "rango abierto rechazado",
+    "package": { "dependencies": { "alpha": ">=1.2.3" } },
+    "config": { "defaultPolicy": "major-band" },
+    "exit": 1,
+    "includes": ["incumple major-band"]
+  },
+  {
+    "name": "techo de banda falso negativo",
+    "package": { "dependencies": { "alpha": ">=1.2.3 <3.0.0" } },
+    "config": { "defaultPolicy": "major-band" },
+    "exit": 1,
+    "includes": ["incumple major-band"]
+  },
+  {
+    "name": "abreviatura exact falsa negativa",
+    "package": { "dependencies": { "alpha": "1.2" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "union caret falsa negativa",
+    "package": { "dependencies": { "alpha": "^1.2.3 || >=2.0.0" } },
+    "config": { "defaultPolicy": "caret-semver" },
+    "exit": 1,
+    "includes": ["incumple caret-semver"]
+  },
+  {
+    "name": "ceros iniciales falsos negativos",
+    "package": { "dependencies": { "alpha": "01.2.3" } },
+    "config": { "defaultPolicy": "exact" },
+    "exit": 1,
+    "includes": ["incumple exact"]
+  },
+  {
+    "name": "runtime solo dev",
+    "package": { "devDependencies": { "alpha": "1.2.3" } },
+    "config": { "defaultPolicy": "exact", "runtimeImports": ["alpha"] },
+    "exit": 1,
+    "includes": ["no directa", "solo está en devDependencies"]
+  },
+  {
+    "name": "runtime transitiva ausente",
+    "package": {
+      "dependencies": { "padre": "1.0.0" },
+      "_fixtureTransitives": { "alpha": "1.2.3" }
+    },
+    "config": { "defaultPolicy": "exact", "runtimeImports": ["alpha"] },
+    "exit": 1,
+    "includes": ["alpha: dependencia runtime no directa"]
+  },
+  {
+    "name": "deny prevalece",
+    "package": { "dependencies": { "alpha": "1.2.3" } },
+    "config": { "defaultPolicy": "exact", "allow": ["alpha"], "deny": ["alpha"] },
+    "exit": 1,
+    "includes": ["dependencia denegada"]
+  },
+  {
+    "name": "fuera de allow",
+    "package": { "dependencies": { "alpha": "1.2.3", "beta": "2.0.0" } },
+    "config": { "defaultPolicy": "exact", "allow": ["alpha"] },
+    "exit": 1,
+    "includes": ["beta: no figura en allow"]
+  },
+  {
+    "name": "override por paquete",
+    "package": {
+      "dependencies": { "alpha": "1.2.3", "beta": ">=2.1.0 <3.0.0" }
+    },
+    "config": {
+      "defaultPolicy": "exact",
+      "policies": { "beta": "major-band" },
+      "runtimeImports": ["alpha", "beta"]
+    },
+    "exit": 0,
+    "includes": ["OK: 2 dependencia(s)"]
+  }
+]
