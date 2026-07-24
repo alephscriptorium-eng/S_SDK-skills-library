@@ -23,6 +23,10 @@ Notas del orquestador:
 - (conflictos con otros WPs en vuelo, orden de merge, excepciones de gates…)
 - ALCANCE_DIFF = …
 - MUNDO_RAIZ = …
+- RIESGO_REVISION: normal | independiente
+- MOTIVO_RIESGO: (clase y efecto verificable; justificar también `normal`)
+- CONTRAEVIDENCIA_REQUERIDA: (casos que intentarán refutar los CA)
+- REVISOR_DISTINTO_WORKER: no requerido | sí
 
 Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
 ```
@@ -35,3 +39,12 @@ Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
 - Declará el **eje** si el tipo de WP lo activa (extracción, demolición,
   auditoría, contrato, mediación con swarms ajenos).
 - Paralelismo: worktree distinto por worker; dirs de entrega que no se pisen.
+- Clasificá el riesgo según
+  `../revision-adversarial.md`. La revisión independiente es selectiva: se
+  exige para gates/parsers con riesgo de falsos negativos, seguridad o
+  fronteras de escritura, cambios irreversibles, publicación/release, cambios
+  transversales del contrato del método y protocolos que autorizan mutaciones;
+  no para documentación rutinaria por el solo hecho de ser documentación.
+- Si `RIESGO_REVISION` es `independiente`, los cuatro campos son obligatorios,
+  el revisor debe ser distinto del worker y la contraevidencia debe incluir
+  algo más que el camino feliz.
