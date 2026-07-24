@@ -14,7 +14,7 @@
 # Multi-carril: un proceso = un WORLD_ROOT. Territorio hermano = otra
 # instancia o SIBLING_ROOT (solo lectura; líneas con prefijo sibling:).
 # Ver reference/ESTACION.md «Pulso multi-carril».
-set -euo pipefail
+set -uo pipefail
 
 WORLD_ROOT="${WORLD_ROOT:-${1:-}}"
 OUT_DIR="${OUT_DIR:-${2:-}}"
@@ -30,6 +30,10 @@ fi
 # Debe preceder cualquier mkdir, escritura, watcher o operación git mutable.
 # También rechaza calibración ausente/ambigua: WORLD_ROOT por sí sola no basta.
 node "$SCRIPT_DIR/verificar-identidad-raiz.mjs"
+identity_status=$?
+if [ "$identity_status" -ne 0 ]; then
+  exit "$identity_status"
+fi
 
 if [ ! -d "$WORLD_ROOT/.git" ] && [ ! -f "$WORLD_ROOT/.git" ]; then
   echo "WORLD_ROOT no parece un repo git: $WORLD_ROOT" >&2
