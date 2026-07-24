@@ -36,14 +36,29 @@ consumidor). No nombra mundos reales ni el marco.
 La calibración concreta (rutas, gates, sellos) vive en el `plan/` del
 mundo, no en este skill.
 
+## Preflight antes de mutar
+
+Antes de crear directorios, escribir, arrancar watchers, ejecutar git mutable,
+editar el plan, crear ramas o worktrees, verificá la identidad de la raíz con
+el detector canónico de `vigilancia`:
+`../vigilancia/scripts/verificar-identidad-raiz.mjs`. Su contrato y parámetros
+viven en `../vigilancia/reference/ESTACION.md`; este skill no los redefine.
+
+Solo `identidad-raiz: PASS` habilita la preparación. Un `LOCK` se devuelve al
+custodio y el proceso queda sin efectos; se solicita otro clone de trabajo,
+pero el orquestador no lo crea ni lo elige. El mismo preflight precede el
+handoff de arranque a `estacion-viva` (`../estacion-viva/reference/BOOT.md`).
+
 ## Montaje rápido (mundo nuevo)
 
-1. Copiá o generá el esqueleto con `scripts/montar-plan.sh` (ver README).
-2. Rellená `VISION.md`, `PRACTICAS.md` (reglas del mundo) y el primer
+1. Obtené `PASS` del preflight de identidad.
+2. Copiá o generá el esqueleto con `scripts/montar-plan.sh` (ver README).
+3. Rellená `VISION.md`, `PRACTICAS.md` (reglas del mundo) y el primer
    `BACKLOG.md`.
-3. Los prompts de rol viven en `plan/roles/` (copias del skill o enlace a
+4. Los prompts de rol viven en `plan/roles/` (copias del skill o enlace a
    `reference/roles/`).
-4. Arrancá el ciclo: orquestador → BRIEF → worker → reporte → revisión.
+5. Arrancá el ciclo: orquestador → BRIEF → worker → revisión selectiva →
+   aceptación → merge → gate post-merge.
 
 Detalle: `reference/ciclo.md` · roles: `reference/roles/` · ejes:
 `reference/ejes-ca.md` · re-plan: `reference/RE-PLAN-protocolo-swarm.md` ·
@@ -52,10 +67,13 @@ ejemplo: `examples/`.
 ## Ciclo (resumen)
 
 ```text
+0. Orquestador: identidad canónica PASS; si LOCK, devolver sin efectos
 1. Orquestador: estado del BACKLOG, lote paralelo, 🔶 + BRIEF por WP
 2. Worker: una rama (y worktree si hay paralelo); implementa; reporta
-3. Orquestador (revisión): ✅ + merge, o devolución numerada
-4. Si devolución: mismo worker, misma rama (corrección)
+3. Si el riesgo lo exige: contrarrevisión adversarial read-only
+4. Orquestador (revisión ordinaria): ✅ + merge, o devolución numerada
+5. Tras merge: gate del carril; no confundirlo con la contrarrevisión
+6. Si devolución: mismo worker, misma rama (corrección)
 ```
 
 ## Reglas de oro
@@ -88,6 +106,15 @@ ejemplo: `examples/`.
     carril, vigía único `Rn-<carril>`, higiene pre-despacho y e2e por
     vías permitidas — ver
     `reference/convivencia-multi-orquestador.md` (fuente única).
+15. Revisión por riesgo: clasificación, campos y protocolo viven únicamente
+    en `reference/revision-adversarial.md`; un PASS read-only precede la
+    aceptación cuando corresponda, pero no la concede.
+16. Dependencias y semver: política, inventario runtime, probes y separación
+    gate local/C8 viven en `reference/politica-dependencias-semver.md`.
+17. Idle y comunicación: `vigilancia` propone candidatos sin escribir
+    BACKLOG y entrega la salida dual de
+    `../vigilancia/reference/ADDENDA-DOS-CARAS.md`; el orquestador conserva
+    decisión y planificación.
 
 ## Método v0.6 (costuras)
 
@@ -109,6 +136,8 @@ convivencia.)
 | `reference/RE-PLAN-protocolo-swarm.md` | fuente narrativa de los ejes (doctrina) |
 | `reference/ciclo.md` | prep → merge y anti-patrones |
 | `reference/lecciones-vnext.md` | sucesión vigía · checkout declarado · worktree por rol · raíz por constelación |
+| `reference/revision-adversarial.md` | selección por riesgo + contrarrevisión read-only pre-aceptación |
+| `reference/politica-dependencias-semver.md` | dependencias directas + políticas semver + gate local/C8 |
 | `reference/convivencia-multi-orquestador.md` | **fuente única**: convivencia multi-orquestador (método v0.6) |
 | `reference/reglas-metodo-v05.md` | reglas 16–17 (run-id verde + sync-map post-apply) + checklist |
 | `reference/reglas-metodo-v04.md` | histórico v0.4: regla 15 + checklist (base de v0.5) |

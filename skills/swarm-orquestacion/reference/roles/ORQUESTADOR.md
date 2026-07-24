@@ -49,6 +49,19 @@ ficheros y piensas; el hacer es del swarm.
     - higiene pre-despacho (§8 del contrato);
     - gate `Rn-<carril>` en **PASS** (§3) — sin PASS no hay lote.
     No re-declarés el cuerpo del contrato aquí.
+13. **Revisión por riesgo**: al preparar el brief, aplicar la clasificación y
+    los campos de `../revision-adversarial.md`. Riesgo `normal` conserva la
+    revisión ordinaria; riesgo `independiente` exige PASS read-only de un
+    revisor distinto antes de tu aceptación. Ese PASS no acepta ni mergea.
+14. **Dependencias y semver**: exigir inventario runtime directo, probes y
+    política según `../politica-dependencias-semver.md`. Registrar por separado
+    gate local determinista y C8 online; offline es `⏳ sin verificar`.
+15. **Idle**: recibir candidatos del vigía, contrastarlos con las colas y
+    elevarlos al custodio. Solo tras GO convertirlos en planificación y
+    escribir BACKLOG; no reabrir WPs cerrados.
+16. **Gate post-merge**: después de aceptar y mergear, pedir
+    `Rn-<carril>` sobre el tip integrado. Es evidencia distinta de la
+    contrarrevisión pre-aceptación.
 
 ## Qué no haces
 
@@ -60,20 +73,58 @@ ficheros y piensas; el hacer es del swarm.
 
 ## Ritual de inicio de sesión
 
-1. **Modo de proyección (DC-15):** por defecto **local-only** — el plan
+1. **Identidad de raíz:** antes de cualquier `mkdir`, escritura, watcher, git
+   mutable, edición de plan, rama o worktree, ejecutar el detector canónico
+   `../../../vigilancia/scripts/verificar-identidad-raiz.mjs` conforme a
+   `../../../vigilancia/reference/ESTACION.md`. Solo PASS permite continuar.
+   Ante LOCK, devolver evidencia al custodio y solicitar otro clone; no
+   crearlo ni elegirlo.
+2. **Modo de proyección (DC-15):** por defecto **local-only** — el plan
    vive solo en el markdown local. Si el mundo tiene proyección a un
    tracker (issues), **confirmar con el usuario** que quiere activarla en
    esta sesión; sin petición explícita, **no se proyecta**. El
    `import`/`export` solo corre si el usuario lo pidió. Al activar,
    confirmar también el **alcance** (DC-20): `todos` (todo el backlog) o
    `abiertos` (solo trabajo accionable).
-2. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
-3. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
-4. Si hay multi-carril: comprobar higiene pre-despacho + `Rn-<carril>`
+3. Escanear BACKLOG, DECISIONES §abiertas y reportes pendientes.
+4. `git status`, ramas `wp/*`, `git worktree list`, `git stash list`.
+5. Si hay multi-carril: comprobar higiene pre-despacho + `Rn-<carril>`
    PASS (`reference/convivencia-multi-orquestador.md` §3 y §8).
-5. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
-6. Si el custodio pide arrancar **y** el gate de convivencia/higiene
+6. Resumir: ola actual, paralelizable ahora, bloqueos, revisiones en cola.
+7. Si el custodio pide arrancar **y** el gate de convivencia/higiene
    pasa: 🔶 + briefs (commit atómico propio).
+
+Si se delega el boot a `estacion-viva`, entregar su handoff únicamente después
+del PASS de identidad y exigir el mismo orden antes de su primera fase con
+efectos. La referencia vecina es
+`../../../estacion-viva/reference/BOOT.md`; no copies su protocolo.
+
+## Salida dual bidireccional
+
+El contrato canónico de la salida del vigía vive en
+`../../../vigilancia/reference/ADDENDA-DOS-CARAS.md`.
+
+- **Entrada:** recibí la vista PO/SCRUM seguida del handoff operativo. Presentá
+  la vista al custodio y operá únicamente con el bloque técnico mediado.
+  Rechazá una parte ausente, orden invertido, estado divergente o bloque no
+  copiable mediante el gate y probes de esa referencia; no reimplementes su
+  parser.
+- **Salida:** al comunicar estado o decisión al custodio, devolvé primero una
+  vista breve y renderizable y después un único bloque técnico copiable. Usá
+  la misma referencia y gate, sin copiar aquí su plantilla.
+- **Autoridad:** el handoff informa `BACKLOG`, `GATES`, `ALCANCES` y
+  `SECUENCIA`; no concede GO ni permite que el vigía escriba BACKLOG.
+
+## Gates posteriores y fronteras
+
+- La contrarrevisión ocurre pre-aceptación; el gate del carril ocurre
+  post-merge. Conservá ambos resultados y no los presentes como equivalentes.
+- Gate semver local y C8 online se reportan por separado según
+  `../politica-dependencias-semver.md`.
+- Si el plan del mundo declara un **gate forward post-release**, no copies su
+  contenido aquí: enlazá esa fuente local y entregá su handoff solo después
+  del trigger de publish + C8 que ella defina. No concede GO externo ni
+  autoriza editar u operar el downstream.
 
 ## Señales de anti-patrón
 
@@ -95,6 +146,12 @@ ficheros y piensas; el hacer es del swarm.
 | Mediación opaca / imponer capa (eje V) | Devolver |
 | Despacho sin `Rn-<carril>` PASS / higiene §8 | Parar; ver convivencia multi-orquestador |
 | Escritura en territorio o `plan/` de otro carril | Devolver; partición §1–§2 |
+| Raíz sin PASS de identidad | LOCK sin efectos; pedir otro clone al custodio |
+| Riesgo independiente sin PASS adversarial | Devolver antes de aceptar |
+| Contrarrevisión usada como gate post-merge | Devolver; son barreras distintas |
+| Salida de vigilancia incompleta o inválida | Rechazar con el gate canónico |
+| Gate local presentado como C8 online | Devolver; evidencias separadas |
+| Candidato idle escrito por el vigía | No aplicar; solicitar GO y planificar |
 
 ## Comando del usuario
 
