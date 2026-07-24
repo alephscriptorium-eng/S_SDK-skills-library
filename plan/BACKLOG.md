@@ -353,3 +353,51 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
 - release · **minor post ✅ A+B** · tip `735989e` · tag `v0.9.0` · Docs
   `30041973425` ✅ · Publish `30041973372` ✅ · registry `0.9.0` ·
   R2-LIB: PASS.
+
+## Sprint REVISION-SEMVER-IDLE · preparado (2026-07-24)
+
+Autoridad: **GO de planificación + GO de implementación/arranque del
+custodio** para WP-22…WP-25. Antes de 🔶: higiene pre-despacho y PASS del
+siguiente gate canónico `Rn-LIB`. Plan operativo y handoffs:
+`plan/SPRINTS/REVISION-SEMVER-IDLE/PLAN.md`.
+
+Fronteras: obra solo en este repo; no consumidores, no `z-sdk`, no gitlinks,
+no publish/tag/release ni bump hasta cumplir el GO condicionado de cierre. La
+preparación de este sprint no lanza agentes; se asienta en un único commit de
+gobierno y no hace push.
+
+### Ola 1 · paralela, sin solapamiento de archivos
+
+- ⬜ **WP-22 · revisión adversarial selectiva + campos de riesgo** —
+  contrato read-only independiente; campos de BRIEF/reporte; PASS o
+  devolución numerada antes de aceptación en clases de riesgo.
+  Contrarrevisión independiente obligatoria para este WP.
+  **Brief:** `plan/BRIEFS/WP-22-revision-adversarial-campos-riesgo.md`.
+- ⬜ **WP-23 · pulso idle + fixes retroactivos + salida dual del vigía** —
+  residuos de gates, candidatos y propuesta de olas vía custodio; no escribir
+  BACKLOG; gate post-merge separado de contrarrevisión. Toda salida al
+  custodio lleva cara PO en llano seguida de handoff scrum copiable para el
+  orquestador. Contrarrevisión independiente obligatoria para este WP.
+  **Brief:** `plan/BRIEFS/WP-23-pulso-idle-fixes-retroactivos.md`.
+- ⬜ **WP-24 · gate semver + dependencias directas + probes** — políticas
+  `exact`, `caret-semver` y `major-band: >=M.m.p <(M+1).0.0`; warning
+  `0.x`; gate local determinista separado de C8 online; probes
+  automatizados. Contrarrevisión independiente obligatoria.
+  **Brief:** `plan/BRIEFS/WP-24-gate-semver-dependencias-probes.md`.
+
+### Ola 2 · secuencial post Ola 1
+
+- ⬜ **WP-25 · integración revisión/semver/idle en el método** — empieza
+  tras WP-22…24 aceptados; enlaza las entregas en ciclo/roles/SKILL sin
+  duplicarlas e integra el handoff dual bidireccional con vigilancia.
+  Contrarrevisión independiente obligatoria.
+  **Brief:**
+  `plan/BRIEFS/WP-25-integracion-metodo-revision-semver-idle.md`.
+
+### Release
+
+**GO end-to-end condicionado para 0.10.0**: ampliación funcional compatible y
+cambio de contrato de método, por lo que corresponde minor desde 0.9.0
+(DC-22). No se ejecuta aún. Solo después de WP-22…25 ✅ e integrados, higiene,
+gates/ceguera y `Rn-LIB` final PASS se habilitan bump/CHANGELOG, tag, workflow
+de Release, publish y C8. Consumo externo y gitlinks quedan fuera de alcance.

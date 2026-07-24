@@ -167,6 +167,22 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   formatos mixtos y falla ruidosamente si encuentra un `WP-` que no puede
   interpretar. Evidencia: `WP-18` en tip de obra `ec86019`, ya integrado en
   `origin/main` @ `eb64459`. No se omiten WPs en silencio.
+- **DC-26 · Salida dual sin fusionar skills (WP-23/WP-25).** Se reconcilia
+  el mandato encolado en
+  `C:\S\scriptorium\plan\SPRINTS\PRUEBA-DE-DOS\APERTURA-APOLO.md` (fila d)
+  con el patrón ya publicado por `estacion-viva` y la frontera de WP-19.
+  `vigilancia` y `estacion-viva` siguen separados (DA-S20): WP-23 amplía
+  todos los informes del vigía con cara PO en llano + handoff scrum
+  copiable; WP-25 integra el intercambio con el orquestador por referencia.
+  No se abre otro WP porque los propietarios de archivo ya son disjuntos y
+  el alcance es parte directa del protocolo idle y de su integración.
+- **DC-27 · Release objetivo 0.10.0 con GO condicionado.** Desde la versión
+  publicada 0.9.0, WP-22…25 amplían de forma compatible el contrato de
+  método; DC-22 exige al menos minor, por lo que el corte propuesto y
+  autorizado es **0.10.0**. El GO end-to-end solo se activa tras aceptación
+  e integración de los cuatro WPs, higiene, gates/ceguera y `Rn-LIB` final
+  PASS. En esta preparación no se ejecutan bump, CHANGELOG, tag, workflow,
+  publish, C8 remoto, consumo externo ni gitlinks.
 
 ## Abiertas
 
