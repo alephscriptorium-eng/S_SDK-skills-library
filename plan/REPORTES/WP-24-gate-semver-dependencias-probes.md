@@ -5,13 +5,15 @@
 | agente | worker fresco independiente WP-24 |
 | fecha | 2026-07-24 |
 | rama | `wp/24-gate-semver-dependencias-probes` |
-| commits | `5e8a6be`, `bb6181b`, `429d1c9`, `d88d468`, `5b5c90f`, `7c7ec29` + commit documental de esta corrección |
+| base viva | `2464a6d` |
+| merge-base (`main`/`HEAD`) | `2464a6d` |
+| commits alcanzables | `af631a1`, `c349070`, `14a7f31`, `b5047a7`, `e6ff017`, `0242cb2`, `2e56fc7` + commit documental post-rebase |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
 
-Se corrigieron los siete puntos de la devolución en `d88d468`.
+Se corrigieron los siete puntos de la devolución en `b5047a7`.
 El parser valida prerelease numérico y compara majors con `BigInt`; los
 built-ins `node:` se reconocen mediante Node.
 El gate descubre imports recorriendo `runtimeRoots`, contrasta el inventario,
@@ -110,7 +112,7 @@ raiz: /c/S_LAB/skills-library-wp-24/skills/swarm-orquestacion
 $ git log -p -- <rutas WP-24> | rg -q -i -e "$PATTERN"
 ceguera historial: 0
 
-$ git diff --name-only 71e446a..HEAD
+$ git diff --name-only 2464a6d...HEAD
 plan/REPORTES/WP-24-gate-semver-dependencias-probes.md
 skills/swarm-orquestacion/examples/fixture-semver/cases.json
 skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/dependencias-semver.json
@@ -137,8 +139,8 @@ configuración, fuente y runner propios; ejecutó el CLI con PASS.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 figura `⏳ sin verificar`.
 - [x] Eje(s) aplicables evidenciado(s): III, IV, ceguera de árbol y regla 14.
 - [x] Gates ejecutados de verdad: sintaxis, 32/32 probes, segundo cliente y ceguera.
-- [x] Commits convencionales: correcciones `d88d468` y `7c7ec29`; reportes separados.
-- [x] Diff solo del alcance del WP: confirmado contra `71e446a`; sin BACKLOG, roles, ciclo ni SKILL.
+- [x] Commits convencionales: correcciones `b5047a7` y `0242cb2`; reportes separados.
+- [x] Diff solo del alcance del WP: confirmado con `2464a6d...HEAD`; sin BACKLOG, roles, ciclo ni SKILL.
 
 ## Hallazgos fuera de alcance
 
