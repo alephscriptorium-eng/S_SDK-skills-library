@@ -89,6 +89,9 @@ antes de aceptación.
 5. El GO condicionado no autoriza consumidores ni gitlinks.
 6. WP-26 permanece futuro e independiente: no forma parte de las olas, del
    gate ni del release 0.10.0 de este sprint.
+7. Tras publish + C8 exacto de 0.10.0, entregar el gate forward
+   `z-sdk-backlog-u145`; no adelantarlo ni convertir su ejecución downstream
+   en precondición del release.
 
 ## Gates y CA comunes
 
@@ -156,6 +159,78 @@ Ownership sin WP adicional:
 La calibración local de este mundo reconoce como downstream read-only las
 rutas que casen por segmentos con `scriptorium/codebase/<algo>`. La ruta
 concreta no viaja a ninguna cara copiable o pública.
+
+## Gate forward post-release · gobierno local
+
+Identificador estable:
+**[z-sdk-backlog-u145](file:///C:/S_LAB/z-sdk/plan/BACKLOG.md)**. Deriva del
+ID real **WP-U145**, punto de adopción de la dependencia registry en el
+backlog Z; **WP-U147** define el sync del runner y **D-36** la política hoy
+vigente (`0.x`, resolución efectiva por lock). Se apunta a esas fuentes: no se
+copian, no se reabren y no se inventa un WP Z desde LIB.
+
+Semántica:
+
+- **Prerequisito:** Release/Publish de LIB verde y C8 exacto
+  `@alephscript/skills-scriptorium@0.10.0` contra el registry.
+- **Entonces:** el custodio entrega el handoff siguiente y solicita/inicia
+  `R12-Z`.
+- **Autoridad:** el mensaje no concede GO en Z. Z permanece IDLE hasta que su
+  propio custodio/vigilante emita `R12-Z` y autorice lo que corresponda.
+- **No bloquea:** bump, tag, publish o C8 de LIB 0.10.0; tampoco WP-26.
+- **Sí bloquea:** declarar `IDLE sin pendientes` post-release antes de
+  entregar el aviso. El resultado downstream se registra como evidencia del
+  gate forward y no revierte el release LIB ya verificado.
+- **Frontera:** no cherry-pick, no editar/operar Z desde LIB, no duplicar
+  WP-23/WP-25/WP-26/DC-28. La política semver efectiva se toma del resultado
+  integrado de este sprint y se reconcilia bajo el gobierno Z.
+
+### Handoff copy/paste · custodio → Z
+
+```text
+GATE FORWARD LIB 0.10.0 → Z
+
+FUENTES
+- LIB: C:\S_LAB\skills-library\plan\SPRINTS\REVISION-SEMVER-IDLE\PLAN.md
+- Z backlog: C:\S_LAB\z-sdk\plan\BACKLOG.md
+- Enlace estable: z-sdk-backlog-u145 (WP-U145; continuidad WP-U147; política D-36)
+- Paquete requerido: @alephscript/skills-scriptorium@0.10.0
+
+AUTORIDAD
+1. Solicitar/iniciar R12-Z al custodio/vigilante propio de Z.
+2. Mantener Z IDLE y sin GO operativo hasta que ese gate sea emitido.
+3. No cherry-pick desde LIB ni intervenir otro carril.
+
+RESOLUCIÓN
+1. Verificar el artefacto exacto:
+   npm view @alephscript/skills-scriptorium@0.10.0 --registry=https://npm.scriptorium.escrivivir.co version
+   Resultado requerido: 0.10.0, exit 0.
+2. Leer la política semver integrada por WP-24/WP-25 en LIB y reconciliarla
+   con C:\S_LAB\z-sdk\plan\DECISIONES.md D-36.
+3. Declarar el rango permitido y resolver el lock exactamente a 0.10.0 usando
+   <según package manager/gate de z-sdk>. No usar latest ni aceptar otra
+   versión resuelta.
+
+INTEGRACIÓN
+1. Ejecutar:
+   npm run skills:sync
+   npm run gates
+2. Ejecutar <tests de integración de z-sdk que cubran vigilancia,
+   swarm-orquestacion, materialización del runner y política semver>.
+3. Si el diff activa CI, obtener run_id + conclusion mediante el canal
+   canónico de Z; si aplica paths-ignore, registrar N/A sin inventar verde.
+
+DEVOLUCIÓN
+- gate: R12-Z <PASS|FAIL|HOLD>
+- versión declarada: <rango>
+- versión resuelta en lock: <debe ser 0.10.0>
+- npm view exacto: <salida + exit>
+- tests ejecutados: <comando → exit/conclusión>
+- run_ids: <id + conclusion, o N/A justificado>
+- diff/commit Z: <rutas + hash, si hubo mutación autorizada>
+- destinatario: <LIB o custodio, según contrato emitido por R12-Z>
+- bloqueos/residuos: <evidencia literal; sin promesas>
+```
 
 ## Gate vigente antes de despacho
 
@@ -267,6 +342,9 @@ Secuencia:
 6. Pedir gate post-merge `Rn-LIB` al vigilante propio de este repo.
 7. Con PASS final y checklist completa, ejecutar el corte 0.10.0 y verificar
    C8; no adelantar ninguna interacción remota durante la preparación.
+8. Solo después del C8 exacto, entregar el gate forward post-release definido
+   en el gobierno local; no tratar su ejecución externa como bloqueo del
+   publish ya verificado.
 
 Usa los briefs `plan/BRIEFS/WP-22-*.md` a `WP-25-*.md`. Solo el orquestador
 edita BACKLOG. No mezcles este carril con rondas de otros mundos.

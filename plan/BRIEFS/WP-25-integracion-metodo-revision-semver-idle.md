@@ -67,6 +67,12 @@ Notas del orquestador:
   separada.
 - Verificar que campos de BRIEF/reporte, dependencia directa y probes
   automatizados quedan exigidos en los puntos correctos.
+- Verificar por referencia, sin copiarlo a la cara FOSS, el gate forward
+  post-release `z-sdk-backlog-u145` definido en
+  `plan/SPRINTS/REVISION-SEMVER-IDLE/PLAN.md`: solo se entrega tras publish +
+  C8 exacto de 0.10.0, solicita R12-Z sin conceder GO externo y exige retorno
+  de versión resuelta, tests y run-ids/N/A justificado. WP-25 no edita, opera
+  ni reabre el backlog downstream.
 - No cambiar package version, CHANGELOG ni workflows de release dentro de
   este WP. La versión autorizada para el cierre posterior es 0.10.0,
   condicionada a integración completa, higiene, gates/ceguera y `Rn-LIB`

@@ -418,6 +418,32 @@ cambio de contrato de método, por lo que corresponde minor desde 0.9.0
 gates/ceguera y `Rn-LIB` final PASS se habilitan bump/CHANGELOG, tag, workflow
 de Release, publish y C8. Consumo externo y gitlinks quedan fuera de alcance.
 
+### Gate forward post-release · pendiente
+
+- ⬜ **GF-0.10.0-Z · aviso de consumo tras registry/C8 verde** —
+  **[z-sdk-backlog-u145](file:///C:/S_LAB/z-sdk/plan/BACKLOG.md)** apunta al
+  backlog real del consumidor, ancla estable **WP-U145** (dependencia
+  registry), con continuidad en **WP-U147** (`skills:sync`) y política vigente
+  **D-36** (`0.x`; versión efectiva en lock). No reabre esos WPs ni crea un WP
+  de implementación en LIB.
+  **Disparo:** únicamente cuando
+  `@alephscript/skills-scriptorium@0.10.0` esté publicado y C8 haya verificado
+  que el registry resuelve exactamente `0.10.0`.
+  **Acción obligatoria del orquestador/custodio LIB:** entregar el bloque
+  copy/paste de
+  `plan/SPRINTS/REVISION-SEMVER-IDLE/PLAN.md` §Gate forward post-release al
+  custodio para solicitar/iniciar **R12-Z**; Z permanece IDLE y sin GO
+  operativo hasta que su propio custodio/vigilante emita ese gate.
+  **Evidencia de cierre del gate forward:** versión resuelta `0.10.0`, tests de
+  integración relevantes, run-ids/conclusiones aplicables y destinatario de
+  devolución asentados por el custodio. La ejecución ocurre en Z bajo su
+  gobierno; LIB solo apunta y recibe la evidencia, no contiene ni opera su
+  backlog.
+  **No bloquea:** bump, tag, publish ni C8 de LIB 0.10.0.
+  **Sí bloquea:** declarar `IDLE sin pendientes` post-release sin haber
+  entregado el handoff; un HOLD/FAIL posterior de Z no invalida ni revierte el
+  release ya verificado de LIB.
+
 ## Futuro posterior a REVISION-SEMVER-IDLE
 
 - ⬜ **WP-26 · rescatar skill runtime prueba-de-dos** — port manual de obra
