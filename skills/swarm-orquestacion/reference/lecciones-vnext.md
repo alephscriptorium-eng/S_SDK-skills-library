@@ -111,7 +111,9 @@ separación pre/post-merge. Para el Eje IV ejercita dos consumidores
 independientes de esta integración: el rol orquestador y el cliente
 worker/ciclo. Mutantes eliminan salida dual, estación, calibración y orden
 PASS→boot; otros eliminan LOCK o adelantan efectos al bloqueo. Los once deben
-quedar rechazados.
+quedar rechazados. Un mutante adicional recorta boot/handoff solo de la
+cláusula de cero efectos; el probe valida esa cláusula aislada, no menciones
+globales.
 
 ```bash
 awk '/^```js integracion-metodo-probe$/{on=1;next} /^```$/{if(on) exit} on' \
@@ -168,8 +170,18 @@ const requiredZeroEffects = [
   "handoff",
   "OUT_DIR",
 ];
+const extractFailClosedClause = (text, label) => {
+  const matches = [
+    ...text.matchAll(
+      /LOCK identidad-raiz`?[\s\S]{0,240}?cero efectos:\s*([\s\S]{0,300}?)`OUT_DIR`/g,
+    ),
+  ];
+  if (matches.length !== 1) {
+    throw new Error(`${label}: cláusula fail-closed única no encontrada`);
+  }
+  return `${matches[0][1]}OUT_DIR`.replace(/\s+/g, " ");
+};
 const validateIdentityBeforeStation = (text, label, requireBootReference) => {
-  const normalized = text.replace(/\s+/g, " ");
   for (const field of requiredCalibration) {
     if (!text.includes(field)) throw new Error(`${label}: falta ${field}`);
   }
@@ -192,10 +204,16 @@ const validateIdentityBeforeStation = (text, label, requireBootReference) => {
   ) {
     throw new Error(`${label}: falta LOCK fail-closed explícito`);
   }
+  const failClosedClause = extractFailClosedClause(text, label);
+  let effectCursor = -1;
   for (const effect of requiredZeroEffects) {
-    if (!normalized.includes(effect)) {
-      throw new Error(`${label}: cero efectos no cubre ${effect}`);
+    const effectIndex = failClosedClause.indexOf(effect);
+    if (effectIndex <= effectCursor) {
+      throw new Error(
+        `${label}: cláusula de cero efectos no cubre en orden ${effect}`,
+      );
     }
+    effectCursor = effectIndex;
   }
 };
 const dualSection = (text) =>
@@ -320,6 +338,11 @@ expectRejection("orquestador-con-efectos-antes-del-bloqueo", () =>
       failClosedOrder,
       "DETECTOR → EFECTOS → PASS|LOCK",
     ),
+  ),
+);
+expectRejection("clausula-sin-boot-handoff", () =>
+  validateOrchestrator(
+    orchestrator.replace("boot, handoff ni `OUT_DIR`", "`OUT_DIR`"),
   ),
 );
 
