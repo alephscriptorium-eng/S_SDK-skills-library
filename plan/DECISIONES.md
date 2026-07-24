@@ -203,6 +203,22 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   **alcance sin definir**. No es WP hasta que el custodio fije qué resetea
   (versionado, estructura, o solo el número). Registrar aquí para que no se
   pierda.
+- **INT-Z-01 · contrato de pulso ONCE — `<pendiente de decisión>`.**
+  ¿`ONCE=1` directo debe refrescar `pulso.txt`, o esa garantía pertenece solo
+  a `pulso-mundo.sh`? Sin contrato fijado y reproducción no se confirma bug.
+- **INT-Z-02 · liveness watcher cross-platform —
+  `<pendiente de decisión>`.** ¿Qué señal portable acredita liveness y qué
+  plataformas forman el contrato cuando PID y ticks divergen?
+- **INT-Z-03 · sucesión de vigía v2 — `<pendiente de decisión>`.**
+  ¿Qué piezas del patrón «gorro» son obligatorias y cómo se distingue una
+  ancla activa reproducible de una histórica inerte?
+- **INT-Z-04 · identidad en commits de gobierno —
+  `<pendiente de decisión>`.** ¿Qué placeholders y flujos debe advertir un
+  check opt-in, sin bloquear, cambiar `git config` ni reescribir historia?
+
+Estas preguntas no son decisiones cerradas ni conceden GO. Alcance, evidencia,
+criterios de promoción, solapes y fronteras:
+`plan/REPORTES/ADDENDA-INTAKE-Z-2026-07-25.md`.
 
 _(Resueltas: DA-1/DA-2 → DC-16/DC-17; DA-3/DA-4 → DC-4/DC-5;
 DC-22..24 ratificadas por GO 2026-07-20.)_

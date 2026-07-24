@@ -476,3 +476,50 @@ gobierno y no hace push.
   no está autorizado para despacho por R5-LIB de este sprint.
   **Release:** independiente y fuera de 0.10.0; no bloquea ese corte.
   **Brief:** `plan/BRIEFS/WP-26-rescatar-skill-runtime-prueba-de-dos.md`.
+
+## Intake de feedback — candidatos no autorizados (2026-07-25)
+
+Estos IDs son anclas estables de intake, **no WPs** y no usan estados
+⬜/🔶/✅. El archivo del feedback no concede GO: la obra permanece **IDLE**.
+Fuente y deduplicación:
+`plan/REPORTES/ADDENDA-INTAKE-Z-2026-07-25.md`.
+
+- **INT-Z-01 · contrato de pulso ONCE** — `<pendiente de decisión>`.
+  **Naturaleza:** bug probable / hipótesis. **Alcance probable:**
+  `estacion-viva` (`watcher-sesion.sh`, `pulso-mundo.sh`, `pulso.txt`).
+  **Evidencia:** sello `2026-07-23T18:44:49Z` y diferencia observada
+  `skills_mat=6` vs `8`; no reproducida. **Promover solo si:** el custodio
+  fija que `ONCE=1` directo promete refrescar `pulso.txt` y una reproducción
+  literal prueba el incumplimiento. **Solape:** afinidad con WP-23, sin
+  reabrirlo. **Pregunta:** ¿esa garantía pertenece a `ONCE=1` directo o solo
+  a `pulso-mundo.sh`?
+- **INT-Z-02 · liveness watcher cross-platform** —
+  `<pendiente de decisión>`. **Naturaleza:** anomalía cross-platform.
+  **Alcance probable:** `estacion-viva` + `vigilancia`. **Evidencia:**
+  `watcher.pid=4627` no verificable con ticks frescos; no demuestra proceso
+  muerto. **Promover solo si:** hay caso reproducible por plataforma y se
+  decide la señal canónica de liveness. **Solape:** BOOT/WATCHER exigen PID
+  vivo; WP-23 no cubre esta divergencia. **Pregunta:** ¿qué señal portable y
+  qué plataformas forman el contrato?
+- **INT-Z-03 · sucesión de vigía v2 («gorro»)** —
+  `<pendiente de decisión>`. **Naturaleza:** wishlist / protocolo.
+  **Alcance probable:** `swarm-orquestacion` + `vigilancia`. **Evidencia:**
+  la sucesión básica ya existe en `lecciones-vnext.md`; faltan handoff
+  volátil, Q&A, herencia explícita de anomalías, rol temporal con origen y
+  anclas activas frente a históricas. `R13-Z` aportó un FAIL documental por
+  residuo de plantilla en sello. **Promover solo si:** el custodio acepta y
+  delimita las piezas obligatorias del patrón. **Solape:** ampliación de la
+  sucesión existente, no reapertura de WP-23. **Pregunta:** ¿qué piezas son
+  obligatorias y cómo se marca una ancla histórica inerte?
+- **INT-Z-04 · guard de identidad en commits de gobierno** —
+  `<pendiente de decisión>`. **Naturaleza:** wishlist / protocolo.
+  **Alcance probable:** preflight opt-in de `swarm-orquestacion`.
+  **Evidencia:** `3bec18a`, `b348c59`, `46c3e5c` atribuidos a
+  `Your Name <you@example.com>`. **Promover solo si:** se define el conjunto
+  de placeholders, los flujos alcanzados y warning opt-in. **Solape:**
+  WP-23/WP-25/DC-28 validan raíz, no autoría. **Pregunta:** ¿qué placeholders
+  advertir y en qué punto del flujo, sin bloquear, cambiar git config ni
+  reescribir historia?
+
+Cross-reference cerrado: **DA-S17 → WP-18 / DC-25**; el consumidor proyectó
+`0 WPs`. No reabrir ni duplicar por defecto.
