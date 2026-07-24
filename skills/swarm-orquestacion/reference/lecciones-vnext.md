@@ -113,7 +113,8 @@ worker/ciclo. Mutantes eliminan salida dual, estación, calibración y orden
 PASS→boot; otros eliminan LOCK o adelantan efectos al bloqueo. Los once deben
 quedar rechazados. Un mutante adicional recorta boot/handoff solo de la
 cláusula de cero efectos; el probe valida esa cláusula aislada, no menciones
-globales.
+globales. Tres mutantes temporales sustituyen «antes» por «después» en cada
+consumidor y también deben quedar rechazados.
 
 ```bash
 awk '/^```js integracion-metodo-probe$/{on=1;next} /^```$/{if(on) exit} on' \
@@ -170,6 +171,14 @@ const requiredZeroEffects = [
   "handoff",
   "OUT_DIR",
 ];
+const temporalBefore = {
+  orquestador:
+    "antes de cualquier `mkdir`, escritura, watcher, git mutable, edición de plan, rama o worktree, ejecutar el detector canónico",
+  worker:
+    "antes de cualquier `mkdir`, escritura, watcher o git mutable, ejecutá el preflight canónico de identidad",
+  ciclo:
+    "ejecutar, antes de cualquier efecto, el preflight canónico de identidad",
+};
 const extractFailClosedClause = (text, label) => {
   const matches = [
     ...text.matchAll(
@@ -191,6 +200,15 @@ const validateIdentityBeforeStation = (text, label, requireBootReference) => {
   const boot = text.indexOf("BOOT.md", pass);
   if (detector < 0 || pass <= detector || station <= pass) {
     throw new Error(`${label}: orden detector→PASS→estacion inválido`);
+  }
+  const normalized = text.replace(/\s+/g, " ").toLowerCase();
+  const normalizedDetector = normalized.indexOf("verificar-identidad-raiz.mjs");
+  const temporalContext = normalized.slice(
+    Math.max(0, normalizedDetector - 320),
+    normalizedDetector,
+  );
+  if (!temporalContext.includes(temporalBefore[label])) {
+    throw new Error(`${label}: detector/PASS no preceden el primer efecto`);
   }
   if (requireBootReference && boot <= pass) {
     throw new Error(`${label}: BOOT puede invocarse sin PASS previo`);
@@ -343,6 +361,32 @@ expectRejection("orquestador-con-efectos-antes-del-bloqueo", () =>
 expectRejection("clausula-sin-boot-handoff", () =>
   validateOrchestrator(
     orchestrator.replace("boot, handoff ni `OUT_DIR`", "`OUT_DIR`"),
+  ),
+);
+expectRejection("orquestador-despues-de-mkdir", () =>
+  validateOrchestrator(
+    orchestrator.replace(
+      "antes de cualquier `mkdir`",
+      "después de cualquier `mkdir`",
+    ),
+  ),
+);
+expectRejection("worker-despues-de-mkdir", () =>
+  validateWorkerCycle(
+    worker.replace(
+      "Antes de cualquier `mkdir`",
+      "Después de cualquier `mkdir`",
+    ),
+    ciclo,
+  ),
+);
+expectRejection("ciclo-despues-de-efecto", () =>
+  validateWorkerCycle(
+    worker,
+    ciclo.replace(
+      "antes de cualquier efecto",
+      "después de cualquier efecto",
+    ),
   ),
 );
 
