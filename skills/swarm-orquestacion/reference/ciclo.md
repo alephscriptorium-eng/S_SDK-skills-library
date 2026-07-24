@@ -5,26 +5,53 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
 
 ## 1. Preparación (orquestador)
 
-1. Ritual de inicio (`ORQUESTADOR.md`).
-2. Si el ecosistema es multi-carril: gate de convivencia
+1. Ejecutar, antes de cualquier efecto, el preflight canónico de identidad de
+   `../../vigilancia/reference/ESTACION.md` con su detector
+   `../../vigilancia/scripts/verificar-identidad-raiz.mjs`. El orquestador
+   exige y adjunta al despacho `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`,
+   `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; la plantilla base del brief no
+   los sustituye. Orden obligatorio: `DETECTOR → PASS|LOCK → EFECTOS`. Solo
+   `identidad-raiz: PASS` permite continuar. Entrada ausente o
+   `LOCK identidad-raiz` se devuelve al custodio con cero efectos: no `mkdir`,
+   escritura, watcher, git mutable, plan, rama, worktree, boot, handoff ni
+   `OUT_DIR`; el orquestador no crea ni elige otro clone.
+2. Ritual de inicio (`ORQUESTADOR.md`).
+3. Si el ecosistema es multi-carril: gate de convivencia
    (`reference/convivencia-multi-orquestador.md` — fuente única): higiene
    pre-despacho §8 + `Rn-<carril>` PASS §3. Sin PASS, no hay lote.
-3. Elegir lote paralelizable (dependencias, dirs que no se pisen; un
+4. Elegir lote paralelizable (dependencias, dirs que no se pisen; un
    territorio por orquestador).
-4. En la rama principal del **carril**: BACKLOG ⬜→🔶 por cada WP del lote.
-5. Rellenar un BRIEF por WP (eje(s) aplicables, `ALCANCE_DIFF`, worktree).
+5. En la rama principal del **carril**: BACKLOG ⬜→🔶 por cada WP del lote.
+6. Rellenar un BRIEF por WP (eje(s), `ALCANCE_DIFF`, worktree y los campos
+   de riesgo definidos en `reference/revision-adversarial.md`).
    REPORTES/BRIEFS bajo el sprint del carril (convivencia §5).
+7. Si el arranque continúa mediante `estacion-viva`, ejecutar primero el
+   detector con las cuatro entradas y conservar su PASS. Solo entonces se
+   construye o entrega el handoff y se invoca
+   `../../estacion-viva/reference/BOOT.md` o su script. Su fase 1 puede crear
+   `OUT_DIR`; por eso LOCK impide boot, handoff y cualquier efecto.
 
 ## 2. Ejecución (worker)
 
 1. Checkout / worktree según brief.
 2. Lectura obligatoria (PRACTICAS, WP, VISION, zona).
 3. Implementar solo el CA (+ ejes).
-4. Gates verdes; auto-revisión; reporte en la rama del WP.
-5. Parar. Sin BACKLOG. Sin merge. Sin push salvo que el mundo lo autorice
+4. Verificar dependencias runtime directas y probes exigidos. Si aplica
+   política semver, usar `reference/politica-dependencias-semver.md`: el gate
+   local determinista y C8 online generan evidencias separadas.
+5. Gates verdes; auto-revisión; reporte con campos de riesgo, casos,
+   dependencias, instalación y tipo de evidencia en la rama del WP.
+6. Parar. Sin BACKLOG. Sin merge. Sin push salvo que el mundo lo autorice
    explícitamente para ese entregable.
 
-## 3. Revisión (orquestador)
+## 3. Contrarrevisión selectiva pre-aceptación
+
+Aplicar `reference/revision-adversarial.md`. Riesgo `normal` pasa directamente
+a revisión ordinaria. Riesgo `independiente` exige un revisor distinto,
+read-only, que intente refutar CA y emita PASS o devolución numerada. Sin PASS,
+el WP no puede aceptarse. El revisor no acepta ni mergea.
+
+## 4. Revisión ordinaria y aceptación (orquestador)
 
 1. `REVISION.md` + reporte + diff.
 2. Verificar CA y eje(s).
@@ -36,11 +63,18 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
    mismo commit (V2 — `reference/reglas-metodo-v03.md`).
 4. Devuelto → comentarios numerados; mismo worker con `CORRECCION.md`.
 
-## 4. Corrección
+## 5. Corrección
 
 Misma rama; solo lo pedido; actualizar reporte a `devuelto-corregido`.
 
-## 5. Cierre de ola (orquestador)
+## 6. Merge y gate post-merge
+
+Tras aceptar, mergear y ejecutar el gate `Rn-<carril>` sobre el tip integrado.
+Ese gate verifica el estado de facto y no sustituye ni queda sustituido por la
+contrarrevisión pre-aceptación. Un fallo post-merge se devuelve numerado como
+incidencia del tip integrado; no fabrica un PASS pre-merge retroactivo.
+
+## 7. Cierre de ola (orquestador)
 
 Antes de declarar la ola cerrada, ejecutar el checklist de
 `reference/reglas-metodo-v05.md`: stash vacío · `plan/` limpio · ramas
@@ -51,12 +85,12 @@ sesión (solo config funcional) y memoria interna no citada como fuente
 repo tocado (regla 16)** · **si hubo proyección: sync-map post-apply, sin
 IDs especulativos (regla 17)**.
 
-## 6. Activación de mundo (regla 13)
+## 8. Activación de mundo (regla 13)
 
 La activación la ejecuta un agente **fresco** (solo conoce el skill).
 No reutilizar un agente con contexto del marco.
 
-## 7. Ceguera (regla 14)
+## 9. Ceguera (regla 14)
 
 Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 `git log -p` sobre el historial reachable. Medir con `grep -c` /
@@ -85,6 +119,12 @@ Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 | Despacho multi-carril sin `Rn-<carril>` PASS | Convivencia §3 + §8 |
 | E2E vía checkout raíz de territorio ajeno | Convivencia §7 (registry / scratch / post-gate) |
 | Push de gobierno con `index.lock` sostenido | Convivencia §9: freeze de **ambos** carriles |
+| Mutar antes de acreditar la raíz canónica | Detector de `vigilancia` → PASS o LOCK sin efectos |
+| Invocar boot/handoff de estación antes del PASS | LOCK; ni fase 1 ni `OUT_DIR` |
+| Tratar PASS adversarial como aceptación | `revision-adversarial.md`: el orquestador acepta |
+| Usar contrarrevisión como gate post-merge | Dos barreras y dos evidencias distintas |
+| Presentar gate semver local como C8 | `politica-dependencias-semver.md`: evidencia separada |
+| Vigía escribe BACKLOG durante idle | Addenda dual al custodio; decide el orquestador |
 
 ## Señal de worker vivo
 

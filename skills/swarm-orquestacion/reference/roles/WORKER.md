@@ -28,15 +28,44 @@ uno: la asignación es del orquestador.
 
 ## Ciclo (no te saltes pasos)
 
-1. Sitúate en rama/worktree del brief.
-2. Implementa **solo** el WP + lo que exija su CA (incluidos ejes aplicables).
-3. Commits convencionales.
-4. Verde local: gates/validadores que exija el CA.
-5. **Para.** Auto-revisión: relee el diff completo contra PRACTICAS.
-6. Crea el reporte desde la plantilla de reporte (en tu rama).
-7. **Para aquí.** Sin BACKLOG, sin merge a la rama principal: el
+1. Confirmá que ya estás en la rama/worktree declarada, sin mutar.
+2. Antes de cualquier `mkdir`, escritura, watcher o git mutable, ejecutá el
+   preflight canónico de identidad de
+   `../../../vigilancia/reference/ESTACION.md` mediante
+   `../../../vigilancia/scripts/verificar-identidad-raiz.mjs`. El despacho
+   debe adjuntar `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y
+   `DOWNSTREAM_PATTERNS`; si falta cualquiera, pará con LOCK aunque la
+   plantilla base del brief no incluya esos campos. Solo
+   `identidad-raiz: PASS` permite continuar. Orden obligatorio:
+   `DETECTOR → PASS|LOCK → EFECTOS`. `LOCK identidad-raiz` se reporta al
+   custodio con cero efectos: no `mkdir`, escritura, watcher, git mutable,
+   plan, rama, worktree, boot, handoff ni `OUT_DIR`; no crees ni elijas otro
+   clone.
+3. Implementa **solo** el WP + lo que exija su CA (incluidos ejes aplicables).
+4. Commits convencionales.
+5. Verde local: gates/validadores que exija el CA.
+6. **Para.** Auto-revisión: relee el diff completo contra PRACTICAS.
+7. Crea el reporte desde la plantilla de reporte (en tu rama).
+8. **Para aquí.** Sin BACKLOG, sin merge a la rama principal: el
    orquestador revisa y, **solo tras** ✅, mergea (merge solo
    post-aceptación).
+
+## Riesgo, dependencias y evidencia
+
+- El brief debe contener los cuatro campos exigidos por
+  `../revision-adversarial.md`. No reclasifiques el WP: riesgo `normal` sigue
+  la revisión ordinaria; riesgo `independiente` queda pendiente de un revisor
+  distinto y read-only.
+- El reporte registra casos adversariales, dependencias runtime directas,
+  instalación limpia o su no-aplicación, y separa pruebas automatizadas de
+  evidencia manual según `../plantilla-reporte.md`.
+- Si el WP carga runtime o cambia política de versión, aplicá
+  `../politica-dependencias-semver.md`: declarativas directas, probes verdes,
+  inválidos y falsos negativos. Gate local sin red y C8 online son evidencias
+  distintas; no conviertas `⏳ sin verificar` en PASS.
+- Un PASS de contrarrevisión no autoriza aceptación ni merge. El gate
+  post-merge pertenece al orquestador/vigía y no sustituye la barrera
+  pre-aceptación.
 
 ## Reglas duras
 
@@ -47,6 +76,11 @@ uno: la asignación es del orquestador.
 - WP mal especificado → **para** y repórtalo en §dudas/bloqueos.
 - **Prohibido** merge/FF de tu `wp/*` a la principal: eso es del
   orquestador **post-aceptación** (✅), nunca del worker.
+- No operes handoffs externos ni gates forward: solo citá la fuente local que
+  el brief indique y dejá cualquier trigger post-release al orquestador.
+- Si el WP consume `estacion-viva`, no invoques su boot, script ni fase 1 y no
+  crees `OUT_DIR` hasta que el preflight anterior haya emitido PASS. Un handoff
+  sin ese PASS se devuelve, no se completa por inferencia.
 
 ## Al terminar
 
