@@ -59,7 +59,9 @@ dependencia runtime al paquete ni depende transitivamente de un parser semver.
   también falla. Así, vaciar el array no puede fabricar un PASS.
 - Built-ins reconocidos por Node, incluidos `node:test`,
   `node:test/reporters` y `node:sqlite`, no requieren entrada en
-  `dependencies`. Un prefijo `node:` desconocido falla.
+  `dependencies`. El prefijo `node:` es obligatorio: formas bare como `fs`
+  o `path` fallan tanto si se descubren en fuentes como si aparecen en
+  `runtimeImports`. Un prefijo `node:` desconocido también falla.
 - Cada paquete externo del inventario debe estar en `dependencies` u
   `optionalDependencies`. Estar solo en `devDependencies`, en el lockfile o
   como transitiva falla.
@@ -124,6 +126,7 @@ script local.
 - banda con techo incorrecto;
 - prerelease numérico con cero inicial y majors fuera del entero seguro;
 - built-ins `node:` prefix-only y subpaths;
+- rechazo de built-ins bare en fuentes e inventario;
 - completitud del escaneo e inventario incompleto;
 - warning y test integrado ejecutado para `0.x`;
 - definición duplicada de un símbolo de contrato;

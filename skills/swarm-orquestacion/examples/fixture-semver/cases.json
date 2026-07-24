@@ -47,6 +47,25 @@
     "includes": ["OK: 0 dependencia(s)"]
   },
   {
+    "name": "built-in bare en fuentes rechazado",
+    "package": {},
+    "config": { "defaultPolicy": "exact" },
+    "source": "import 'fs';",
+    "exit": 1,
+    "includes": ["fs: import runtime inválido"]
+  },
+  {
+    "name": "built-in bare en inventario rechazado",
+    "package": {},
+    "config": {
+      "defaultPolicy": "exact",
+      "runtimeImports": ["fs"]
+    },
+    "source": "import 'node:fs';",
+    "exit": 1,
+    "includes": ["fs: runtimeImports contiene un localizador inválido"]
+  },
+  {
     "name": "versión no resuelta queda para C8",
     "package": { "dependencies": { "alpha": "999999.0.0" } },
     "config": { "defaultPolicy": "exact", "runtimeImports": ["alpha"] },

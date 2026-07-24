@@ -38,10 +38,10 @@ function failInput(message) {
 }
 
 function classifySpecifier(specifier) {
-  if (isBuiltin(specifier)) return { kind: 'builtin' };
   if (specifier.startsWith('node:')) {
-    return { kind: 'invalid' };
+    return isBuiltin(specifier) ? { kind: 'builtin' } : { kind: 'invalid' };
   }
+  if (isBuiltin(specifier)) return { kind: 'invalid' };
   if (
     specifier.startsWith('.') ||
     specifier.startsWith('/') ||
