@@ -1,6 +1,6 @@
 # Sprint · REVISION-SEMVER-IDLE
 
-Estado: **Ola 1 despachada: WP-22, WP-23 y WP-24 en curso**.
+Estado: **Ola 1 aceptada e integrada; WP-25 no despachado**.
 
 ## Autoridad (custodio · 2026-07-24)
 
