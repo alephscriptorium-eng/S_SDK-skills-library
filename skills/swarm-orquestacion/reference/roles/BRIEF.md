@@ -23,6 +23,10 @@ Notas del orquestador:
 - (conflictos con otros WPs en vuelo, orden de merge, excepciones de gates…)
 - ALCANCE_DIFF = …
 - MUNDO_RAIZ = …
+- RIESGO_REVISION: normal | independiente
+- MOTIVO_RIESGO: (clase y efecto verificable; justificar también `normal`)
+- CONTRAEVIDENCIA_REQUERIDA: (casos que intentarán refutar los CA)
+- REVISOR_DISTINTO_WORKER: no requerido | sí
 
 Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
 ```
@@ -35,3 +39,6 @@ Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
 - Declará el **eje** si el tipo de WP lo activa (extracción, demolición,
   auditoría, contrato, mediación con swarms ajenos).
 - Paralelismo: worktree distinto por worker; dirs de entrega que no se pisen.
+- Usá `../revision-adversarial.md` como fuente canónica única para clasificar
+  `RIESGO_REVISION` y validar los otros tres campos. Esta plantilla solo los
+  registra: no redefine clases, activadores ni excepciones.

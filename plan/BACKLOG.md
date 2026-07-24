@@ -368,7 +368,7 @@ gobierno y no hace push.
 
 ### Ola 1 · paralela, sin solapamiento de archivos
 
-- 🔶 **WP-22 · revisión adversarial selectiva + campos de riesgo** —
+- ✅ **WP-22 · revisión adversarial selectiva + campos de riesgo** —
   contrato read-only independiente; campos de BRIEF/reporte; PASS o
   devolución numerada antes de aceptación en clases de riesgo.
   Contrarrevisión independiente obligatoria para este WP.
