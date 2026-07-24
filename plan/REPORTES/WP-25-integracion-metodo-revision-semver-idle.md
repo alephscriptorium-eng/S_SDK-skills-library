@@ -276,3 +276,21 @@ Contrarrevisión independiente, fresca y read-only final:
 ## Veredicto: Aceptado ✅
 
 El orquestador acepta WP-25 para integración atómica tras el PASS definitivo.
+
+## Gate post-merge local
+
+Primera ejecución: **DEVUELTO** exclusivamente por higiene; la rama y el
+worktree WP-25 ya integrados seguían registrados.
+
+Tras verificar que estaban limpios, se removieron el worktree y la rama local.
+La repetición read-only sobre `main` produjo:
+
+```text
+R6-LIB POST-MERGE: PASS
+HEAD/main: f7248ec
+WP-25: ✅
+WP-26: ⬜
+C8 online: ⏳ sin verificar
+```
+
+Sin red, remotas, release, publish ni cambios sobre WP-26.

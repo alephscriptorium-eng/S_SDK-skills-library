@@ -1,6 +1,6 @@
 # Sprint · REVISION-SEMVER-IDLE
 
-Estado: **Ola 1 aceptada e integrada; WP-25 en curso**.
+Estado: **WP-22…WP-25 aceptados e integrados; R6-LIB local PASS**.
 
 ## Autoridad (custodio · 2026-07-24)
 
