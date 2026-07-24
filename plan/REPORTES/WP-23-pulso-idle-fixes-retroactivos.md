@@ -5,7 +5,9 @@
 | agente | worker fresco WP-23 |
 | fecha | 2026-07-24 |
 | rama | `wp/23-pulso-idle-fixes-retroactivos` |
-| commits de implementación | `274d39e`, `c2b0ffd`, `b0bbd75` |
+| base viva / merge-base | `2464a6d` / `2464a6d` |
+| commits alcanzables post-rebase | `ff52a39`, `dcd8e51`, `b4c13a0`, `c6e373b`, `508b3a7` |
+| corrección pre-integración | `891c1fc` |
 | eje(s) CA | III + ceguera + regla 14 |
 | riesgo de revisión | independiente |
 | estado propuesto | devuelto-corregido |
@@ -33,6 +35,12 @@ de contar marcadores: cuenta definiciones de símbolos efectivos y su
 co-localización. Un contra-probe copia el detector completo, elimina el
 comentario marcador y acredita que la copia se rechaza.
 
+La devolución pre-integración adicional mostró que una apertura de cuatro
+backticks podía cerrarse incorrectamente con tres. El parser conserva ahora
+tipo y longitud del opener y solo cierra con el mismo tipo y longitud igual o
+mayor. El contra-probe `parte-1-cercada-cierre-corto` reproduce exactamente el
+caso 4→3 y queda rechazado.
+
 ## Archivos tocados
 
 - Modificado `skills/vigilancia/README.md`: parámetros y gates locales.
@@ -51,7 +59,7 @@ comentario marcador y acredita que la copia se rechaza.
 - Creado `skills/vigilancia/scripts/probar-identidad-raiz.mjs`: nueve probes,
   siete LOCK con cero efectos.
 - Creado `skills/vigilancia/scripts/probar-salida-dual.mjs`: fixture verde y
-  dieciocho falsos negativos estructurales.
+  diecinueve falsos negativos estructurales.
 - Creado `skills/vigilancia/scripts/probar-dedup-contratos.mjs`: árbol verde
   y duplicado real sin marcador rechazado.
 - Creado `skills/vigilancia/scripts/verificar-dedup-contratos.mjs`: gate del
@@ -93,6 +101,7 @@ $ node skills/vigilancia/scripts/probar-salida-dual.mjs
 PASS fixture-pass-y-bloqueo
 RECHAZO sin-cara-wp: se requiere exactamente una cara §WP
 RECHAZO estructura-simulada-en-caja: la estructura dual no puede simularse dentro de una caja
+RECHAZO parte-1-cercada-cierre-corto: la estructura dual no puede simularse dentro de una caja
 RECHAZO una-sola-parte: se requiere exactamente una Parte 2
 RECHAZO parte-1-cercada: Parte 1 no puede estar cercada
 RECHAZO seccion-po-omitida: Parte 1 requiere exactamente Qué cambió→Qué sigue→Decisión del custodio
@@ -109,7 +118,7 @@ RECHAZO demasiadas-referencias-wp: Parte 1 contiene más de 2 referencias WP
 RECHAZO token-no-go: GO no es token completo en Parte 1
 RECHAZO token-checkmate: CHECK no es token completo en Parte 1
 RECHAZO token-bypass: PASS no es token completo en Parte 1
-salida-dual-probes: PASS (19 casos)
+salida-dual-probes: PASS (20 casos)
 
 $ for file in skills/vigilancia/examples/addenda-*.md; do node skills/vigilancia/scripts/verificar-salida-dual.mjs "$file" || exit 1; done
 salida-dual: PASS
@@ -148,10 +157,17 @@ raiz: /c/S_LAB/skills-library-wp-23/skills/vigilancia
 $ <búsqueda canónica por fragmentos sobre git log -p -- skills/vigilancia>
 ceguera-historial: 0
 
-$ git diff --check 71e446a..HEAD
+$ git rev-parse --short=7 main
+2464a6d
+
+$ git rev-parse --short=7 "$(git merge-base HEAD main)"
+2464a6d
+
+$ git diff --check 2464a6d..HEAD
 (sin salida; exit 0)
 
-$ git diff --name-only 71e446a..HEAD
+$ git diff --name-only 2464a6d..HEAD
+plan/REPORTES/WP-23-pulso-idle-fixes-retroactivos.md
 skills/vigilancia/README.md
 skills/vigilancia/SKILL.md
 skills/vigilancia/examples/addenda-idle-sintetica.md
@@ -159,12 +175,16 @@ skills/vigilancia/examples/addenda-multi-carril-lock.md
 skills/vigilancia/examples/addenda-sintetica.md
 skills/vigilancia/reference/ADDENDA-DOS-CARAS.md
 skills/vigilancia/reference/ESTACION.md
+skills/vigilancia/scripts/probar-dedup-contratos.mjs
 skills/vigilancia/scripts/probar-identidad-raiz.mjs
 skills/vigilancia/scripts/probar-salida-dual.mjs
 skills/vigilancia/scripts/verificar-dedup-contratos.mjs
 skills/vigilancia/scripts/verificar-identidad-raiz.mjs
 skills/vigilancia/scripts/verificar-salida-dual.mjs
 skills/vigilancia/scripts/watcher.sh
+
+$ git diff --name-only 2464a6d..HEAD | wc -l
+15
 ```
 
 Diagnósticos del editor sobre `skills/vigilancia`: `No linter errors found.`
@@ -182,14 +202,15 @@ Diagnósticos del editor sobre `skills/vigilancia`: `No linter errors found.`
   copiado íntegro sin comentario se rechaza con definiciones duplicadas.
 - [x] Ceguera de árbol e historial reachable: `0`.
 - [x] Propiedad positiva y falsos negativos automatizados: 9 probes de
-  identidad, 19 de salida dual y 2 de dedup.
+  identidad, 20 de salida dual y 2 de dedup.
 - [x] Casos bloqueados sin efectos: árbol y Git sin cambios, `OUT_DIR`
   ausente.
 - [x] Dependencia cargada = directa: solo built-ins de Node; ninguna
   dependencia nueva.
 - [x] Gate local determinista separado de C8 online: C8 no aplica a este WP.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
-- [x] Commits convencionales en castellano: `274d39e`, `c2b0ffd`, `b0bbd75`.
+- [x] Commits convencionales en castellano y alcanzables tras rebase:
+  `ff52a39`, `dcd8e51`, `b4c13a0`, `c6e373b`, `508b3a7`, `891c1fc`.
 - [x] Sin BACKLOG, swarm-orquestacion, remotas, merge ni release.
 
 ## Hallazgos fuera de alcance
