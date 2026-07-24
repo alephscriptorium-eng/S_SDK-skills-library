@@ -87,7 +87,7 @@ Este handoff no sustituye esas fuentes ni copia el backlog.
 - Acta de instancia:
   `C:\S_LAB\vigilancia\lib\handoffs\ACTA-DETENCION-DE-FACTO-LIB-2026-07-25.md`.
 - Último tick real:
-  `[2026-07-25 01:41:17] sesion=1 skills_mat=6 residuo_filtrado=0 locks=''`.
+  `[2026-07-25 01:42:03] sesion=1 skills_mat=6 residuo_filtrado=0 locks=''`.
 - PID `31668`: ausente tras fallback seguro limitado al proceso confirmado;
   `watcher.pid` retirado.
 - Tip inicial de la orden:
