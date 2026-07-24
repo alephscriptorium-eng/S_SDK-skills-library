@@ -49,12 +49,15 @@ FS regenerada desde el canónico en git.
 `WORLD_ROOT` es candidata, no prueba. Todo punto de entrada reutiliza el
 detector canónico y el LOCK sin efectos de
 `../../vigilancia/reference/ESTACION.md`; no duplica implementación ni
-calibración. El orden es PASS → mkdir/escritura/watcher/git mutable/plan/
+calibración. Cada despacho aporta explícitamente `WORLD_ROOT`,
+`CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; faltar una
+entrada es LOCK. El orden es PASS → mkdir/escritura/watcher/git mutable/plan/
 rama/worktree. Ante LOCK, el custodio aporta otra raíz; orquestador y worker no
 crean ni eligen clones.
 
-El handoff a estación viva conserva ese orden antes de su fase 1:
-`../../estacion-viva/reference/BOOT.md`.
+El handoff a estación viva conserva ese orden antes de invocar su boot, script
+o fase 1: `../../estacion-viva/reference/BOOT.md`. Como esa fase puede crear
+`OUT_DIR`, no se construye ni entrega el handoff sin PASS previo.
 
 ## 6 · Revisión selectiva y gate final
 
@@ -100,8 +103,11 @@ aviso, no concede GO downstream y no edita ni opera su backlog.
 ## Probe integrado
 
 Este probe ejecuta las fuentes canónicas en vez de recrearlas. Cubre PASS/LOCK
-sin efectos, salida dual inválida, selección normal/independiente, semver,
-segundo cliente y separación pre/post-merge.
+sin efectos, salida dual inválida, selección normal/independiente, semver y
+separación pre/post-merge. Para el Eje IV ejercita dos consumidores
+independientes de esta integración: el rol orquestador y el cliente
+worker/ciclo. Mutantes eliminan salida dual, estación, calibración y orden
+PASS→boot; todos deben quedar rechazados.
 
 ```bash
 awk '/^```js integracion-metodo-probe$/{on=1;next} /^```$/{if(on) exit} on' \
@@ -129,6 +135,66 @@ const run = (label, args, options = {}) => {
   }
   console.log(`${label}: PASS`);
   return result.stdout;
+};
+const expectRejection = (label, check) => {
+  try {
+    check();
+  } catch {
+    console.log(`mutante ${label}: RECHAZADO`);
+    return;
+  }
+  throw new Error(`mutante ${label}: ACEPTADO`);
+};
+const requiredCalibration = [
+  "WORLD_ROOT",
+  "CANONICAL_WORLD_ROOT",
+  "READ_ONLY_ROOTS",
+  "DOWNSTREAM_PATTERNS",
+];
+const validateIdentityBeforeStation = (text, label, requireBootReference) => {
+  for (const field of requiredCalibration) {
+    if (!text.includes(field)) throw new Error(`${label}: falta ${field}`);
+  }
+  const detector = text.indexOf("verificar-identidad-raiz.mjs");
+  const pass = text.indexOf("identidad-raiz: PASS", detector);
+  const station = text.indexOf("estacion-viva", pass);
+  const boot = text.indexOf("BOOT.md", pass);
+  if (detector < 0 || pass <= detector || station <= pass) {
+    throw new Error(`${label}: orden detector→PASS→estacion inválido`);
+  }
+  if (requireBootReference && boot <= pass) {
+    throw new Error(`${label}: BOOT puede invocarse sin PASS previo`);
+  }
+};
+const dualSection = (text) =>
+  text.match(/## Salida dual bidireccional[\s\S]*?(?=\n## )/)?.[0] ?? "";
+const validateOrchestrator = (text) => {
+  validateIdentityBeforeStation(text, "orquestador", true);
+  const dualContract = dualSection(text);
+  for (const signal of [
+    "ADDENDA-DOS-CARAS.md",
+    "**Entrada:**",
+    "**Salida:**",
+    "gate",
+  ]) {
+    if (!dualContract.includes(signal)) {
+      throw new Error(`orquestador: salida dual incompleta (${signal})`);
+    }
+  }
+};
+const validateWorkerCycle = (worker, ciclo) => {
+  validateIdentityBeforeStation(worker, "worker", false);
+  validateIdentityBeforeStation(ciclo, "ciclo", true);
+  if (!worker.includes("calibración ausente") && !worker.includes("falta cualquiera")) {
+    throw new Error("worker: no bloquea calibración ausente");
+  }
+  if (!ciclo.includes("LOCK impide boot, handoff y cualquier efecto")) {
+    throw new Error("ciclo: LOCK no bloquea boot/handoff");
+  }
+};
+const swapOnce = (text, first, second) => {
+  const marker = "__INTEGRACION_SWAP__";
+  return text.replace(first, marker).replace(second, first).replace(marker, second);
 };
 
 const revisionPath =
@@ -171,6 +237,49 @@ run("segundo cliente semver", [
 ]);
 
 const ciclo = read("skills/swarm-orquestacion/reference/ciclo.md");
+const orchestrator = read(
+  "skills/swarm-orquestacion/reference/roles/ORQUESTADOR.md",
+);
+const worker = read("skills/swarm-orquestacion/reference/roles/WORKER.md");
+validateOrchestrator(orchestrator);
+console.log("Eje IV consumidor orquestador: PASS");
+validateWorkerCycle(worker, ciclo);
+console.log("Eje IV consumidor worker/ciclo: PASS");
+
+expectRejection("orquestador-sin-salida-dual", () =>
+  validateOrchestrator(
+    orchestrator.replace(
+      /## Salida dual bidireccional[\s\S]*?(?=\n## )/,
+      "",
+    ),
+  ),
+);
+expectRejection("orquestador-sin-estacion-viva", () =>
+  validateOrchestrator(orchestrator.replaceAll("estacion-viva", "estacion")),
+);
+expectRejection("worker-sin-estacion-viva", () =>
+  validateWorkerCycle(worker.replaceAll("estacion-viva", "estacion"), ciclo),
+);
+for (const field of requiredCalibration) {
+  expectRejection(`orquestador-sin-${field}`, () =>
+    validateOrchestrator(orchestrator.replaceAll(field, "CAMPO_ELIMINADO")),
+  );
+}
+const swappedOrchestrator = swapOnce(
+  orchestrator,
+  "../../../vigilancia/scripts/verificar-identidad-raiz.mjs",
+  "../../../estacion-viva/reference/BOOT.md",
+);
+expectRejection("orquestador-boot-antes-de-detector", () =>
+  validateOrchestrator(swappedOrchestrator),
+);
+expectRejection("ciclo-sin-pass-previo-al-boot", () =>
+  validateWorkerCycle(
+    worker,
+    ciclo.replace("identidad-raiz: PASS", "identidad pendiente"),
+  ),
+);
+
 const ordered = [
   "## 3. Contrarrevisión selectiva pre-aceptación",
   "## 4. Revisión ordinaria y aceptación",

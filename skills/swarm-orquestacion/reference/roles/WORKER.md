@@ -32,10 +32,12 @@ uno: la asignación es del orquestador.
 2. Antes de cualquier `mkdir`, escritura, watcher o git mutable, ejecutá el
    preflight canónico de identidad de
    `../../../vigilancia/reference/ESTACION.md` mediante
-   `../../../vigilancia/scripts/verificar-identidad-raiz.mjs`, usando la
-   calibración explícita del brief. Solo PASS permite continuar. LOCK o
-   calibración ausente se reporta al custodio sin efectos; no crees ni elijas
-   otro clone.
+   `../../../vigilancia/scripts/verificar-identidad-raiz.mjs`. El despacho
+   debe adjuntar `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y
+   `DOWNSTREAM_PATTERNS`; si falta cualquiera, pará con LOCK aunque la
+   plantilla base del brief no incluya esos campos. Solo
+   `identidad-raiz: PASS` permite continuar. LOCK se reporta al custodio sin
+   efectos; no crees ni elijas otro clone.
 3. Implementa **solo** el WP + lo que exija su CA (incluidos ejes aplicables).
 4. Commits convencionales.
 5. Verde local: gates/validadores que exija el CA.
@@ -73,6 +75,9 @@ uno: la asignación es del orquestador.
   orquestador **post-aceptación** (✅), nunca del worker.
 - No operes handoffs externos ni gates forward: solo citá la fuente local que
   el brief indique y dejá cualquier trigger post-release al orquestador.
+- Si el WP consume `estacion-viva`, no invoques su boot, script ni fase 1 y no
+  crees `OUT_DIR` hasta que el preflight anterior haya emitido PASS. Un handoff
+  sin ese PASS se devuelve, no se completa por inferencia.
 
 ## Al terminar
 

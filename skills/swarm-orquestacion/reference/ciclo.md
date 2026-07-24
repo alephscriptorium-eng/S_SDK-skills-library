@@ -7,9 +7,12 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
 
 1. Ejecutar, antes de cualquier efecto, el preflight canónico de identidad de
    `../../vigilancia/reference/ESTACION.md` con su detector
-   `../../vigilancia/scripts/verificar-identidad-raiz.mjs`. Solo PASS permite
-   crear directorios, escribir, arrancar watchers, usar git mutable, editar
-   plan o crear rama/worktree. LOCK se devuelve al custodio sin crear ni
+   `../../vigilancia/scripts/verificar-identidad-raiz.mjs`. El orquestador
+   exige y adjunta al despacho `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`,
+   `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; la plantilla base del brief no
+   los sustituye. Solo `identidad-raiz: PASS` permite crear directorios,
+   escribir, arrancar watchers, usar git mutable, editar plan o crear
+   rama/worktree. Entrada ausente o LOCK se devuelve al custodio sin crear ni
    elegir otro clone.
 2. Ritual de inicio (`ORQUESTADOR.md`).
 3. Si el ecosistema es multi-carril: gate de convivencia
@@ -21,9 +24,11 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
 6. Rellenar un BRIEF por WP (eje(s), `ALCANCE_DIFF`, worktree y los campos
    de riesgo definidos en `reference/revision-adversarial.md`).
    REPORTES/BRIEFS bajo el sprint del carril (convivencia §5).
-7. Si el arranque continúa mediante `estacion-viva`, entregar los parámetros
-   solo después del PASS y exigir que su fase 1 no preceda al mismo preflight;
-   referencia vecina: `../../estacion-viva/reference/BOOT.md`.
+7. Si el arranque continúa mediante `estacion-viva`, ejecutar primero el
+   detector con las cuatro entradas y conservar su PASS. Solo entonces se
+   construye o entrega el handoff y se invoca
+   `../../estacion-viva/reference/BOOT.md` o su script. Su fase 1 puede crear
+   `OUT_DIR`; por eso LOCK impide boot, handoff y cualquier efecto.
 
 ## 2. Ejecución (worker)
 
@@ -114,6 +119,7 @@ Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 | E2E vía checkout raíz de territorio ajeno | Convivencia §7 (registry / scratch / post-gate) |
 | Push de gobierno con `index.lock` sostenido | Convivencia §9: freeze de **ambos** carriles |
 | Mutar antes de acreditar la raíz canónica | Detector de `vigilancia` → PASS o LOCK sin efectos |
+| Invocar boot/handoff de estación antes del PASS | LOCK; ni fase 1 ni `OUT_DIR` |
 | Tratar PASS adversarial como aceptación | `revision-adversarial.md`: el orquestador acepta |
 | Usar contrarrevisión como gate post-merge | Dos barreras y dos evidencias distintas |
 | Presentar gate semver local como C8 | `politica-dependencias-semver.md`: evidencia separada |

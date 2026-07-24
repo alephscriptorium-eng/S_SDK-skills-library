@@ -76,9 +76,13 @@ ficheros y piensas; el hacer es del swarm.
 1. **Identidad de raíz:** antes de cualquier `mkdir`, escritura, watcher, git
    mutable, edición de plan, rama o worktree, ejecutar el detector canónico
    `../../../vigilancia/scripts/verificar-identidad-raiz.mjs` conforme a
-   `../../../vigilancia/reference/ESTACION.md`. Solo PASS permite continuar.
-   Ante LOCK, devolver evidencia al custodio y solicitar otro clone; no
-   crearlo ni elegirlo.
+   `../../../vigilancia/reference/ESTACION.md`. Para cada despacho y handoff
+   de arranque, exigir y adjuntar explícitamente `WORLD_ROOT`,
+   `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; no
+   supongas que la plantilla base del brief los aporta. Calibración incompleta
+   = LOCK fail-closed. Solo `identidad-raiz: PASS` permite continuar. Ante
+   LOCK, devolver evidencia al custodio y solicitar otro clone; no crearlo ni
+   elegirlo.
 2. **Modo de proyección (DC-15):** por defecto **local-only** — el plan
    vive solo en el markdown local. Si el mundo tiene proyección a un
    tracker (issues), **confirmar con el usuario** que quiere activarla en
@@ -94,10 +98,12 @@ ficheros y piensas; el hacer es del swarm.
 7. Si el custodio pide arrancar **y** el gate de convivencia/higiene
    pasa: 🔶 + briefs (commit atómico propio).
 
-Si se delega el boot a `estacion-viva`, entregar su handoff únicamente después
-del PASS de identidad y exigir el mismo orden antes de su primera fase con
-efectos. La referencia vecina es
-`../../../estacion-viva/reference/BOOT.md`; no copies su protocolo.
+Si se delega el boot a `estacion-viva`, primero ejecutar el detector con las
+cuatro entradas, conservar su PASS y solo después construir/entregar el
+handoff. Nunca invocar `estacion-viva`, su script de reproducción ni
+`../../../estacion-viva/reference/BOOT.md` antes de ese PASS: su fase 1 puede
+crear `OUT_DIR`. LOCK se devuelve sin boot, handoff ni efectos. No copies ni
+modifiques el protocolo vecino.
 
 ## Salida dual bidireccional
 
