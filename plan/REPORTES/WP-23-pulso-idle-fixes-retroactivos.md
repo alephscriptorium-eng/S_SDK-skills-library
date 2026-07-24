@@ -5,10 +5,10 @@
 | agente | worker fresco WP-23 |
 | fecha | 2026-07-24 |
 | rama | `wp/23-pulso-idle-fixes-retroactivos` |
-| commits de implementación | `274d39e`, `c2b0ffd` |
+| commits de implementación | `274d39e`, `c2b0ffd`, `b0bbd75` |
 | eje(s) CA | III + ceguera + regla 14 |
 | riesgo de revisión | independiente |
-| estado propuesto | listo para revisión |
+| estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
 
@@ -25,6 +25,13 @@ handoff operativo, con gate documental, fixtures y falsos negativos.
 No se añadió dependencia: los scripts cargan únicamente built-ins de Node.
 Gate local y C8 online permanecen separados; este WP no cambia versión ni
 contrato de consumo, por lo que C8 online no aplica.
+
+Tras la DEVOLUCIÓN independiente, el gate dual dejó de aceptar caras sin
+`§WP`, estructura simulada en cajas, secciones/contenido operativo libre y
+claves que solo contienen las subcadenas GO/check/PASS. El gate Eje III dejó
+de contar marcadores: cuenta definiciones de símbolos efectivos y su
+co-localización. Un contra-probe copia el detector completo, elimina el
+comentario marcador y acredita que la copia se rechaza.
 
 ## Archivos tocados
 
@@ -44,7 +51,9 @@ contrato de consumo, por lo que C8 online no aplica.
 - Creado `skills/vigilancia/scripts/probar-identidad-raiz.mjs`: nueve probes,
   siete LOCK con cero efectos.
 - Creado `skills/vigilancia/scripts/probar-salida-dual.mjs`: fixture verde y
-  once falsos negativos.
+  dieciocho falsos negativos estructurales.
+- Creado `skills/vigilancia/scripts/probar-dedup-contratos.mjs`: árbol verde
+  y duplicado real sin marcador rechazado.
 - Creado `skills/vigilancia/scripts/verificar-dedup-contratos.mjs`: gate del
   Eje III.
 - Creado `skills/vigilancia/scripts/verificar-identidad-raiz.mjs`: detector
@@ -82,18 +91,25 @@ bloqueado invoca el watcher y compara árbol, estado Git y ausencia de
 ```text
 $ node skills/vigilancia/scripts/probar-salida-dual.mjs
 PASS fixture-pass-y-bloqueo
-RECHAZO una-sola-parte: falta Parte 2
+RECHAZO sin-cara-wp: se requiere exactamente una cara §WP
+RECHAZO estructura-simulada-en-caja: la estructura dual no puede simularse dentro de una caja
+RECHAZO una-sola-parte: se requiere exactamente una Parte 2
 RECHAZO parte-1-cercada: Parte 1 no puede estar cercada
-RECHAZO seccion-po-omitida: Parte 1 omite ### Decisión del custodio
-RECHAZO go-oculto: GO no es visible en ambas partes
+RECHAZO seccion-po-omitida: Parte 1 requiere exactamente Qué cambió→Qué sigue→Decisión del custodio
+RECHAZO go-oculto: GO no es token completo en Parte 1
 RECHAZO matriz-sin-bifurcacion: matriz sin bifurcación real declarada
 RECHAZO parte-2-no-copiable: Parte 2 debe ser un único bloque cercado completamente copiable
 RECHAZO handoff-con-fluff: Parte 2 contiene fluff
-RECHAZO handoff-fuera-de-vocabulario: Parte 2 sale del vocabulario operativo: MOTIVACION
-RECHAZO orden-invertido: orden inválido: debe ser Parte 1→Parte 2
+RECHAZO handoff-fuera-de-vocabulario: contenido libre fuera del vocabulario de BACKLOG: MOTIVACION
+RECHAZO seccion-libre-en-wp: §WP contiene secciones de nivel 2 libres
+RECHAZO contenido-libre-en-handoff: contenido libre fuera del vocabulario de GATES: Decisión operativa fuera de lista.
+RECHAZO orden-invertido: orden inválido: debe ser §WP→Parte 1→Parte 2→Prueba de ceguera
 RECHAZO estado-divergente: estado operativo distinto entre partes
 RECHAZO demasiadas-referencias-wp: Parte 1 contiene más de 2 referencias WP
-salida-dual-probes: PASS (12 casos)
+RECHAZO token-no-go: GO no es token completo en Parte 1
+RECHAZO token-checkmate: CHECK no es token completo en Parte 1
+RECHAZO token-bypass: PASS no es token completo en Parte 1
+salida-dual-probes: PASS (19 casos)
 
 $ for file in skills/vigilancia/examples/addenda-*.md; do node skills/vigilancia/scripts/verificar-salida-dual.mjs "$file" || exit 1; done
 salida-dual: PASS
@@ -105,9 +121,14 @@ salida-dual: PASS
 
 ```text
 $ node skills/vigilancia/scripts/verificar-dedup-contratos.mjs
-dedup CONTRATO_IDENTIDAD_RAIZ_V1: PASS definiciones=1
-dedup CONTRATO_SALIDA_DUAL_V1: PASS definiciones=1
+dedup identidad-raiz: PASS simbolos=4 implementaciones=1
+dedup salida-dual: PASS simbolos=1 implementaciones=1
 dedup-contratos: PASS
+
+$ node skills/vigilancia/scripts/probar-dedup-contratos.mjs
+PASS arbol-actual: implementaciones efectivas únicas
+RECHAZO detector-duplicado-sin-marcador: lock=2; implementación copiada detectada
+dedup-probes: PASS (2 casos)
 
 $ bash -n skills/vigilancia/scripts/watcher.sh
 (sin salida; exit 0)
@@ -116,7 +137,9 @@ $ node --check skills/vigilancia/scripts/verificar-identidad-raiz.mjs
 $ node --check skills/vigilancia/scripts/probar-identidad-raiz.mjs
 $ node --check skills/vigilancia/scripts/verificar-salida-dual.mjs
 $ node --check skills/vigilancia/scripts/probar-salida-dual.mjs
-(sin salida; exit 0 en los cuatro comandos)
+$ node --check skills/vigilancia/scripts/verificar-dedup-contratos.mjs
+$ node --check skills/vigilancia/scripts/probar-dedup-contratos.mjs
+(sin salida; exit 0 en los seis comandos)
 
 $ bash skills/vigilancia/scripts/comprobar-ceguera.sh
 ceguera: 0
@@ -155,17 +178,18 @@ Diagnósticos del editor sobre `skills/vigilancia`: `No linter errors found.`
 - [x] Sellos con fuente; rutas citadas existentes: comprobadas en el árbol.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: evidencia literal;
   contrarrevisión queda pendiente abajo.
-- [x] Eje III evidenciado: ambos contratos canónicos tienen una definición.
+- [x] Eje III evidenciado por símbolos efectivos, no marcadores: detector
+  copiado íntegro sin comentario se rechaza con definiciones duplicadas.
 - [x] Ceguera de árbol e historial reachable: `0`.
 - [x] Propiedad positiva y falsos negativos automatizados: 9 probes de
-  identidad y 12 de salida dual.
+  identidad, 19 de salida dual y 2 de dedup.
 - [x] Casos bloqueados sin efectos: árbol y Git sin cambios, `OUT_DIR`
   ausente.
 - [x] Dependencia cargada = directa: solo built-ins de Node; ninguna
   dependencia nueva.
 - [x] Gate local determinista separado de C8 online: C8 no aplica a este WP.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
-- [x] Commits convencionales en castellano: `274d39e`, `c2b0ffd`.
+- [x] Commits convencionales en castellano: `274d39e`, `c2b0ffd`, `b0bbd75`.
 - [x] Sin BACKLOG, swarm-orquestacion, remotas, merge ni release.
 
 ## Hallazgos fuera de alcance
@@ -174,9 +198,9 @@ Ninguno.
 
 ## Dudas / bloqueos
 
-- Contrarrevisión read-only por persona/agente distinto:
-  `⏳ pendiente del orquestador`; no se lanzó subagente por instrucción
-  explícita.
+- La contrarrevisión independiente emitió DEVOLUCIÓN y sus dos hallazgos se
+  corrigieron. `⏳ re-revisión independiente pendiente del orquestador`; no
+  se lanzó subagente por instrucción explícita.
 - Sin bloqueos de implementación ni gates locales.
 
 ---
