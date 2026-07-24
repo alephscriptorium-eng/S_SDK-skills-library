@@ -28,6 +28,7 @@ Gates locales:
 node skills/vigilancia/scripts/probar-identidad-raiz.mjs
 node skills/vigilancia/scripts/probar-salida-dual.mjs
 node skills/vigilancia/scripts/verificar-dedup-contratos.mjs
+node skills/vigilancia/scripts/probar-dedup-contratos.mjs
 ```
 
 Consumo canónico (versión fijada + dedup + C8): README raíz del paquete o

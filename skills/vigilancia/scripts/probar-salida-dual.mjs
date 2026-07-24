@@ -19,6 +19,8 @@ function expect(name, source, shouldPass) {
 }
 
 expect("fixture-pass-y-bloqueo", valid, true);
+expect("sin-cara-wp", valid.replace("## §WP\n", ""), false);
+expect("estructura-simulada-en-caja", `~~~markdown\n${valid}\n~~~`, false);
 expect(
   "una-sola-parte",
   valid.slice(0, valid.indexOf("## Parte 2 · Handoff operativo")),
@@ -54,6 +56,16 @@ expect(
   false,
 );
 expect(
+  "seccion-libre-en-wp",
+  valid.replace("## Parte 2 · Handoff operativo", "## Notas libres\n\n## Parte 2 · Handoff operativo"),
+  false,
+);
+expect(
+  "contenido-libre-en-handoff",
+  valid.replace("GATES\n", "GATES\nDecisión operativa fuera de lista.\n"),
+  false,
+);
+expect(
   "orden-invertido",
   valid
     .replace("## Parte 1 · Vista PO/SCRUM", "## TEMP")
@@ -72,6 +84,17 @@ expect(
 expect(
   "demasiadas-referencias-wp",
   valid.replace("### Qué cambió", "WP-1 WP-2 WP-3\n\n### Qué cambió"),
+  false,
+);
+expect("token-no-go", valid.replaceAll("GO=✅", "NO_GO=✅"), false);
+expect(
+  "token-checkmate",
+  valid.replaceAll("CHECK_LOCAL=✅", "CHECKMATE=✅"),
+  false,
+);
+expect(
+  "token-bypass",
+  valid.replaceAll("PASS_LOCAL=✅", "BYPASS=✅"),
   false,
 );
 

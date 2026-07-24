@@ -39,7 +39,14 @@ salida de vigilancia presenta exactamente este orden:
 El estado operativo se repite literalmente en ambas partes para que un PASS o
 un bloqueo no desaparezca al separar audiencias. Una parte sola, Parte 1
 cercada, Parte 2 parcialmente fuera de caja o estados divergentes se
-devuelven.
+devuelven. La estructura exige una única `§WP`; dentro de ella no caben
+secciones libres. El handoff contiene una vez y en orden `BACKLOG`, `GATES`,
+`ALCANCES`, `SECUENCIA`: listas bajo las tres primeras y pasos numerados bajo
+la última, sin prosa operativa suelta.
+
+`ESTADO` es una lista `CLAVE=✅|⏳|⛔` separada por `;`. Debe incluir la clave
+exacta `GO` y familias completas `CHECK`/`CHECK_*` y `PASS`/`PASS_*`.
+Subcadenas dentro de otras claves no acreditan estado.
 
 El patrón de boot dual de `estacion-viva/reference/SALIDA-DUAL.md` es una
 referencia vecina: no se copia ni fusiona. Este contrato cubre las salidas

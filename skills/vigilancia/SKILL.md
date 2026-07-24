@@ -86,7 +86,7 @@ orquestación): `reference/ESTACION.md`.
 - `scripts/watcher.sh` — muestreo parametrizado (no usa `git status`)
 - `scripts/verificar-identidad-raiz.mjs` + probe — preflight fail-closed
 - `scripts/verificar-salida-dual.mjs` + probe — gate documental dual
-- `scripts/verificar-dedup-contratos.mjs` — CA Eje III
+- `scripts/verificar-dedup-contratos.mjs` + probe de copia real — CA Eje III
 - `scripts/verificar-territorio-mapa.sh` — pulso territorio==mapa (#19)
 - `scripts/comprobar-ceguera.sh` — ceguera sobre este skill
 
