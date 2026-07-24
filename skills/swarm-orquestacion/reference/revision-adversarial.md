@@ -83,9 +83,14 @@ awk '/^```js revision-adversarial-probe$/{on=1;next} /^```$/{if(on) exit} on' \
 ```
 
 El probe comprueba los campos, ambos flujos y la ubicación única de la
-clasificación. Además inyecta en memoria una copia de la política dentro del
-brief y exige que el detector semántico la rechace; no se limita a contar un
-encabezado o marcador.
+clasificación en todos los consumidores contractuales de este WP: `BRIEF.md`,
+`REVISION.md` y `plantilla-reporte.md`. Extrae las clases desde la fila
+canónica, sin volver a declararlas en el código. Después inyecta esa
+clasificación en memoria dentro de `REVISION.md` y exige que el detector
+semántico la rechace; no se limita a contar un encabezado o marcador.
+
+Runtime del probe: Node y su built-in `node:fs`; no requiere ni añade
+dependencias npm.
 
 ```js revision-adversarial-probe
 import fs from "node:fs";
@@ -94,8 +99,16 @@ const canonicalPath =
   "skills/swarm-orquestacion/reference/revision-adversarial.md";
 const briefPath =
   "skills/swarm-orquestacion/reference/roles/BRIEF.md";
+const consumerPaths = [
+  briefPath,
+  "skills/swarm-orquestacion/reference/roles/REVISION.md",
+  "skills/swarm-orquestacion/reference/plantilla-reporte.md",
+];
 const canonical = fs.readFileSync(canonicalPath, "utf8");
-const brief = fs.readFileSync(briefPath, "utf8");
+const consumers = new Map(
+  consumerPaths.map((file) => [file, fs.readFileSync(file, "utf8")]),
+);
+const brief = consumers.get(briefPath);
 
 const fields = [
   "RIESGO_REVISION",
@@ -109,53 +122,54 @@ for (const field of fields) {
   }
 }
 
-if (!canonical.includes("| `normal` | documentación rutinaria")) {
+const rows = canonical.split(/\r?\n/);
+if (!rows.some((line) => line.startsWith("| `normal` |"))) {
   throw new Error("falta el flujo normal canónico");
 }
-if (!canonical.includes("| `independiente` | gate/parser")) {
+const independentRow = rows.find((line) =>
+  line.startsWith("| `independiente` |"),
+);
+if (!independentRow) {
   throw new Error("falta el flujo independiente canónico");
 }
 
-const riskSignals = [
-  ["gate-parser", /gate\/parser\s+con\s+riesgo\s+de\s+falsos\s+negativos/i],
-  [
-    "seguridad-fronteras",
-    /seguridad,\s+permisos\s+o\s+fronteras\s+de\s+escritura/i,
-  ],
-  ["irreversibilidad", /migración\s+o\s+demolición\s+irreversible/i],
-  ["publicacion-release", /publicación\/release/i],
-  [
-    "contrato-transversal",
-    /cambio\s+transversal\s+del\s+contrato\s+del\s+método/i,
-  ],
-  [
-    "protocolo-mutable",
-    /protocolo\s+operativo\s+que\s+puede\s+autorizar\s+mutaciones/i,
-  ],
-];
-
-const semanticDuplicates = (text) =>
-  riskSignals.filter(([, pattern]) => pattern.test(text)).map(([name]) => name);
-
-const missingCanonical = riskSignals
-  .filter(([, pattern]) => !pattern.test(canonical))
-  .map(([name]) => name);
-if (missingCanonical.length > 0) {
-  throw new Error(`clasificación canónica incompleta: ${missingCanonical}`);
+const classification = independentRow.split("|")[2].trim();
+const riskClasses = classification.split(";").map((item) => item.trim());
+if (riskClasses.length !== 6 || riskClasses.some((item) => item.length === 0)) {
+  throw new Error(`clasificación canónica inválida: clases=${riskClasses.length}`);
 }
 
-const duplicates = semanticDuplicates(brief);
+const normalize = (text) =>
+  text
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
+    .trim();
+const semanticDuplicates = (text) => {
+  const normalizedText = normalize(text);
+  return riskClasses.filter((riskClass) =>
+    normalizedText.includes(normalize(riskClass)),
+  );
+};
+
+const duplicates = [...consumers.entries()].flatMap(([file, text]) =>
+  semanticDuplicates(text).map((riskClass) => ({ file, riskClass })),
+);
 if (duplicates.length > 0) {
-  throw new Error(`clasificación duplicada en BRIEF: ${duplicates}`);
+  throw new Error(
+    `clasificación duplicada: ${duplicates
+      .map(({ file, riskClass }) => `${file}:${riskClass}`)
+      .join(", ")}`,
+  );
 }
 
-const mutant = `${brief}
-gate/parser con riesgo de falsos negativos; seguridad, permisos o fronteras de
-escritura; migración o demolición irreversible; publicación/release; cambio
-transversal del contrato del método; protocolo operativo que puede autorizar
-mutaciones`;
+const mutantPath =
+  "skills/swarm-orquestacion/reference/roles/REVISION.md";
+const mutant = `${consumers.get(mutantPath)}
+${classification}`;
 const rejectedMutant = semanticDuplicates(mutant);
-if (rejectedMutant.length !== riskSignals.length) {
+if (rejectedMutant.length !== riskClasses.length) {
   throw new Error(`el gate no rechazó el duplicado semántico: ${rejectedMutant}`);
 }
 
@@ -163,9 +177,9 @@ console.log("probe revision-adversarial: PASS");
 console.log("caso normal: revisión ordinaria sin contrarrevisión obligatoria");
 console.log("caso gate: contrarrevisión independiente obligatoria");
 console.log(
-  "dedup semántico: PASS (fuente canónica=1; consumidores duplicados=0)",
+  `dedup semántico: PASS (fuente canónica=1; consumidores=${consumerPaths.length}; duplicados=0)`,
 );
 console.log(
-  `mutante duplicado: RECHAZADO (${rejectedMutant.join(", ")})`,
+  `mutante REVISION.md: RECHAZADO (clases=${rejectedMutant.length})`,
 );
 ```
