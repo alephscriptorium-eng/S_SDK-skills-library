@@ -6,7 +6,7 @@
 
 WP: WP-23 · pulso idle y fixes retroactivos
 Rama: wp/23-pulso-idle-fixes-retroactivos
-Worktree: <WORKTREE_BASE>/skills-library-wp-23
+Worktree: C:\S_LAB\skills-library-wp-23
 Reporte: plan/REPORTES/WP-23-pulso-idle-fixes-retroactivos.md
 
 Lecturas extra (además de PRACTICAS + WP en BACKLOG + VISION):

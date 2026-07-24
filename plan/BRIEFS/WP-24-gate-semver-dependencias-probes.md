@@ -6,7 +6,7 @@
 
 WP: WP-24 · gate semver, dependencias directas y probes
 Rama: wp/24-gate-semver-dependencias-probes
-Worktree: <WORKTREE_BASE>/skills-library-wp-24
+Worktree: C:\S_LAB\skills-library-wp-24
 Reporte: plan/REPORTES/WP-24-gate-semver-dependencias-probes.md
 
 Lecturas extra (además de PRACTICAS + WP en BACKLOG + VISION):

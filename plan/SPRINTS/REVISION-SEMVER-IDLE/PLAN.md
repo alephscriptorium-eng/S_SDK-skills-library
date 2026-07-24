@@ -1,6 +1,6 @@
 # Sprint · REVISION-SEMVER-IDLE
 
-Estado: **preparado y autorizado; sin workers lanzados**.
+Estado: **Ola 1 despachada: WP-22, WP-23 y WP-24 en curso**.
 
 ## Autoridad (custodio · 2026-07-24)
 

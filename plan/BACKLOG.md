@@ -368,12 +368,12 @@ gobierno y no hace push.
 
 ### Ola 1 · paralela, sin solapamiento de archivos
 
-- ⬜ **WP-22 · revisión adversarial selectiva + campos de riesgo** —
+- 🔶 **WP-22 · revisión adversarial selectiva + campos de riesgo** —
   contrato read-only independiente; campos de BRIEF/reporte; PASS o
   devolución numerada antes de aceptación en clases de riesgo.
   Contrarrevisión independiente obligatoria para este WP.
   **Brief:** `plan/BRIEFS/WP-22-revision-adversarial-campos-riesgo.md`.
-- ⬜ **WP-23 · pulso idle + fixes retroactivos + salida dual del vigía** —
+- 🔶 **WP-23 · pulso idle + fixes retroactivos + salida dual del vigía** —
   residuos de gates, candidatos y propuesta de olas vía custodio; no escribir
   BACKLOG; gate post-merge separado de contrarrevisión. Toda salida al
   custodio lleva cara PO en llano seguida de handoff scrum copiable para el
@@ -389,7 +389,7 @@ gobierno y no hace push.
   no resoluble, verificando cero efectos en casos bloqueados. Los patrones
   concretos viven solo en la calibración del consumidor.
   **Brief:** `plan/BRIEFS/WP-23-pulso-idle-fixes-retroactivos.md`.
-- ⬜ **WP-24 · gate semver + dependencias directas + probes** — políticas
+- 🔶 **WP-24 · gate semver + dependencias directas + probes** — políticas
   `exact`, `caret-semver` y `major-band: >=M.m.p <(M+1).0.0`; warning
   `0.x`; gate local determinista separado de C8 online; probes
   automatizados. Contrarrevisión independiente obligatoria.

@@ -6,7 +6,7 @@
 
 WP: WP-22 · revisión adversarial selectiva + campos de riesgo
 Rama: wp/22-revision-adversarial-campos-riesgo
-Worktree: <WORKTREE_BASE>/skills-library-wp-22
+Worktree: C:\S_LAB\skills-library-wp-22
 Reporte: plan/REPORTES/WP-22-revision-adversarial-campos-riesgo.md
 
 Lecturas extra (además de PRACTICAS + WP en BACKLOG + VISION):
