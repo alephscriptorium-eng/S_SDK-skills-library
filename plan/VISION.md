@@ -32,6 +32,13 @@ skill; nadie copia el método.
 4. **Consumo con versión fijada** — el contrato de consumo exige versión
    exacta (`--save-exact`), nunca `latest`; verificable por `npm view`
    (C8).
+5. **Clone canónico antes de mutar** — `WORLD_ROOT` candidata no basta:
+   identidad contra `CANONICAL_WORLD_ROOT`, raíces read-only y patrones
+   downstream mediante ruta absoluta/realpath, git toplevel, normalización
+   Windows y comparación por segmentos. Ambigüedad, downstream o raíz
+   distinta = LOCK fail-closed antes de mkdir, escritura, watcher, git
+   mutable, plan, rama o worktree. El custodio aporta otro clone de trabajo;
+   el vigía no lo crea ni lo elige.
 
 ## Calibración local (mundo-fuente)
 

@@ -378,6 +378,16 @@ gobierno y no hace push.
   BACKLOG; gate post-merge separado de contrarrevisión. Toda salida al
   custodio lleva cara PO en llano seguida de handoff scrum copiable para el
   orquestador. Contrarrevisión independiente obligatoria para este WP.
+  **CA ampliados:** `WORLD_ROOT` candidata se valida contra
+  `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS` mediante
+  ruta absoluta/realpath, junction/symlink, git toplevel, normalización
+  Windows y comparación por segmentos. Downstream igual/descendiente,
+  ambigüedad o raíz distinta = LOCK fail-closed antes de cualquier mkdir,
+  escritura, watcher o git/plan mutable. El vigía solicita al custodio otro
+  clone de trabajo, pero no lo crea ni elige. Probes cubren canónico válido,
+  falso prefijo, descendiente, alias de filesystem, toplevel distinto y raíz
+  no resoluble, verificando cero efectos en casos bloqueados. Los patrones
+  concretos viven solo en la calibración del consumidor.
   **Brief:** `plan/BRIEFS/WP-23-pulso-idle-fixes-retroactivos.md`.
 - ⬜ **WP-24 · gate semver + dependencias directas + probes** — políticas
   `exact`, `caret-semver` y `major-band: >=M.m.p <(M+1).0.0`; warning
@@ -391,6 +401,12 @@ gobierno y no hace push.
   tras WP-22…24 aceptados; enlaza las entregas en ciclo/roles/SKILL sin
   duplicarlas e integra el handoff dual bidireccional con vigilancia.
   Contrarrevisión independiente obligatoria.
+  **CA ampliados:** integra por referencia el detector de raíz de WP-23 en
+  el preflight de `swarm-orquestacion` y el handoff a `estacion-viva`;
+  identidad canónica PASS precede mkdir/escritura/watcher/git mutable/plan/
+  rama/worktree. LOCK se devuelve al custodio sin crear ni escoger clone.
+  Fixtures prueban arranque permitido y bloqueo sin efectos, sin duplicar
+  detector ni calibración.
   **Brief:**
   `plan/BRIEFS/WP-25-integracion-metodo-revision-semver-idle.md`.
 
@@ -401,3 +417,20 @@ cambio de contrato de método, por lo que corresponde minor desde 0.9.0
 (DC-22). No se ejecuta aún. Solo después de WP-22…25 ✅ e integrados, higiene,
 gates/ceguera y `Rn-LIB` final PASS se habilitan bump/CHANGELOG, tag, workflow
 de Release, publish y C8. Consumo externo y gitlinks quedan fuera de alcance.
+
+## Futuro posterior a REVISION-SEMVER-IDLE
+
+- ⬜ **WP-26 · rescatar skill runtime prueba-de-dos** — port manual de obra
+  externa al destino `skills/prueba-de-dos/**`; no cherry-pick, no reapertura
+  de WP-21 y no forma parte de Ola 1/Ola 2. Fuente local de gobierno:
+  `C:\S\scriptorium`, commits `4427caa4`, `107ae6d6` y únicamente los cambios
+  pertinentes de `b66436e2` bajo `playground/prueba-de-dos/**`.
+  Reusar por referencia `skills/operador-rooms` para PEERCARD/ACL/salud.
+  Excluir `.env`, `.npmrc`, handoffs/outputs H/M,
+  `playground/ciudad/**` y metadata privada. Probes obligatorios:
+  `--sin-install`, no-clobber, operador inválido y merge idempotente de
+  scripts; revalidar Node 22 y dependencias directas.
+  **Gate:** requiere planificación futura propia, GO y `Rn-LIB` de su tip;
+  no está autorizado para despacho por R5-LIB de este sprint.
+  **Release:** independiente y fuera de 0.10.0; no bloquea ese corte.
+  **Brief:** `plan/BRIEFS/WP-26-rescatar-skill-runtime-prueba-de-dos.md`.

@@ -183,6 +183,19 @@ Estados: las **abiertas** las resuelve el custodio, no el orquestador.
   e integración de los cuatro WPs, higiene, gates/ceguera y `Rn-LIB` final
   PASS. En esta preparación no se ejecutan bump, CHANGELOG, tag, workflow,
   publish, C8 remoto, consumo externo ni gitlinks.
+- **DC-28 · Clone canónico y downstream read-only (WP-23/WP-25).**
+  `WORLD_ROOT` identifica una candidata, pero no acredita el clone de trabajo
+  canónico. El preflight recibe `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y
+  `DOWNSTREAM_PATTERNS`; resuelve ruta absoluta normalizada en Windows,
+  realpath/junction/symlink y git toplevel, y compara por segmentos. Una
+  candidata igual/descendiente de downstream, ambigua, no resoluble o distinta
+  del canónico queda en LOCK fail-closed antes de mkdir, escritura, watcher,
+  git mutable, plan, rama o worktree. El vigía pide al custodio un clone de
+  trabajo fuera de esas raíces, sin crearlo ni elegirlo. WP-23 posee
+  contrato/detector/probes/salida dual; WP-25 lo integra por referencia en
+  `swarm-orquestacion` y `estacion-viva`. El patrón local
+  `scriptorium/codebase/<algo>` es calibración de este consumidor y no se
+  hardcodea en la cara FOSS.
 
 ## Abiertas
 

@@ -24,6 +24,25 @@ Notas del orquestador:
   cruzada desde ese skill.
 - Incorporar un pulso idle que recoja residuos técnicos observados en gates,
   candidatos de fix retroactivo y propuesta de olas.
+- Definir el contrato de identidad de raíz del vigía con entradas explícitas
+  `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`.
+  `WORLD_ROOT` sigue identificando la candidata, pero no prueba por sí solo
+  que sea el clone canónico.
+- El detector resuelve ruta absoluta normalizada para Windows,
+  `realpath`/junction/symlink y `git rev-parse --show-toplevel`; compara
+  pertenencia por segmentos, nunca por prefijo textual.
+- Aplicar fail-closed antes de cualquier `mkdir`, escritura, watcher,
+  operación git mutable, plan, rama o worktree: candidata
+  igual/descendiente de downstream, ambigua, no resoluble o distinta del
+  canónico = LOCK.
+- Ante LOCK, el vigía pide al custodio un clone de trabajo fuera de
+  `READ_ONLY_ROOTS`; no lo crea ni elige. La calibración concreta de
+  `DOWNSTREAM_PATTERNS` pertenece al consumidor y no se hardcodea en la cara
+  FOSS.
+- Probes automatizados: canónico válido; nombre con prefijo parecido pero
+  segmento distinto; descendiente downstream; junction/symlink que resuelve
+  allí; `git toplevel` distinto; raíz inexistente/ambigua. Verificar que
+  ningún caso bloqueado crea directorios, archivos, watcher o estado git.
 - El vigilante eleva al custodio mediante addenda; no edita BACKLOG, no abre
   WP, no implementa, no acepta.
 - Ampliar el contrato de salida de `vigilancia`: todo informe al custodio
@@ -60,7 +79,9 @@ Notas del orquestador:
 - CONTRAEVIDENCIA_REQUERIDA: demostrar que el pulso propone y eleva sin
   mutar BACKLOG ni confundir contrarrevisión con gate post-merge; demostrar
   además que se rechazan una salida de una sola parte, una Parte 1 dentro de
-  caja y un handoff con fluff o no copiable.
+  caja y un handoff con fluff o no copiable; demostrar también que un alias
+  de filesystem o un `git toplevel` ajeno no eluden el LOCK y que un nombre
+  lexicalmente parecido no produce falso positivo.
 - REVISOR_DISTINTO_WORKER: sí
 
 Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.

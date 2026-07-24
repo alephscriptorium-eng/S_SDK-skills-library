@@ -33,7 +33,9 @@ Endurecer el método del paquete con:
 5. dependencias directas declaradas;
 6. probes adversariales automatizados;
 7. política semver configurable (`exact`, `caret-semver`, `major-band`);
-8. salida dual PO/scrum entre vigilancia, custodio y orquestación.
+8. salida dual PO/scrum entre vigilancia, custodio y orquestación;
+9. identidad verificable del clone canónico y bloqueo fail-closed de raíces
+   downstream/read-only antes de cualquier mutación.
 
 `major-band` se define como `>=M.m.p <(M+1).0.0`. En `0.x` debe advertirse
 que el rango permite saltos minor potencialmente incompatibles y exigirse
@@ -48,7 +50,7 @@ Los alcances no se solapan:
 | WP | entrega | propiedad exclusiva |
 | --- | ------- | ------------------- |
 | WP-22 | revisión independiente + campos de riesgo | `skills/swarm-orquestacion/reference/roles/{BRIEF,REVISION}.md`; `skills/swarm-orquestacion/reference/plantilla-reporte.md`; referencia nueva de contrarrevisión |
-| WP-23 | pulso idle + fixes retroactivos + salida dual del vigía | `skills/vigilancia/**` |
+| WP-23 | pulso idle + fixes retroactivos + salida dual + detector de identidad de raíz del vigía | `skills/vigilancia/**` |
 | WP-24 | política semver + gate/probes | referencia/script/fixtures nuevos bajo `skills/swarm-orquestacion/`; `package.json` y lock solo si una dependencia runtime nueva resulta imprescindible |
 
 Orden de integración: WP-22, WP-23 y WP-24 pueden entrar en cualquier orden.
@@ -71,6 +73,9 @@ de los puntos de entrada compartidos:
 WP-25 enlaza, no duplica, las piezas de Ola 1 y demuestra el flujo completo.
 También integra en el rol de orquestador la recepción y emisión de la salida
 dual definida por WP-23, sin copiar el contrato de `vigilancia`.
+Además integra por referencia el candado de identidad de raíz entregado por
+WP-23 en `swarm-orquestacion` y `estacion-viva`: ningún arranque, plan,
+watcher ni operación git mutable precede esa comprobación.
 Por cambiar contrato de método, recibe contrarrevisión read-only independiente
 antes de aceptación.
 
@@ -82,6 +87,8 @@ antes de aceptación.
 4. Preparar la evidencia para el corte **0.10.0**; el bump/CHANGELOG, tag,
    workflow de Release, publish y C8 se ejecutan solo tras PASS final.
 5. El GO condicionado no autoriza consumidores ni gitlinks.
+6. WP-26 permanece futuro e independiente: no forma parte de las olas, del
+   gate ni del release 0.10.0 de este sprint.
 
 ## Gates y CA comunes
 
@@ -113,6 +120,49 @@ antes de aceptación.
   orden PO→handoff, estado visible en ambas partes, brevedad, pocas
   referencias WP en la vista, ausencia de fluff y un bloque técnico copiable
   completo; una salida de una sola parte o una Parte 1 cercada se devuelve.
+- `WORLD_ROOT` identifica una raíz candidata, pero por sí solo no demuestra
+  que sea el clone de trabajo canónico. El contrato recibe explícitamente
+  `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`.
+- La identidad normaliza rutas absolutas en Windows y verifica
+  `realpath`/junction/symlink y `git rev-parse --show-toplevel`; compara por
+  segmentos de ruta, nunca por prefijo textual.
+- Antes de cualquier `mkdir`, escritura, watcher, operación git mutable,
+  edición de plan, rama o worktree: candidato igual/descendiente de un
+  downstream, ambiguo, no resoluble o distinto del canónico → **LOCK
+  fail-closed**.
+- El vigía no crea ni elige otro clone: pide al custodio una raíz de trabajo
+  canónica fuera de las raíces read-only/downstream y espera nueva
+  calibración.
+- `DOWNSTREAM_PATTERNS` es calibración del consumidor. El patrón real
+  `scriptorium/codebase/<algo>` queda solo en este gobierno y nunca se
+  hardcodea en la cara FOSS.
+- Probes mínimos de identidad: canónico válido; ruta lexicalmente parecida
+  pero en otro segmento; descendiente downstream; junction/symlink al
+  downstream; `git toplevel` distinto; raíz inexistente/ambigua. Solo el
+  primer caso permite continuar; todos los demás bloquean antes de crear
+  artefactos.
+
+## Addenda · identidad de raíz
+
+Ownership sin WP adicional:
+
+- **WP-23** define bajo `skills/vigilancia/**` el contrato, detector, probes,
+  LOCK fail-closed y salida dual que solicita al custodio un clone de trabajo
+  fuera de las raíces observadas.
+- **WP-25** integra el preflight por referencia en los puntos de entrada de
+  `swarm-orquestacion` y en el handoff a `estacion-viva`; no duplica detector
+  ni calibración.
+
+La calibración local de este mundo reconoce como downstream read-only las
+rutas que casen por segmentos con `scriptorium/codebase/<algo>`. La ruta
+concreta no viaja a ninguna cara copiable o pública.
+
+## Gate vigente antes de despacho
+
+`R4-LIB` validó exactamente `b5e3ae23ead5357c6a58f89ad4a440eb5d7d830a`
+(`b5e3ae2`). Este nuevo commit de gobierno cambia el tip medido: **R4-LIB no
+autoriza despacho**. El vigilante debe emitir **R5-LIB** sobre el nuevo tip y
+dar PASS antes de cualquier 🔶, worker, rama o worktree.
 
 ## Ejemplo visual del modo dual
 
@@ -195,21 +245,27 @@ Opera el sprint `REVISION-SEMVER-IDLE` de skills-library.
 Autoridad:
 
 - GO de planificación y GO de implementación/arranque para WP-22…WP-25.
-- Antes de 🔶: higiene pre-despacho y PASS del siguiente gate `Rn-LIB`.
+- R4-LIB validó el tip anterior, no este gobierno. Antes de 🔶: identidad de
+  raíz canónica, higiene pre-despacho y R5-LIB PASS sobre el nuevo tip.
 - GO de release condicionado para 0.10.0: no ejecutar bump/CHANGELOG, tag,
   Release ni publish hasta integrar WP-22…WP-25 y obtener `Rn-LIB` final
   PASS. Consumidores y gitlinks siguen fuera de alcance.
+- WP-26 es futuro independiente: R5-LIB no autoriza su despacho y 0.10.0 no
+  depende de él.
 
 Secuencia:
 
-1. Abrir WP-22, WP-23 y WP-24 en worktrees y ramas distintas; sus archivos
-   no se solapan.
-2. Exigir contrarrevisión read-only independiente de cada WP de Ola 1 antes
+1. Confirmar que la candidata coincide con `CANONICAL_WORLD_ROOT` y queda
+   fuera de `READ_ONLY_ROOTS`/downstream. Ambigüedad o diferencia = LOCK sin
+   efectos; pedir al custodio otro clone, sin crearlo ni elegirlo.
+2. Tras R5-LIB PASS, abrir WP-22, WP-23 y WP-24 en worktrees y ramas
+   distintas; sus archivos no se solapan.
+3. Exigir contrarrevisión read-only independiente de cada WP de Ola 1 antes
    de aceptar.
-3. Integrar Ola 1; abrir WP-25 solo después.
-4. Exigir contrarrevisión read-only independiente de WP-25.
-5. Pedir gate post-merge `Rn-LIB` al vigilante propio de este repo.
-6. Con PASS final y checklist completa, ejecutar el corte 0.10.0 y verificar
+4. Integrar Ola 1; abrir WP-25 solo después.
+5. Exigir contrarrevisión read-only independiente de WP-25.
+6. Pedir gate post-merge `Rn-LIB` al vigilante propio de este repo.
+7. Con PASS final y checklist completa, ejecutar el corte 0.10.0 y verificar
    C8; no adelantar ninguna interacción remota durante la preparación.
 
 Usa los briefs `plan/BRIEFS/WP-22-*.md` a `WP-25-*.md`. Solo el orquestador
@@ -229,13 +285,16 @@ Copiar solo este bloque:
 Eres el vigilante read-only del carril canónico `LIB` para el repo
 skills-library. No eres worker, orquestador ni aceptador.
 
-1. Calibra `WORLD_ROOT` a la raíz de skills-library y un `OUT_DIR` propio,
-   fuera del repo.
-2. Emite rondas únicamente como `Rn-LIB`; empieza por el siguiente número
-   libre confirmado en el plan. No reutilices ni mezcles rondas de otro
-   carril.
-3. Antes del despacho, verifica higiene de worktrees/ramas/locks, diff limpio
-   fuera de `plan/` y último CI principal. Persiste evidencia literal.
+1. Calibra `WORLD_ROOT` candidata, `CANONICAL_WORLD_ROOT`,
+   `READ_ONLY_ROOTS`, `DOWNSTREAM_PATTERNS` y un `OUT_DIR` propio fuera del
+   repo. Compara raíces por segmentos tras normalizar y resolver aliases.
+2. R4-LIB midió `b5e3ae2`, no el nuevo tip de gobierno. Emite R5-LIB sobre
+   el nuevo tip; no autorices ninguna marca en curso antes de PASS.
+3. Antes del despacho, verifica identidad del clone canónico, higiene de
+   worktrees/ramas/locks, diff limpio fuera de `plan/` y último CI principal.
+   Una raíz candidata downstream, ambigua o distinta del canónico queda en
+   LOCK antes de cualquier mutación; pide al custodio otro clone de trabajo
+   y no lo crees ni elijas. Persiste evidencia literal.
 4. Durante la ola, observa sin editar. Para WP-22…WP-25, el orquestador
    puede pedir una contrarrevisión read-only independiente pre-merge; esa
    revisión no sustituye el gate post-merge.

@@ -10,6 +10,14 @@ diff contra este fichero y los ejes aplicables antes de reportar.
 - Citar, no copiar árboles ajenos. Ningún sello sin fuente; ruta citada =
   ruta existente.
 - Commits convencionales, en **castellano**, un repo por commit.
+- Antes de despacho, devolver si la raíz candidata no acredita identidad con
+  `CANONICAL_WORLD_ROOT`: resolver ruta absoluta/realpath, aliases de
+  filesystem y git toplevel, normalizar Windows y comparar por segmentos
+  contra `READ_ONLY_ROOTS`/`DOWNSTREAM_PATTERNS`. Downstream
+  igual/descendiente, ambigüedad o diferencia = LOCK fail-closed antes de
+  cualquier mkdir, escritura, watcher, git mutable, plan, rama o worktree.
+  El vigía solicita al custodio un clone de trabajo válido; no lo crea ni lo
+  elige.
 
 ## Ejes de CA (obligatorios por tipo de WP)
 

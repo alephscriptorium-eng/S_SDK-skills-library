@@ -48,6 +48,17 @@ Notas del orquestador:
   bifurcación real o petición de ampliar, preferentemente como lista vertical.
 - Parte 2: un único fenced code block íntegramente copy/paste, sin fluff y
   limitado a backlog/gates/alcances/secuencia.
+- Integrar por referencia el contrato/detector de identidad de raíz de WP-23
+  en el preflight de `swarm-orquestacion` y en el handoff a
+  `estacion-viva`; no duplicar implementación ni calibraciones de
+  consumidor.
+- El orden obligatorio es identidad canónica PASS → cualquier `mkdir`,
+  escritura, watcher, git mutable, edición de plan, rama o worktree. Un
+  candidato downstream, ambiguo, no resoluble o distinto de
+  `CANONICAL_WORLD_ROOT` conserva LOCK fail-closed.
+- El orquestador y el arranque de estación devuelven el bloqueo al custodio
+  y solicitan un clone de trabajo fuera de `READ_ONLY_ROOTS`; no crean ni
+  eligen ese clone.
 - Probar el intercambio bidireccional con fixtures de PASS y bloqueo. Debe
   rechazarse si falta una parte, se invierte el orden, Parte 1 está cercada o
   no es breve, el estado no coincide entre partes, o Parte 2 contiene fluff,
@@ -66,7 +77,9 @@ Notas del orquestador:
 - CONTRAEVIDENCIA_REQUERIDA: un WP normal sin contrarrevisión obligatoria,
   un WP de riesgo devuelto sin PASS, separación pre-merge/post-merge y un
   intercambio vigilancia↔orquestación rechazado cuando falte una parte,
-  Parte 1 pierda word-wrap o el handoff tenga fluff/no sea copiable.
+  Parte 1 pierda word-wrap o el handoff tenga fluff/no sea copiable; además,
+  un arranque bloqueado que demuestre cero efectos antes del LOCK y un
+  arranque canónico que continúe sin duplicar el detector.
 - REVISOR_DISTINTO_WORKER: sí
 
 Empieza: sitúate en rama/worktree, lee PRACTICAS entero, luego implementa.
