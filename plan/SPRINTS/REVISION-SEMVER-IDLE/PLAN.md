@@ -18,6 +18,9 @@ Estado: **WP-22…WP-25 aceptados e integrados; R6-LIB local PASS**.
   cumplir esas precondiciones.
 - **No hay GO externo:** quedan fuera consumidores, `z-sdk`, cualquier otro
   repo y todos los gitlinks.
+- **Proyección en git:** si se reportan proyecciones en git (p. ej.
+  `d52e91d` · `plan/.sync-map.json` post-apply), ha sido **Vigía S,
+  Dionisos (Aprobado)**.
 
 Esta preparación solo modifica `plan/`: no lanza agentes ni implementa
 skills. Culmina en un único commit de gobierno; no hace push.
