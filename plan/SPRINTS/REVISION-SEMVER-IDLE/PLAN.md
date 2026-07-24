@@ -1,6 +1,7 @@
 # Sprint · REVISION-SEMVER-IDLE
 
-Estado: **WP-22…WP-25 aceptados e integrados; R6-LIB local PASS**.
+Estado: **release 0.10.0 publicado y C8 exacto PASS; gate forward Z listo
+para entrega, sin GO downstream**.
 
 ## Autoridad (custodio · 2026-07-24)
 
@@ -14,8 +15,8 @@ Estado: **WP-22…WP-25 aceptados e integrados; R6-LIB local PASS**.
   únicamente después de WP-22…WP-25 aceptados e integrados, higiene de
   cierre, gates del plan, ceguera y `Rn-LIB` final en PASS. Incluye entonces
   bump/CHANGELOG, tag, workflow de Release, publish y C8 del artefacto.
-  **No se ejecuta en esta preparación** y no habilita remotas antes de
-  cumplir esas precondiciones.
+  Las precondiciones quedaron acreditadas por `R7-LIB` sobre `79b1b64`; el
+  corte se ejecutó después, sin habilitar consumidores ni otros repos.
 - **No hay GO externo:** quedan fuera consumidores, `z-sdk`, cualquier otro
   repo y todos los gitlinks.
 - **Proyección en git:** si se reportan proyecciones en git (p. ej.
@@ -95,6 +96,32 @@ antes de aceptación.
 7. Tras publish + C8 exacto de 0.10.0, entregar el gate forward
    `z-sdk-backlog-u145`; no adelantarlo ni convertir su ejecución downstream
    en precondición del release.
+
+## Cierre operativo · 0.10.0
+
+- **Candidato/tag:** commit
+  `f251066927e673005cec5dae631c4537f42e53fd`; tag anotado `v0.10.0`.
+- **Docs:** run `30125503524` · `completed/success`.
+- **Publish:** run `30125507369` · `completed/success`.
+- **Release homólogo:** GitHub Release
+  `https://github.com/alephscriptorium-eng/S_SDK-skills-library/releases/tag/v0.10.0`.
+  Solo existen workflows `Docs` y `Publish package`; no hay workflow
+  `Release`, por lo que el objeto Release no tiene run-id de Actions.
+- **Registry:** `npm view
+  @alephscript/skills-scriptorium@0.10.0 --registry=https://npm.scriptorium.escrivivir.co
+  version` → `0.10.0`; dist-tag `latest` → `0.10.0`.
+- **C8 exacto:** instalación limpia con `--save-exact --ignore-scripts`;
+  declarada `0.10.0`, resuelta en lock `0.10.0`, instalada `0.10.0`; sync
+  materializó `swarm-orquestacion`, `vigilancia` y `estacion-viva`; política
+  semver 32/32 e integración de método PASS desde la raíz instalada.
+- **Corrección de evidencia:** la primera invocación del probe integrado desde
+  la raíz del consumidor falló `ENOENT`; se repitió desde la raíz del paquete
+  instalado y terminó `C8 limpio corregido: PASS`.
+- **Residuo no bloqueante:** `docs:verificar-pesos` falla porque `docs/public`
+  contiene solo `CNAME`; es preexistente al corte 0.9.0, no integra los gates
+  de este plan ni el workflow Docs y no se corrigió introduciendo obra ajena.
+- **Fronteras:** WP-26, consumidores y gitlinks sin tocar. No declarar
+  `IDLE sin pendientes` hasta entregar el bloque `z-sdk-backlog-u145`.
 
 ## Gates y CA comunes
 

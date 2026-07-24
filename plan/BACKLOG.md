@@ -354,7 +354,7 @@ Gate `Rn-LIB` PASS del custodio. Tip de referencia: `cc59e4e`
   `30041973425` ✅ · Publish `30041973372` ✅ · registry `0.9.0` ·
   R2-LIB: PASS.
 
-## Sprint REVISION-SEMVER-IDLE · preparado (2026-07-24)
+## Sprint REVISION-SEMVER-IDLE · release 0.10.0 publicado (2026-07-24)
 
 Autoridad: **GO de planificación + GO de implementación/arranque del
 custodio** para WP-22…WP-25. Antes de 🔶: higiene pre-despacho y PASS del
@@ -410,13 +410,29 @@ gobierno y no hace push.
   **Brief:**
   `plan/BRIEFS/WP-25-integracion-metodo-revision-semver-idle.md`.
 
-### Release
+### Release · PASS
 
-**GO end-to-end condicionado para 0.10.0**: ampliación funcional compatible y
-cambio de contrato de método, por lo que corresponde minor desde 0.9.0
-(DC-22). No se ejecuta aún. Solo después de WP-22…25 ✅ e integrados, higiene,
-gates/ceguera y `Rn-LIB` final PASS se habilitan bump/CHANGELOG, tag, workflow
-de Release, publish y C8. Consumo externo y gitlinks quedan fuera de alcance.
+- **Versión:** `0.10.0` (minor compatible, DC-22/DC-27).
+- **Tip/tag:** `f251066927e673005cec5dae631c4537f42e53fd` · `v0.10.0`
+  anotado y publicado; `main` local/remoto alineado en ese tip antes de este
+  cierre de gobierno.
+- **Docs:** run `30125503524` · `success`.
+- **Publish:** run `30125507369` · `success`.
+- **Release homólogo:** GitHub Release `v0.10.0` publicado; este repo no tiene
+  workflow `Release` separado, por lo que no existe run-id de Actions que
+  atribuirle.
+- **Registry/C8:** `npm view
+  @alephscript/skills-scriptorium@0.10.0 --registry=https://npm.scriptorium.escrivivir.co
+  version` → `0.10.0`; `latest=0.10.0`. Instalación limpia con política
+  `exact`: declarada, resuelta en lock e instalada `0.10.0`; sync materializó
+  `swarm-orquestacion`, `vigilancia` y `estacion-viva`; probes semver 32/32 e
+  integración de método PASS desde la raíz del paquete instalado.
+- **Evidencia corregida:** una primera invocación del probe integrado desde la
+  raíz del consumidor falló `ENOENT` por cwd incorrecto; la repetición desde
+  la raíz del paquete instalado terminó `C8 limpio corregido: PASS`.
+- **Frontera:** consumo externo, gitlinks y WP-26 no fueron tocados. El sprint
+  no se declara `IDLE sin pendientes`: queda entregar el gate forward
+  `z-sdk-backlog-u145`.
 
 ### Gate forward post-release · pendiente
 
