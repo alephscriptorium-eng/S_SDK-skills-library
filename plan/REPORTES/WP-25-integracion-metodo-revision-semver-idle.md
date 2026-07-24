@@ -6,7 +6,7 @@
 | fecha | 2026-07-24 |
 | rama | `wp/25-integracion-metodo-revision-semver-idle` |
 | base viva / main / merge-base | `d52e91d52c5a5dd010300c057bd0dfca310d829a` |
-| commits alcanzables | `348e4789`, `b67bf625`, `032310ad`, `c8d6c110`, `36263598`, `8211b065`, `b4d53ea9`, `d1591ad9`; actualización de este reporte: ver historial de la rama |
+| commits alcanzables | `348e4789`, `b67bf625`, `032310ad`, `c8d6c110`, `36263598`, `8211b065`, `b4d53ea9`, `d1591ad9`, `ea97940a`, `e91cc46f`; actualización de este reporte: ver historial de la rama |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
 | revisor distinto del worker | `⏳ sin verificar` |
@@ -56,10 +56,17 @@ WP-22/23/24 sin duplicar detector, parser, políticas ni calibraciones.
    `LOCK identidad-raiz`, `cero efectos:` y `OUT_DIR`; exige dentro de ella los
    diez efectos en el orden literal. El mutante persistente
    `clausula-sin-boot-handoff` queda rechazado.
+6. La cuarta devolución mostró que el orden simbólico podía coexistir con una
+   instrucción operativa que dijera «después». El probe vincula ahora cada
+   consumidor con su cláusula temporal inmediatamente anterior al detector y
+   exige literalmente detector/preflight **antes** del primer efecto. Los
+   mutantes `orquestador-despues-de-mkdir`, `worker-despues-de-mkdir` y
+   `ciclo-despues-de-efecto` quedan rechazados.
 
 Corrección implementada en `032310ad`, sin editar `BOOT.md` ni
 `roles/BRIEF.md`; endurecimiento fail-closed añadido en `8211b065` y
-extracción semántica de cláusula en `d1591ad9`.
+extracción semántica de cláusula en `d1591ad9`; orden temporal exacto añadido
+en `e91cc46f`.
 
 ## Reconciliación post-rebase
 
@@ -120,6 +127,9 @@ mutante ciclo-sin-pass-previo-al-boot: RECHAZADO
 mutante orquestador-sin-LOCK: RECHAZADO
 mutante orquestador-con-efectos-antes-del-bloqueo: RECHAZADO
 mutante clausula-sin-boot-handoff: RECHAZADO
+mutante orquestador-despues-de-mkdir: RECHAZADO
+mutante worker-despues-de-mkdir: RECHAZADO
+mutante ciclo-despues-de-efecto: RECHAZADO
 integracion-metodo: PASS
 pre-merge/post-merge: evidencia separada
 
@@ -146,7 +156,7 @@ El probe compuesto ejecutó los 9 casos de identidad de WP-23 —incluidos siete
 LOCK sin cambios de FS/Git ni `OUT_DIR`—, los 20 casos duales, los 2 casos de
 dedup, los 32 casos semver y el segundo cliente semver. También extrajo y
 ejecutó el probe de selección de WP-22. Para la integración WP-25 ejercitó dos
-clientes y rechazó doce mutantes contractuales.
+clientes y rechazó quince mutantes contractuales.
 
 ### Evidencia manual
 
@@ -163,6 +173,8 @@ clientes y rechazó doce mutantes contractuales.
   los diez efectos prohibidos antes de resolver PASS/LOCK.
 - Inspección manual del probe: la lista se valida sobre la cláusula extraída de
   cada consumidor, no sobre presencia global en el documento.
+- Inspección manual temporal: cada consumidor exige «antes» en el contexto
+  inmediato al detector; el orden simbólico no sustituye esa frase operativa.
 - Inspección manual de frontera release: no se editaron versión, CHANGELOG,
   workflows, paquete ni fuentes downstream; no se usó red.
 - Diagnósticos del editor sobre los cinco ficheros modificados:
@@ -192,7 +204,8 @@ clientes y rechazó doce mutantes contractuales.
     detector→PASS→estación y LOCK sin boot/handoff — PASS.
   - `[automatizado]` eliminación de salida dual, estación, cada campo o PASS
     previo; inversión BOOT/detector; eliminación de LOCK; efectos antes del
-    bloqueo; cláusula sin boot/handoff — doce mutantes — RECHAZADOS.
+    bloqueo; cláusula sin boot/handoff; tres cambios antes→después — quince
+    mutantes — RECHAZADOS.
 - `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: el probe integrado usa directamente
   built-ins `node:fs` y `node:child_process`; los probes compuestos usan
   built-ins declarados por sus fuentes. Dependencias npm nuevas: cero.
@@ -218,12 +231,13 @@ clientes y rechazó doce mutantes contractuales.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
 - [x] Commits convencionales y alcanzables post-rebase: `348e4789`,
   `b67bf625`, `032310ad`, `c8d6c110`, `36263598`, `8211b065`, `b4d53ea9`,
-  `d1591ad9`; esta actualización se asienta en commit documental separado.
+  `d1591ad9`, `ea97940a`, `e91cc46f`; esta actualización se asienta en commit
+  documental separado.
 - [x] Diff solo del alcance del WP: comprobado contra base exacta
   `d52e91d52c5a5dd010300c057bd0dfca310d829a`; seis rutas autorizadas.
 - [x] Riesgo y contraevidencia del brief cubiertos: normal/riesgo, PASS/LOCK,
-  cláusula aislada, cero efectos, doce mutantes, dual inválida, semver y
-  pre/post-merge.
+  cláusula aislada, temporalidad antes, cero efectos, quince mutantes, dual
+  inválida, semver y pre/post-merge.
 - [x] Pruebas automatizadas separadas de evidencia manual: secciones distintas.
 
 ## Hallazgos fuera de alcance
