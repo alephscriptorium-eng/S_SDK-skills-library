@@ -14,6 +14,31 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-07-24
+
+Minor (DC-22/DC-27: cambio compatible de contrato de método): revisión
+adversarial selectiva, pulso idle, política semver verificable e integración
+fail-closed de identidad de raíz.
+
+### Added
+
+- **WP-22 · revisión adversarial selectiva + campos de riesgo** — contrato
+  read-only independiente, riesgo explícito en BRIEF/reporte y devolución
+  numerada para las clases que exigen contrarrevisión.
+- **WP-23 · pulso idle + fixes retroactivos + salida dual** — vigilancia
+  separa gate post-merge de contrarrevisión, detecta identidad de raíz antes
+  de efectos y entrega vista PO seguida de handoff operativo copiable.
+- **WP-24 · política semver + dependencias directas + probes** — políticas
+  `exact`, `caret-semver` y `major-band`, warning e integración obligatoria
+  para `0.x`, gate local 32/32 y C8 online como evidencia separada.
+
+### Changed
+
+- **WP-25 · integración revisión/semver/idle** — el ciclo y los roles enlazan
+  las entregas anteriores, exigen PASS de identidad antes de todo efecto e
+  integran el intercambio dual entre vigilancia y orquestación.
+- Semver del paquete `0.9.0` → `0.10.0`; pins de consumo/docs alineados.
+
 ## [0.9.0] — 2026-07-23
 
 Minor (DC-22: cambio de contrato de método): parser mixto con fallo
