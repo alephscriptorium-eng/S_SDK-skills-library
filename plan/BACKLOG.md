@@ -389,7 +389,7 @@ gobierno y no hace push.
   no resoluble, verificando cero efectos en casos bloqueados. Los patrones
   concretos viven solo en la calibración del consumidor.
   **Brief:** `plan/BRIEFS/WP-23-pulso-idle-fixes-retroactivos.md`.
-- 🔶 **WP-24 · gate semver + dependencias directas + probes** — políticas
+- ✅ **WP-24 · gate semver + dependencias directas + probes** — políticas
   `exact`, `caret-semver` y `major-band: >=M.m.p <(M+1).0.0`; warning
   `0.x`; gate local determinista separado de C8 online; probes
   automatizados. Contrarrevisión independiente obligatoria.
