@@ -5,7 +5,7 @@
 | agente | worker fresco independiente WP-24 |
 | fecha | 2026-07-24 |
 | rama | `wp/24-gate-semver-dependencias-probes` |
-| commits | `5e8a6be`, `bb6181b`, `429d1c9`, `d88d468` + commit documental de esta corrección |
+| commits | `5e8a6be`, `bb6181b`, `429d1c9`, `d88d468`, `5b5c90f`, `7c7ec29` + commit documental de esta corrección |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | estado propuesto | devuelto-corregido |
 
@@ -16,7 +16,7 @@ El parser valida prerelease numérico y compara majors con `BigInt`; los
 built-ins `node:` se reconocen mediante Node.
 El gate descubre imports recorriendo `runtimeRoots`, contrasta el inventario,
 ejecuta tests integrados `0.x` y aplica patrones dedup.
-Treinta probes ejercitan verdes, inválidos y falsos negativos.
+Treinta y dos probes ejercitan verdes, inválidos y falsos negativos.
 Un paquete-fixture con runner propio acredita el segundo cliente.
 La referencia conserva separado el gate local de C8 online.
 No se añadió ninguna dependencia: script y probes usan solo built-ins de
@@ -35,17 +35,27 @@ Node 22; `package.json` y lockfile no cambiaron.
 7. `cliente-independiente/` aporta manifiesto, configuración, fuente y runner
    propios que invocan el CLI fuera del runner matricial.
 
+## Segunda devolución numerada corregida
+
+1. Los built-ins solo pasan con prefijo `node:`. `node:test`,
+   `node:test/reporters` y `node:sqlite` siguen verdes; `fs` bare falla tanto
+   descubierto en `runtimeRoots` como declarado en `runtimeImports`.
+2. El diff completo contiene nueve rutas, enumeradas y medidas abajo; se
+   eliminó la referencia obsoleta a cinco.
+
 ## Archivos tocados
 
 - Creado `skills/swarm-orquestacion/reference/politica-dependencias-semver.md`: contrato, configuración y frontera C8.
 - Creado `skills/swarm-orquestacion/scripts/verificar-dependencias-semver.mjs`: gate local determinista.
-- Modificado `skills/swarm-orquestacion/examples/fixture-semver/cases.json`: 30 casos declarativos.
+- Modificado `skills/swarm-orquestacion/examples/fixture-semver/cases.json`: 32 casos declarativos.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/probes.mjs`: runner efímero sin red.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/package.json`: segundo manifiesto.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/dependencias-semver.json`: política propia.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/src/index.mjs`: fuente runtime propia.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/probe.mjs`: runner independiente.
 - Creado `plan/REPORTES/WP-24-gate-semver-dependencias-probes.md`: este reporte.
+
+Total: **9 rutas**.
 
 ## Evidencia
 
@@ -61,6 +71,8 @@ PASS verde caret · exit=0
 PASS verde major-band · exit=0
 PASS major-band sin pérdida de precisión · exit=1
 PASS built-ins node prefix y subpath · exit=0
+PASS built-in bare en fuentes rechazado · exit=1
+PASS built-in bare en inventario rechazado · exit=1
 PASS versión no resuelta queda para C8 · exit=0
 PASS verde cero con integración · exit=0
 PASS cero sin integración · exit=1
@@ -85,7 +97,7 @@ PASS dedup definición duplicada · exit=1
 PASS deny prevalece · exit=1
 PASS fuera de allow · exit=1
 PASS override por paquete · exit=0
-probes semver: OK (30/30) · sin red
+probes semver: OK (32/32) · sin red
 
 $ node skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/probe.mjs
 [dependencias-semver] OK: 1 dependencia(s) runtime; 1 fuente(s); 0 integración(es); gate local sin red; C8 no se ejecutó
@@ -98,6 +110,17 @@ raiz: /c/S_LAB/skills-library-wp-24/skills/swarm-orquestacion
 $ git log -p -- <rutas WP-24> | rg -q -i -e "$PATTERN"
 ceguera historial: 0
 
+$ git diff --name-only 71e446a..HEAD
+plan/REPORTES/WP-24-gate-semver-dependencias-probes.md
+skills/swarm-orquestacion/examples/fixture-semver/cases.json
+skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/dependencias-semver.json
+skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/package.json
+skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/probe.mjs
+skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/src/index.mjs
+skills/swarm-orquestacion/examples/fixture-semver/probes.mjs
+skills/swarm-orquestacion/reference/politica-dependencias-semver.md
+skills/swarm-orquestacion/scripts/verificar-dependencias-semver.mjs
+
 C8 online (npm view + instalación limpia + integración):
 ⏳ sin verificar — separado deliberadamente; no se ejecutó red por mandato.
 ```
@@ -108,13 +131,13 @@ configuración, fuente y runner propios; ejecutó el CLI con PASS.
 
 ## Auto-revisión (PRACTICAS del mundo — con honestidad)
 
-- [x] Diff solo dentro de `ALCANCE_DIFF`: las cinco rutas están autorizadas.
+- [x] Diff solo dentro de `ALCANCE_DIFF`: las nueve rutas listadas están autorizadas.
 - [x] Cero árboles/ficheros copiados de otros mundos sin procedencia: implementación y fixtures nuevos.
 - [x] Sellos con fuente; rutas citadas existentes: evidencia literal de esta rama.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 figura `⏳ sin verificar`.
 - [x] Eje(s) aplicables evidenciado(s): III, IV, ceguera de árbol y regla 14.
-- [x] Gates ejecutados de verdad: sintaxis, 30/30 probes, segundo cliente y ceguera.
-- [x] Commits convencionales: corrección técnica `d88d468`; reporte separado.
+- [x] Gates ejecutados de verdad: sintaxis, 32/32 probes, segundo cliente y ceguera.
+- [x] Commits convencionales: correcciones `d88d468` y `7c7ec29`; reportes separados.
 - [x] Diff solo del alcance del WP: confirmado contra `71e446a`; sin BACKLOG, roles, ciclo ni SKILL.
 
 ## Hallazgos fuera de alcance
