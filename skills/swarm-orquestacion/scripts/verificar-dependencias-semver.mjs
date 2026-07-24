@@ -211,7 +211,7 @@ Este gate no consulta registries ni instala: C8 online se ejecuta aparte.`);
     return;
   }
   console.log(
-    `[dependencias-semver] OK: ${result.directCount} dependencia(s) runtime; gate local sin red`,
+    `[dependencias-semver] OK: ${result.directCount} dependencia(s) runtime; gate local sin red; C8 no se ejecutó`,
   );
 }
 

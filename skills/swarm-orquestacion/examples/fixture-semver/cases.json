@@ -21,6 +21,13 @@
     "includes": ["OK:"]
   },
   {
+    "name": "versión no resuelta queda para C8",
+    "package": { "dependencies": { "alpha": "999999.0.0" } },
+    "config": { "defaultPolicy": "exact", "runtimeImports": ["alpha"] },
+    "exit": 0,
+    "includes": ["OK:", "C8 no se ejecutó"]
+  },
+  {
     "name": "verde cero con integración",
     "package": { "dependencies": { "alpha": ">=0.4.2 <1.0.0" } },
     "config": {

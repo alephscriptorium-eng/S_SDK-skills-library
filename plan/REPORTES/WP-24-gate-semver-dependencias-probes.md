@@ -16,7 +16,8 @@ Se añadió un gate local sin red para políticas `exact`, `caret-semver` y
 El gate rechaza dependencias transitivas o solo-dev y exige evidencia de
 integración para mínimos `0.x`, además del warning explícito.
 La referencia separa el resultado local de C8 online.
-Veintiún probes ejercitan verdes, inválidos y falsos negativos.
+Veintidós probes ejercitan verdes, inválidos y falsos negativos, incluida una
+versión no resuelta que el gate local deja expresamente para C8.
 No se añadió ninguna dependencia: script y probes usan solo built-ins de
 Node 22; `package.json` y lockfile no cambiaron.
 
@@ -39,6 +40,7 @@ $ node skills/swarm-orquestacion/examples/fixture-semver/probes.mjs
 PASS verde exact · exit=0
 PASS verde caret · exit=0
 PASS verde major-band · exit=0
+PASS versión no resuelta queda para C8 · exit=0
 PASS verde cero con integración · exit=0
 PASS cero sin integración · exit=1
 PASS tag rechazado · exit=1
@@ -57,7 +59,7 @@ PASS runtime transitiva ausente · exit=1
 PASS deny prevalece · exit=1
 PASS fuera de allow · exit=1
 PASS override por paquete · exit=0
-probes semver: OK (21/21) · sin red
+probes semver: OK (22/22) · sin red
 
 $ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
 ceguera: 0
@@ -88,7 +90,7 @@ una combinación con override por paquete como clientes del mismo gate.
 - [x] Sellos con fuente; rutas citadas existentes: evidencia literal de esta rama.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 figura `⏳ sin verificar`.
 - [x] Eje(s) aplicables evidenciado(s): III, IV, ceguera de árbol y regla 14.
-- [x] Gates ejecutados de verdad: sintaxis, 21/21 probes y ceguera.
+- [x] Gates ejecutados de verdad: sintaxis, 22/22 probes y ceguera.
 - [x] Commits convencionales: `feat(semver): ...`; reporte documental separado.
 - [x] Diff solo del alcance del WP: confirmado contra `71e446a`.
 
