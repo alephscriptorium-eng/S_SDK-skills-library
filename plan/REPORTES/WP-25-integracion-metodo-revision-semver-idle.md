@@ -6,7 +6,7 @@
 | fecha | 2026-07-24 |
 | rama | `wp/25-integracion-metodo-revision-semver-idle` |
 | base viva / main / merge-base | `d52e91d52c5a5dd010300c057bd0dfca310d829a` |
-| commits alcanzables | `348e4789`, `b67bf625`, `032310ad`, `c8d6c110`; commit post-rebase de este reporte: ver historial de la rama |
+| commits alcanzables | `348e4789`, `b67bf625`, `032310ad`, `c8d6c110`, `36263598`, `8211b065`; actualización de este reporte: ver historial de la rama |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
 | revisor distinto del worker | `⏳ sin verificar` |
@@ -43,9 +43,16 @@ WP-22/23/24 sin duplicar detector, parser, políticas ni calibraciones.
    `ORQUESTADOR.md` y el cliente `WORKER.md`/`ciclo.md`. Ambos ejercitan
    calibración, detector, PASS, estación y bloqueo; el segundo cliente semver
    de WP-24 queda como evidencia compuesta, no como sustituto.
+4. La segunda devolución mostró que el probe aún aceptaba omitir LOCK o
+   adelantar efectos al bloqueo. El contrato fija ahora
+   `DETECTOR → PASS|LOCK → EFECTOS` y exige `LOCK identidad-raiz` fail-closed
+   con cero `mkdir`, escritura, watcher, git mutable, plan, rama, worktree,
+   boot, handoff y `OUT_DIR`. Los mutantes
+   `orquestador-sin-LOCK` y
+   `orquestador-con-efectos-antes-del-bloqueo` quedan rechazados.
 
 Corrección implementada en `032310ad`, sin editar `BOOT.md` ni
-`roles/BRIEF.md`.
+`roles/BRIEF.md`; endurecimiento fail-closed añadido en `8211b065`.
 
 ## Reconciliación post-rebase
 
@@ -103,6 +110,8 @@ mutante orquestador-sin-READ_ONLY_ROOTS: RECHAZADO
 mutante orquestador-sin-DOWNSTREAM_PATTERNS: RECHAZADO
 mutante orquestador-boot-antes-de-detector: RECHAZADO
 mutante ciclo-sin-pass-previo-al-boot: RECHAZADO
+mutante orquestador-sin-LOCK: RECHAZADO
+mutante orquestador-con-efectos-antes-del-bloqueo: RECHAZADO
 integracion-metodo: PASS
 pre-merge/post-merge: evidencia separada
 
@@ -129,7 +138,7 @@ El probe compuesto ejecutó los 9 casos de identidad de WP-23 —incluidos siete
 LOCK sin cambios de FS/Git ni `OUT_DIR`—, los 20 casos duales, los 2 casos de
 dedup, los 32 casos semver y el segundo cliente semver. También extrajo y
 ejecutó el probe de selección de WP-22. Para la integración WP-25 ejercitó dos
-clientes y rechazó nueve mutantes contractuales.
+clientes y rechazó once mutantes contractuales.
 
 ### Evidencia manual
 
@@ -142,6 +151,8 @@ clientes y rechazó nueve mutantes contractuales.
   autorizados.
 - Inspección manual de autoridad: el contrarrevisor no acepta ni mergea; el
   vigía no escribe BACKLOG; el worker no opera gate forward.
+- Inspección manual de fail-closed: los cinco puntos de método enumeran LOCK y
+  los diez efectos prohibidos antes de resolver PASS/LOCK.
 - Inspección manual de frontera release: no se editaron versión, CHANGELOG,
   workflows, paquete ni fuentes downstream; no se usó red.
 - Diagnósticos del editor sobre los cinco ficheros modificados:
@@ -170,7 +181,8 @@ clientes y rechazó nueve mutantes contractuales.
   - `[automatizado]` consumidor WORKER/ciclo — calibración ausente bloqueada,
     detector→PASS→estación y LOCK sin boot/handoff — PASS.
   - `[automatizado]` eliminación de salida dual, estación, cada campo o PASS
-    previo; inversión BOOT/detector — nueve mutantes — RECHAZADOS.
+    previo; inversión BOOT/detector; eliminación de LOCK; efectos antes del
+    bloqueo — once mutantes — RECHAZADOS.
 - `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: el probe integrado usa directamente
   built-ins `node:fs` y `node:child_process`; los probes compuestos usan
   built-ins declarados por sus fuentes. Dependencias npm nuevas: cero.
@@ -195,12 +207,12 @@ clientes y rechazó nueve mutantes contractuales.
   ceguera árbol/historial.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
 - [x] Commits convencionales y alcanzables post-rebase: `348e4789`,
-  `b67bf625`, `032310ad`, `c8d6c110`; esta reconciliación se asienta en commit
-  documental separado.
+  `b67bf625`, `032310ad`, `c8d6c110`, `36263598`, `8211b065`; esta actualización
+  se asienta en commit documental separado.
 - [x] Diff solo del alcance del WP: comprobado contra base exacta
   `d52e91d52c5a5dd010300c057bd0dfca310d829a`; seis rutas autorizadas.
 - [x] Riesgo y contraevidencia del brief cubiertos: normal/riesgo, PASS/LOCK,
-  dual inválida, semver y pre/post-merge.
+  cero efectos, once mutantes, dual inválida, semver y pre/post-merge.
 - [x] Pruebas automatizadas separadas de evidencia manual: secciones distintas.
 
 ## Hallazgos fuera de alcance
