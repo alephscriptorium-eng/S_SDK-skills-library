@@ -1,8 +1,8 @@
 # ESTACIÓN DEL VIGÍA — protocolo (marco-agnóstico)
 
 Protocolo de vigilancia v1. Parametriza **el mundo** (`WORLD_ROOT`,
-`OUT_DIR`, `INTERVAL`). No incluye histórico de sesión: eso es dato de
-instancia.
+`CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS`, `DOWNSTREAM_PATTERNS`, `OUT_DIR`,
+`INTERVAL`). No incluye histórico de sesión: eso es dato de instancia.
 La nota de frontera local del worktree, si existe, vive en
 `plan/ESTACION.md` y se trata como calibración local.
 
@@ -10,12 +10,55 @@ La nota de frontera local del worktree, si existe, vive en
 
 | param | rol |
 | ----- | --- |
-| `WORLD_ROOT` | Raíz del repo git vigilado (un root por proceso watcher) |
+| `WORLD_ROOT` | Raíz candidata del repo git vigilado; no acredita identidad por sí sola |
+| `CANONICAL_WORLD_ROOT` | Clone de trabajo canónico esperado |
+| `READ_ONLY_ROOTS` | Array JSON explícito de raíces que nunca pueden ser raíz de trabajo |
+| `DOWNSTREAM_PATTERNS` | Array JSON de patrones por segmentos; calibración del consumidor |
 | `OUT_DIR` | Logs/estado del vigía (`watch.log`, `anomalias.log`) |
 | `INTERVAL` | Segundos entre muestras (default 45) |
 
 Territorio hermano (p. ej. gobierno vs obra) = **otra** calibración
 `WORLD_ROOT`/`OUT_DIR`, no hardcode en el skill. Ver «Pulso multi-carril».
+
+## Preflight de identidad (antes de cualquier efecto)
+
+`scripts/verificar-identidad-raiz.mjs` es el detector canónico. El watcher lo
+ejecuta **antes** de `mkdir -p "$OUT_DIR"`, de escribir logs o de entrar en su
+bucle. Un consumidor que vaya a crear plan, rama o worktree, arrancar otro
+watcher o ejecutar git mutable invoca el mismo preflight antes de esa acción.
+
+El detector:
+
+1. exige las cuatro entradas de identidad, incluidas listas vacías explícitas
+   (`[]`), para distinguir «sin raíces» de calibración ausente;
+2. resuelve ruta absoluta, `realpath` (incluidos junction/symlink) y
+   `git rev-parse --show-toplevel` de candidata y canónica;
+3. normaliza separadores y, en Windows, el case; compara pertenencia por
+   segmentos, no por prefijo textual;
+4. resuelve también cada raíz read-only y contrasta los patrones downstream
+   contra la ruta lexical, real y git toplevel;
+5. solo emite `identidad-raiz: PASS` si candidata, canónica y git toplevel
+   identifican exactamente la misma raíz y esta queda fuera de las zonas
+   prohibidas.
+
+Cada elemento de `DOWNSTREAM_PATTERNS` es una secuencia `/` de segmentos. `*`
+representa exactamente un segmento; `**`, segmentos parciales con glob, `.`
+y `..` son ambiguos y producen LOCK. Los patrones concretos pertenecen a la
+calibración del consumidor: este skill no incluye ninguno real.
+
+Raíz inexistente, alias hacia downstream/read-only, git toplevel distinto,
+calibración ausente o ambigua y diferencia respecto del canónico producen
+`LOCK identidad-raiz` (exit `23`). Ante LOCK no se crea salida ni artefacto:
+se pide al custodio un clone canónico fuera de las raíces observadas. El vigía
+no lo crea, no lo elige y espera nueva calibración.
+
+```bash
+WORLD_ROOT=/ruta/candidata \
+CANONICAL_WORLD_ROOT=/ruta/canonica \
+READ_ONLY_ROOTS='["/ruta/solo-lectura"]' \
+DOWNSTREAM_PATTERNS='["segmento/downstream/*"]' \
+node skills/vigilancia/scripts/verificar-identidad-raiz.mjs
+```
 
 ## Rol (inviolable)
 
@@ -38,6 +81,11 @@ decide (acepta/adapta/cola) → WP → merge → **vigía re-verifica CA de fact
 (grep/curl/gh real, nunca fiarse del ✅). Entregar en QUIETUD (entre lotes,
 nunca sobre zona de worker vivo). Cruzar SIEMPRE con las colas propias del
 orquestador antes de entregar (no duplicar).
+
+Toda salida al custodio aplica además el contrato dual de
+`ADDENDA-DOS-CARAS.md`: primero vista PO/SCRUM renderizable y después handoff
+operativo copiable. La contrarrevisión read-only pre-merge intenta refutar un
+WP de riesgo; no sustituye el gate final post-merge `Rn-<carril>`.
 
 ## Doctrina calibrada (señales)
 
@@ -105,6 +153,37 @@ orquestador antes de entregar (no duplicar).
 3. **POST:** verificación batch; persistir veredictos; retro de protocolo;
    declarar gates externos pendientes.
 4. **Invariante:** un WP ✅ jamás se reabre — trabajo nuevo = WP nuevo.
+
+## Pulso idle y fixes retroactivos
+
+Idle significa que no hay zona de worker viva sobre la que la elevación pueda
+interferir. No significa «sin trabajo»: el vigía usa esa ventana para recoger
+evidencia ya observada en gates y formar propuestas, siempre read-only.
+
+1. Recoger residuos técnicos reproducibles de gates, devoluciones y CAs de
+   facto. Una nota sin evidencia queda como observación, no como candidato.
+2. Agrupar por causa/clase del defecto y exigir control positivo más falso
+   negativo. No proponer un fix por cada síntoma.
+3. Contrastar con backlog/colas existentes para evitar duplicados.
+4. Registrar candidato, evidencia literal, alcance tentativo, dependencia,
+   CA por clase y si el probe fue automatizado o manual.
+5. Proponer al custodio olas pequeñas por independencia de archivos y
+   dependencias; la propuesta no es planificación aceptada.
+6. Elevar mediante addenda dual. El vigía no edita BACKLOG, no abre WP, no
+   implementa, no acepta y no reabre trabajo cerrado.
+
+Checklist de elevación idle:
+
+- dependencia cargada en runtime → dependencia directa declarada;
+- propiedad positiva + falsos negativos;
+- probes automatizados o evidencia marcada explícitamente como manual;
+- gate local determinista separado de C8 online;
+- contrarrevisión pre-merge separada del gate post-merge;
+- ceguera de la cara copiable = 0.
+
+Fixture: `../examples/addenda-idle-sintetica.md`. Gate documental:
+`node ../scripts/verificar-salida-dual.mjs <addenda>` desde esta carpeta, o
+las rutas equivalentes desde la raíz.
 
 ## Layout BACKSTAGE_GIT · `cantera/`
 

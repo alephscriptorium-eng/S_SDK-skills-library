@@ -5,24 +5,34 @@
 # Escribe watch.log (todo) y anomalias.log (solo rarezas). No toca el index.
 #
 # Uso:
-#   WORLD_ROOT=/ruta/al/repo OUT_DIR=/ruta/salida [INTERVAL=45] ./watcher.sh
+#   WORLD_ROOT=/ruta/al/repo CANONICAL_WORLD_ROOT=/ruta/canonica \
+#   READ_ONLY_ROOTS='["/ruta/solo-lectura"]' \
+#   DOWNSTREAM_PATTERNS='["segmento/downstream/*"]' \
+#   OUT_DIR=/ruta/salida [INTERVAL=45] ./watcher.sh
 #   SIBLING_ROOT=/ruta/hermano  # opcional: pulso locks/worktrees del hermano
-#   ./watcher.sh /ruta/al/repo /ruta/salida [INTERVAL]
 #
 # Multi-carril: un proceso = un WORLD_ROOT. Territorio hermano = otra
 # instancia o SIBLING_ROOT (solo lectura; líneas con prefijo sibling:).
 # Ver reference/ESTACION.md «Pulso multi-carril».
-set -u
+set -uo pipefail
 
 WORLD_ROOT="${WORLD_ROOT:-${1:-}}"
 OUT_DIR="${OUT_DIR:-${2:-}}"
 INTERVAL="${INTERVAL:-${3:-45}}"
 SIBLING_ROOT="${SIBLING_ROOT:-}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -z "$WORLD_ROOT" ] || [ -z "$OUT_DIR" ]; then
-  echo "uso: WORLD_ROOT=<repo> OUT_DIR=<salida> [INTERVAL=45] [SIBLING_ROOT=<hermano>] $0" >&2
-  echo "  o: $0 <WORLD_ROOT> <OUT_DIR> [INTERVAL]" >&2
+  echo "uso: WORLD_ROOT=<repo> CANONICAL_WORLD_ROOT=<repo-canonico> READ_ONLY_ROOTS='<array JSON>' DOWNSTREAM_PATTERNS='<array JSON>' OUT_DIR=<salida> [INTERVAL=45] [SIBLING_ROOT=<hermano>] $0" >&2
   exit 2
+fi
+
+# Debe preceder cualquier mkdir, escritura, watcher o operación git mutable.
+# También rechaza calibración ausente/ambigua: WORLD_ROOT por sí sola no basta.
+node "$SCRIPT_DIR/verificar-identidad-raiz.mjs"
+identity_status=$?
+if [ "$identity_status" -ne 0 ]; then
+  exit "$identity_status"
 fi
 
 if [ ! -d "$WORLD_ROOT/.git" ] && [ ! -f "$WORLD_ROOT/.git" ]; then

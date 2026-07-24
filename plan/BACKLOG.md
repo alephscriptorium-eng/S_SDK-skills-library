@@ -373,7 +373,7 @@ gobierno y no hace push.
   devolución numerada antes de aceptación en clases de riesgo.
   Contrarrevisión independiente obligatoria para este WP.
   **Brief:** `plan/BRIEFS/WP-22-revision-adversarial-campos-riesgo.md`.
-- 🔶 **WP-23 · pulso idle + fixes retroactivos + salida dual del vigía** —
+- ✅ **WP-23 · pulso idle + fixes retroactivos + salida dual del vigía** —
   residuos de gates, candidatos y propuesta de olas vía custodio; no escribir
   BACKLOG; gate post-merge separado de contrarrevisión. Toda salida al
   custodio lleva cara PO en llano seguida de handoff scrum copiable para el

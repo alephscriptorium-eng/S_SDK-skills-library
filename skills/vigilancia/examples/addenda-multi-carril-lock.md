@@ -13,22 +13,44 @@ si hace falta).
 
 ## §WP
 
-### Hallazgo
+## Parte 1 · Vista PO/SCRUM
 
-`index.lock` sostenido ≥3 ciclos en el repo de gobierno. Carril:
-`Rn-gobierno`.
+ESTADO: GO=⛔; CHECK_LOCK=✅; PASS_HIGIENE=⛔ BLOQUEADO
 
-### Propuesta
+### Qué cambió
 
-1. Freeze inmediato de pushes de gobierno en todos los carriles activos.
-2. No despachar workers nuevos hasta que el lock desaparezca y la higiene
-   §8 del carril afectado vuelva a PASS.
-3. Inspeccionar procesos git colgados; no matar workers vivos a ciegas.
+- ✅ El mismo `index.lock` apareció durante tres ciclos.
+- ⛔ Los pushes de gobierno y los despachos nuevos quedan congelados.
 
-### CA
+### Qué sigue
 
-- Tras resolución: 0 `index.lock` / `HEAD.lock` en 2 ciclos consecutivos.
-- Bitácora del vigía registra el fin del freeze con etiqueta `Rn-gobierno`.
+- ⏳ Inspeccionar procesos git y esperar dos ciclos limpios.
+- ⛔ No matar procesos ni workers a ciegas.
+
+### Decisión del custodio
+
+- ⏳ Autorizar la investigación del lock o mantener el freeze.
+
+## Parte 2 · Handoff operativo
+
+```markdown
+BACKLOG
+- Incidente sin alta: lock sostenido en `Rn-gobierno`.
+
+GATES
+ESTADO: GO=⛔; CHECK_LOCK=✅; PASS_HIGIENE=⛔ BLOQUEADO
+- Requerir 0 `index.lock` / `HEAD.lock` durante 2 ciclos consecutivos.
+
+ALCANCES
+- Freeze de pushes de gobierno en carriles activos.
+- No despachar trabajo nuevo ni matar procesos a ciegas.
+
+SECUENCIA
+1. Inspeccionar procesos git.
+2. Resolver el lock sin intervenir workers vivos.
+3. Observar dos ciclos limpios.
+4. Registrar fin del freeze con etiqueta `Rn-gobierno`.
+```
 
 ## Prueba de ceguera
 
