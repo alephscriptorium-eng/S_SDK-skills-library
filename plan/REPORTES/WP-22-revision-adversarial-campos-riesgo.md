@@ -5,10 +5,10 @@
 | agente | worker fresco WP-22 |
 | fecha | 2026-07-24 |
 | rama | `wp/22-revision-adversarial-campos-riesgo` |
-| commits | `0054bd1`, `b9a8cc2`, `6efbc03`, `5aabf43`, `4b49398`; commit final del reporte: ver historial de la rama |
+| commits | `0054bd1`, `b9a8cc2`, `6efbc03`, `5aabf43`, `4b49398`, `b23155f`, `556185f`; commit final del reporte: ver historial de la rama |
 | eje(s) CA | III + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
-| revisor distinto del worker | `sí` — dos revisiones: `DEVUELTO` |
+| revisor distinto del worker | `sí` — tres revisiones: `DEVUELTO` |
 | estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
@@ -23,7 +23,9 @@ orquestador. Tras la devolución, se eliminó la clasificación duplicada del
 brief y se añadió un probe persistente que rechaza una duplicación semántica
 inyectada. Tras la segunda devolución, el probe se amplió a los tres
 consumidores contractuales y el mutante se movió a `REVISION.md`. No se tocaron
-puntos de integración reservados a WP-25.
+puntos de integración reservados a WP-25. Tras la tercera devolución, el probe
+pasó a validar el significado exacto de ambos flujos y a rechazar mutantes de
+cada uno.
 
 ## Correcciones de la devolución numerada
 
@@ -49,6 +51,18 @@ Corregido en commit `6efbc03`.
 
 Corregido en commit `4b49398`.
 
+## Corrección de la tercera devolución numerada
+
+1. El flujo `normal` debe ser exactamente worker → revisión ordinaria sin
+   contrarrevisión obligatoria.
+2. El flujo `independiente` debe ser exactamente worker → contrarrevisión
+   adversarial → revisión ordinaria, con revisor distinto y contraevidencia no
+   limitada al camino feliz.
+3. Dos mutantes en memoria intercambian por separado cada flujo; ambos deben
+   producir `RECHAZADO`.
+
+Corregido en commit `556185f`.
+
 ## Archivos tocados
 
 - Modificado `skills/swarm-orquestacion/reference/roles/BRIEF.md`: campos y
@@ -71,9 +85,11 @@ $ git diff --check 71e446a...HEAD
 (sin salida; exit 0)
 
 $ awk '/^```js revision-adversarial-probe$/{on=1;next} /^```$/{if(on) exit} on' skills/swarm-orquestacion/reference/revision-adversarial.md | node --input-type=module
+mutante flujo normal: RECHAZADO
+mutante flujo independiente: RECHAZADO
 probe revision-adversarial: PASS
 caso normal: revisión ordinaria sin contrarrevisión obligatoria
-caso gate: contrarrevisión independiente obligatoria
+caso independiente: worker → contrarrevisión adversarial → revisión ordinaria; revisor distinto; contraevidencia no solo feliz
 dedup semántico: PASS (fuente canónica=1; consumidores=3; duplicados=0)
 mutante REVISION.md: RECHAZADO (clases=6)
 
@@ -97,7 +113,7 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
 
 ### Evidencia manual
 
-- Inspección manual del diff completo `71e446a...4b49398`: cinco ficheros,
+- Inspección manual del diff completo `71e446a...556185f`: cinco ficheros,
   todos dentro de `ALCANCE_DIFF`; resultado conforme.
 - Comparación manual contra PRACTICAS, brief y plan: documentación rutinaria no
   fuerza contrarrevisión; un gate/parser con riesgo de falsos negativos sí.
@@ -114,6 +130,10 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
     ordinaria sin contrarrevisión obligatoria.
   - `[automatizado]` WP de gate/parser — probe persistente — contrarrevisión
     independiente obligatoria.
+  - `[automatizado]` flujo normal cambiado al independiente — mutación en
+    memoria — `RECHAZADO`.
+  - `[automatizado]` flujo independiente cambiado al normal — mutación en
+    memoria — `RECHAZADO`.
   - `[automatizado]` copia de las seis clases dentro de `REVISION.md` — mutación
     en memoria — rechazada con `clases=6`.
   - `[manual]` intento de confundir `PASS` con aceptación — inspección del
@@ -130,8 +150,8 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
     campos/selección/dedup semántico y ceguera de historial.
   - Manual: inspección del diff, correspondencia con el brief y fronteras
     read-only.
-- `VEREDICTO_REVISOR`: `DEVUELTO` por segunda vez; correcciones aplicadas en
-  `4b49398`, pendiente de nueva contrarrevisión read-only.
+- `VEREDICTO_REVISOR`: `DEVUELTO` por tercera vez; corrección aplicada en
+  `556185f`, pendiente de nueva contrarrevisión read-only.
 
 ## Auto-revisión (PRACTICAS del mundo — con honestidad)
 
@@ -152,11 +172,13 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
   adversarial selectiva`, `docs(reporte): registrar evidencia de WP-22` y
   `fix(revision): deduplicar clasificacion de riesgo`; el reporte corregido se
   asentó convencionalmente y la segunda corrección usa
-  `fix(revision): ampliar dedup a todos los consumidores`.
+  `fix(revision): ampliar dedup a todos los consumidores`; la tercera usa
+  `fix(revision): validar semantica de los flujos`.
 - [x] Diff solo del alcance del WP: no se editaron BACKLOG, SKILL, ciclo,
   ORQUESTADOR, WORKER ni otros WPs.
-- [x] Riesgo y contraevidencia del brief cubiertos: caso normal y caso gate
-  comprobados.
+- [x] Riesgo y contraevidencia del brief cubiertos: casos normal e independiente
+  comprobados semánticamente, incluidos revisor distinto y contraevidencia no
+  solo feliz.
 - [x] Pruebas automatizadas separadas de evidencia manual: secciones distintas
   y etiquetas por caso.
 
@@ -189,4 +211,12 @@ Segunda contrarrevisión independiente: **DEVUELTO**.
 2. La evidencia negaba ejecución runtime pese al probe Node con `node:fs`.
 
 Correcciones aplicadas en `4b49398`; pendiente de nueva contrarrevisión
-read-only independiente y decisión del orquestador.
+read-only independiente.
+
+Tercera contrarrevisión independiente: **DEVUELTO**.
+
+1. El probe aceptaba mutaciones semánticas de los flujos `normal` e
+   `independiente`.
+
+Corrección aplicada en `556185f`; pendiente de nueva contrarrevisión read-only
+independiente y decisión del orquestador.
