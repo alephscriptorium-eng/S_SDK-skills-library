@@ -23,9 +23,17 @@ function fencedLineMap(lines) {
   let marker;
   return lines.map((line) => {
     const wasFenced = marker !== undefined;
-    const fence = line.match(/^\s{0,3}(`{3,}|~{3,})/u)?.[1]?.[0];
-    if (fence && marker === undefined) marker = fence;
-    else if (fence === marker) marker = undefined;
+    const match = line.match(/^\s{0,3}(`{3,}|~{3,})(.*)$/u);
+    if (match && marker === undefined) {
+      marker = { type: match[1][0], length: match[1].length };
+    } else if (
+      match &&
+      match[1][0] === marker?.type &&
+      match[1].length >= marker.length &&
+      match[2].trim() === ""
+    ) {
+      marker = undefined;
+    }
     return wasFenced;
   });
 }

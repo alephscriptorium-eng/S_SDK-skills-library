@@ -22,6 +22,11 @@ expect("fixture-pass-y-bloqueo", valid, true);
 expect("sin-cara-wp", valid.replace("## §WP\n", ""), false);
 expect("estructura-simulada-en-caja", `~~~markdown\n${valid}\n~~~`, false);
 expect(
+  "parte-1-cercada-cierre-corto",
+  `\`\`\`\`markdown\npreámbulo\n\`\`\`\n${valid}\n\`\`\`\``,
+  false,
+);
+expect(
   "una-sola-parte",
   valid.slice(0, valid.indexOf("## Parte 2 · Handoff operativo")),
   false,
