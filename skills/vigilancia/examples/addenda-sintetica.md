@@ -12,31 +12,56 @@ Carril de laboratorio: `Rn-obra`.
 
 ## §WP
 
-### Hallazgo
+## Parte 1 · Vista PO/SCRUM
 
-Carpeta `.worktrees/demo-orphan` sin entrada en `git worktree list`, con
-`.git` y mtime reciente, tras relanzo del mismo WP. Carril: `Rn-obra`.
+ESTADO: GO=⏳; CHECK_LOCAL=✅; PASS_HIGIENE=⛔ BLOQUEADO
 
-### Propuesta
+### Qué cambió
 
-1. No relanzar de nuevo el WP mientras exista esa carpeta.
-2. En quietud: inspeccionar HEAD del huérfano; si coincide con trabajo
-   útil, recuperar; si no, `git worktree remove` / limpieza de residuo.
-3. Añadir al pulso: exigir ≥2 ciclos antes de logar huérfano no vacío.
-4. No mezclar este hallazgo con señales de otro carril en la misma addenda.
+- ✅ Una carpeta no registrada mantuvo `.git` y mtime vivo durante tres
+  ciclos.
+- ⛔ La higiene del carril permanece bloqueada.
 
-### CA
+### Qué sigue
 
-- Tras limpieza: `git worktree list` y `ls .worktrees/` coinciden.
-- El watcher no registra `!!HUERFANO` para `demo-orphan` en 2 ciclos.
-- Higiene §8 del carril `Rn-obra` en PASS antes del próximo despacho.
+- ⏳ Inspeccionar su HEAD en quietud y recuperar trabajo útil o limpiar el
+  residuo.
+- ⛔ No relanzar ni despachar mientras persista.
+
+### Decisión del custodio
+
+- ⏳ Autorizar la inspección en quietud o mantener el freeze.
+
+## Parte 2 · Handoff operativo
+
+```markdown
+BACKLOG
+- Hallazgo sin alta: huérfano activo bajo `.worktrees/demo-orphan`.
+
+GATES
+ESTADO: GO=⏳; CHECK_LOCAL=✅; PASS_HIGIENE=⛔ BLOQUEADO
+- Exigir ≥2 ciclos antes de elevar un huérfano no vacío.
+- Tras resolución, watcher sin `!!HUERFANO` durante 2 ciclos.
+
+ALCANCES
+- Un solo carril: `Rn-obra`.
+- No relanzar trabajo ni editar backlog desde vigilancia.
+
+SECUENCIA
+1. Inspeccionar HEAD del huérfano en quietud.
+2. Recuperar trabajo útil o limpiar el residuo.
+3. Contrastar `git worktree list` con `.worktrees/`.
+4. Exigir higiene §8 en PASS antes del siguiente despacho.
+```
 
 ## Prueba de ceguera
 
 ```text
 # Sobre solo §WP (fixture): vocabulario prohibido del marco = 0
 # (el consumidor sustituye el patrón por el de su PRACTICAS)
-rg -n 'MARCO_PROHIBIDO_PLACEHOLDER' examples/addenda-sintetica.md
+awk '/^## §WP$/{on=1} /^## Prueba de ceguera$/{on=0} on' \
+  examples/addenda-sintetica.md |
+  rg -n 'MARCO_PROHIBIDO_PLACEHOLDER'
 → 0 matches en §WP tras redacción
 ```
 

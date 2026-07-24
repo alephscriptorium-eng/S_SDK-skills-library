@@ -13,12 +13,43 @@ puede llegar al orquestador del mundo jamás filtra vocabulario del marco.
 Declara el carril. No se copia al orquestador del mundo.)
 
 ## §WP
-(Texto copiable en el idioma del mundo: WP, CA, evidencia pedida.
-Sin vocabulario del marco ni rutas ajenas al mundo.
+(Salida dual copiable en el idioma del mundo: Parte 1 PO/SCRUM y Parte 2
+operativa, en ese orden. Sin vocabulario del marco ni rutas ajenas al mundo.
 Un solo carril por addenda — ver abajo.)
 
 ## Prueba de ceguera
 (Paso obligatorio del método — ver abajo.)
+```
+
+## Contrato dual de toda salida al custodio
+
+La cara `§interna` conserva contexto de mediación. Dentro de `§WP`, toda
+salida de vigilancia presenta exactamente este orden:
+
+1. **Parte 1 · Vista PO/SCRUM**, Markdown renderizable fuera de fenced code
+   blocks. Es breve y humana; contiene «Qué cambió», «Qué sigue» y «Decisión
+   del custodio». Muestra GO/check/PASS con `✅`/`⏳`/`⛔`, limita referencias
+   WP a las imprescindibles y evita jerga de backlog. Prefiere listas
+   verticales; solo usa matriz corta cuando declara una bifurcación real o el
+   custodio pide ampliación.
+2. **Parte 2 · Handoff operativo**, contenido completo dentro de un único
+   fenced code block. Sin fluff: solo `BACKLOG`, `GATES`, `ALCANCES` y
+   `SECUENCIA`; queda listo para copy/paste al orquestador.
+
+El estado operativo se repite literalmente en ambas partes para que un PASS o
+un bloqueo no desaparezca al separar audiencias. Una parte sola, Parte 1
+cercada, Parte 2 parcialmente fuera de caja o estados divergentes se
+devuelven.
+
+El patrón de boot dual de `estacion-viva/reference/SALIDA-DUAL.md` es una
+referencia vecina: no se copia ni fusiona. Este contrato cubre las salidas
+propias del vigía.
+
+Gate y probes:
+
+```bash
+node skills/vigilancia/scripts/verificar-salida-dual.mjs <salida.md>
+node skills/vigilancia/scripts/probar-salida-dual.mjs
 ```
 
 ## Carril (multi-carril)
