@@ -6,7 +6,7 @@
 
 WP: WP-25 · integración del método revisión/semver/idle
 Rama: wp/25-integracion-metodo-revision-semver-idle
-Worktree: <WORKTREE_BASE>/skills-library-wp-25
+Worktree: C:\S_LAB\skills-library-wp-25
 Reporte: plan/REPORTES/WP-25-integracion-metodo-revision-semver-idle.md
 
 Precondición:

@@ -397,7 +397,7 @@ gobierno y no hace push.
 
 ### Ola 2 · secuencial post Ola 1
 
-- ⬜ **WP-25 · integración revisión/semver/idle en el método** — empieza
+- 🔶 **WP-25 · integración revisión/semver/idle en el método** — empieza
   tras WP-22…24 aceptados; enlaza las entregas en ciclo/roles/SKILL sin
   duplicarlas e integra el handoff dual bidireccional con vigilancia.
   Contrarrevisión independiente obligatoria.
