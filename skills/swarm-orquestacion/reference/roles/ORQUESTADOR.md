@@ -80,9 +80,12 @@ ficheros y piensas; el hacer es del swarm.
    de arranque, exigir y adjuntar explícitamente `WORLD_ROOT`,
    `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; no
    supongas que la plantilla base del brief los aporta. Calibración incompleta
-   = LOCK fail-closed. Solo `identidad-raiz: PASS` permite continuar. Ante
-   LOCK, devolver evidencia al custodio y solicitar otro clone; no crearlo ni
-   elegirlo.
+   = LOCK fail-closed. Orden obligatorio:
+   `DETECTOR → PASS|LOCK → EFECTOS`. Solo `identidad-raiz: PASS` permite
+   continuar. `LOCK identidad-raiz` se resuelve antes de cualquier efecto y se
+   devuelve al custodio con cero efectos: no `mkdir`, escritura, watcher, git
+   mutable, plan, rama, worktree, boot, handoff ni `OUT_DIR`. Solicitar otro
+   clone, sin crearlo ni elegirlo.
 2. **Modo de proyección (DC-15):** por defecto **local-only** — el plan
    vive solo en el markdown local. Si el mundo tiene proyección a un
    tracker (issues), **confirmar con el usuario** que quiere activarla en

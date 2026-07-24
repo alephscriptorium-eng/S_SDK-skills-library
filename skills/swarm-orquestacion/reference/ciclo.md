@@ -10,10 +10,11 @@ construcción. No lo sustituyas. Lo que sigue son las costuras.
    `../../vigilancia/scripts/verificar-identidad-raiz.mjs`. El orquestador
    exige y adjunta al despacho `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`,
    `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; la plantilla base del brief no
-   los sustituye. Solo `identidad-raiz: PASS` permite crear directorios,
-   escribir, arrancar watchers, usar git mutable, editar plan o crear
-   rama/worktree. Entrada ausente o LOCK se devuelve al custodio sin crear ni
-   elegir otro clone.
+   los sustituye. Orden obligatorio: `DETECTOR → PASS|LOCK → EFECTOS`. Solo
+   `identidad-raiz: PASS` permite continuar. Entrada ausente o
+   `LOCK identidad-raiz` se devuelve al custodio con cero efectos: no `mkdir`,
+   escritura, watcher, git mutable, plan, rama, worktree, boot, handoff ni
+   `OUT_DIR`; el orquestador no crea ni elige otro clone.
 2. Ritual de inicio (`ORQUESTADOR.md`).
 3. Si el ecosistema es multi-carril: gate de convivencia
    (`reference/convivencia-multi-orquestador.md` — fuente única): higiene

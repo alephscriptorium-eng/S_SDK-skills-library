@@ -36,8 +36,11 @@ uno: la asignación es del orquestador.
    debe adjuntar `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y
    `DOWNSTREAM_PATTERNS`; si falta cualquiera, pará con LOCK aunque la
    plantilla base del brief no incluya esos campos. Solo
-   `identidad-raiz: PASS` permite continuar. LOCK se reporta al custodio sin
-   efectos; no crees ni elijas otro clone.
+   `identidad-raiz: PASS` permite continuar. Orden obligatorio:
+   `DETECTOR → PASS|LOCK → EFECTOS`. `LOCK identidad-raiz` se reporta al
+   custodio con cero efectos: no `mkdir`, escritura, watcher, git mutable,
+   plan, rama, worktree, boot, handoff ni `OUT_DIR`; no crees ni elijas otro
+   clone.
 3. Implementa **solo** el WP + lo que exija su CA (incluidos ejes aplicables).
 4. Commits convencionales.
 5. Verde local: gates/validadores que exija el CA.

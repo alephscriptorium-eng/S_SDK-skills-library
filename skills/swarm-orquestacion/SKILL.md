@@ -48,12 +48,13 @@ El orquestador adjunta a cada despacho y handoff de arranque la calibración
 explícita `WORLD_ROOT`, `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y
 `DOWNSTREAM_PATTERNS`. Si falta cualquiera, no hay despacho ni boot.
 
-Solo `identidad-raiz: PASS` habilita la preparación. Un `LOCK` se devuelve al
-custodio y el proceso queda sin efectos; se solicita otro clone de trabajo,
-pero el orquestador no lo crea ni lo elige. El mismo preflight precede el
-handoff de arranque a `estacion-viva` (`../estacion-viva/reference/BOOT.md`):
-no se invoca su boot, script ni fase 1 —que puede crear `OUT_DIR`— hasta
-obtener PASS.
+Orden obligatorio: `DETECTOR → PASS|LOCK → EFECTOS`. Solo
+`identidad-raiz: PASS` habilita la preparación. `LOCK identidad-raiz` es
+fail-closed y se devuelve al custodio con cero efectos: no `mkdir`, escritura,
+watcher, git mutable, plan, rama, worktree, boot, handoff ni `OUT_DIR`. Se
+solicita otro clone de trabajo, pero el orquestador no lo crea ni lo elige. El
+mismo preflight precede el handoff de arranque a `estacion-viva`
+(`../estacion-viva/reference/BOOT.md`).
 
 ## Montaje rápido (mundo nuevo)
 

@@ -52,8 +52,11 @@ detector canónico y el LOCK sin efectos de
 calibración. Cada despacho aporta explícitamente `WORLD_ROOT`,
 `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS`; faltar una
 entrada es LOCK. El orden es PASS → mkdir/escritura/watcher/git mutable/plan/
-rama/worktree. Ante LOCK, el custodio aporta otra raíz; orquestador y worker no
-crean ni eligen clones.
+rama/worktree. Más precisamente: `DETECTOR → PASS|LOCK → EFECTOS`.
+`LOCK identidad-raiz` es fail-closed y garantiza cero efectos: no `mkdir`,
+escritura, watcher, git mutable, plan, rama, worktree, boot, handoff ni
+`OUT_DIR`. El custodio aporta otra raíz; orquestador y worker no crean ni
+eligen clones.
 
 El handoff a estación viva conserva ese orden antes de invocar su boot, script
 o fase 1: `../../estacion-viva/reference/BOOT.md`. Como esa fase puede crear
@@ -107,7 +110,8 @@ sin efectos, salida dual inválida, selección normal/independiente, semver y
 separación pre/post-merge. Para el Eje IV ejercita dos consumidores
 independientes de esta integración: el rol orquestador y el cliente
 worker/ciclo. Mutantes eliminan salida dual, estación, calibración y orden
-PASS→boot; todos deben quedar rechazados.
+PASS→boot; otros eliminan LOCK o adelantan efectos al bloqueo. Los once deben
+quedar rechazados.
 
 ```bash
 awk '/^```js integracion-metodo-probe$/{on=1;next} /^```$/{if(on) exit} on' \
@@ -151,7 +155,21 @@ const requiredCalibration = [
   "READ_ONLY_ROOTS",
   "DOWNSTREAM_PATTERNS",
 ];
+const failClosedOrder = "DETECTOR → PASS|LOCK → EFECTOS";
+const requiredZeroEffects = [
+  "mkdir",
+  "escritura",
+  "watcher",
+  "git mutable",
+  "plan",
+  "rama",
+  "worktree",
+  "boot",
+  "handoff",
+  "OUT_DIR",
+];
 const validateIdentityBeforeStation = (text, label, requireBootReference) => {
+  const normalized = text.replace(/\s+/g, " ");
   for (const field of requiredCalibration) {
     if (!text.includes(field)) throw new Error(`${label}: falta ${field}`);
   }
@@ -164,6 +182,20 @@ const validateIdentityBeforeStation = (text, label, requireBootReference) => {
   }
   if (requireBootReference && boot <= pass) {
     throw new Error(`${label}: BOOT puede invocarse sin PASS previo`);
+  }
+  if (!text.includes(failClosedOrder)) {
+    throw new Error(`${label}: falta orden fail-closed`);
+  }
+  if (
+    !text.includes("LOCK identidad-raiz") ||
+    !text.includes("cero efectos")
+  ) {
+    throw new Error(`${label}: falta LOCK fail-closed explícito`);
+  }
+  for (const effect of requiredZeroEffects) {
+    if (!normalized.includes(effect)) {
+      throw new Error(`${label}: cero efectos no cubre ${effect}`);
+    }
   }
 };
 const dualSection = (text) =>
@@ -277,6 +309,17 @@ expectRejection("ciclo-sin-pass-previo-al-boot", () =>
   validateWorkerCycle(
     worker,
     ciclo.replace("identidad-raiz: PASS", "identidad pendiente"),
+  ),
+);
+expectRejection("orquestador-sin-LOCK", () =>
+  validateOrchestrator(orchestrator.replaceAll("LOCK", "BLOQUEO")),
+);
+expectRejection("orquestador-con-efectos-antes-del-bloqueo", () =>
+  validateOrchestrator(
+    orchestrator.replace(
+      failClosedOrder,
+      "DETECTOR → EFECTOS → PASS|LOCK",
+    ),
   ),
 );
 
