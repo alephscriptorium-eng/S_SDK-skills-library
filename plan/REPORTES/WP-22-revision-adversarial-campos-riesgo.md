@@ -5,10 +5,10 @@
 | agente | worker fresco WP-22 |
 | fecha | 2026-07-24 |
 | rama | `wp/22-revision-adversarial-campos-riesgo` |
-| commits | `0054bd1`, `b9a8cc2`, `6efbc03`, `5aabf43`, `4b49398`, `b23155f`, `556185f`; commit final del reporte: ver historial de la rama |
+| commits | `06d1103`, `17d0a03`, `ba383e1`, `96f8771`, `5e68c49`, `f2d2c6e`, `f6ffdb9`, `8b11ca7`; commit post-rebase del reporte: ver historial de la rama |
 | eje(s) CA | III + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
-| revisor distinto del worker | `sí` — tres revisiones: `DEVUELTO` |
+| revisor distinto del worker | `sí` — cuatro revisiones: `DEVUELTO` |
 | estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
@@ -36,7 +36,7 @@ cada uno.
    semánticas de las seis clases y demuestra que un duplicado mutante es
    rechazado.
 
-Corregido en commit `6efbc03`.
+Corregido en commit alcanzable `ba383e1`.
 
 ## Correcciones de la segunda devolución numerada
 
@@ -49,7 +49,7 @@ Corregido en commit `6efbc03`.
    no aplica porque el built-in forma parte del runtime, no porque falte código
    ejecutable.
 
-Corregido en commit `4b49398`.
+Corregido en commit alcanzable `5e68c49`.
 
 ## Corrección de la tercera devolución numerada
 
@@ -61,7 +61,15 @@ Corregido en commit `4b49398`.
 3. Dos mutantes en memoria intercambian por separado cada flujo; ambos deben
    producir `RECHAZADO`.
 
-Corregido en commit `556185f`.
+Corregido en commit alcanzable `f6ffdb9`.
+
+## Corrección pre-integración post-rebase
+
+La cuarta revisión devolvió únicamente evidencia obsoleta tras el rebase. Antes
+de mutar se confirmó `main=2464a6d`, `merge-base(main, HEAD)=2464a6d` y
+`HEAD=8b11ca7`. Se reemplazaron la base anterior y todos los hashes reescritos
+por sus equivalentes alcanzables actuales. Los comandos de diff usan
+`2464a6d...HEAD` y enumeran exactamente cinco rutas.
 
 ## Archivos tocados
 
@@ -81,7 +89,16 @@ Corregido en commit `556185f`.
 ### Pruebas automatizadas
 
 ```text
-$ git diff --check 71e446a...HEAD
+$ git rev-parse --short=7 main
+2464a6d
+
+$ git merge-base main HEAD
+2464a6de014f0bf013598f6693a657f55f887581
+
+$ git rev-parse --short=7 HEAD
+8b11ca7
+
+$ git diff --check 2464a6d...HEAD
 (sin salida; exit 0)
 
 $ awk '/^```js revision-adversarial-probe$/{on=1;next} /^```$/{if(on) exit} on' skills/swarm-orquestacion/reference/revision-adversarial.md | node --input-type=module
@@ -103,7 +120,7 @@ raiz: /c/S_LAB/skills-library-wp-22/skills/swarm-orquestacion
 $ P1="ze"; P1+="us"; P2="ho"; P2+="l"; P2+=$'\u00f3'; P2+="n"; P3="ho"; P3+="larqu"; P3+=$'\u00ed'; P3+="a"; P4="SCRI"; P4+="PT_"; P4+="SDK"; P5="S_"; P5+="SDK"; P6="jun"; P6+="tura"; PATTERN="${P1}|${P2}|${P3}|${P4}|${P5}|${P6}"; if git log -p -- skills/swarm-orquestacion/reference/roles/BRIEF.md skills/swarm-orquestacion/reference/roles/REVISION.md skills/swarm-orquestacion/reference/plantilla-reporte.md skills/swarm-orquestacion/reference/revision-adversarial.md | rg -q -i -e "$PATTERN"; then echo "ceguera historial: FAIL"; exit 1; else CODE=$?; test "$CODE" -eq 1 || exit "$CODE"; echo "ceguera historial reachable: 0"; fi
 ceguera historial reachable: 0
 
-$ git diff --name-status 71e446a...HEAD
+$ git diff --name-status 2464a6d...HEAD
 A plan/REPORTES/WP-22-revision-adversarial-campos-riesgo.md
 M skills/swarm-orquestacion/reference/plantilla-reporte.md
 A skills/swarm-orquestacion/reference/revision-adversarial.md
@@ -113,8 +130,9 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
 
 ### Evidencia manual
 
-- Inspección manual del diff completo `71e446a...556185f`: cinco ficheros,
-  todos dentro de `ALCANCE_DIFF`; resultado conforme.
+- Inspección manual del diff completo pre-corrección
+  `2464a6d...8b11ca7`: cinco ficheros, todos dentro de `ALCANCE_DIFF`;
+  resultado conforme.
 - Comparación manual contra PRACTICAS, brief y plan: documentación rutinaria no
   fuerza contrarrevisión; un gate/parser con riesgo de falsos negativos sí.
 - Inspección manual de fronteras: el contrarrevisor no escribe, acepta, mergea,
@@ -150,8 +168,8 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
     campos/selección/dedup semántico y ceguera de historial.
   - Manual: inspección del diff, correspondencia con el brief y fronteras
     read-only.
-- `VEREDICTO_REVISOR`: `DEVUELTO` por tercera vez; corrección aplicada en
-  `556185f`, pendiente de nueva contrarrevisión read-only.
+- `VEREDICTO_REVISOR`: `DEVUELTO` por cuarta vez; única corrección pendiente:
+  evidencia post-rebase de este reporte, aplicada sobre `8b11ca7`.
 
 ## Auto-revisión (PRACTICAS del mundo — con honestidad)
 
@@ -173,7 +191,8 @@ M skills/swarm-orquestacion/reference/roles/REVISION.md
   `fix(revision): deduplicar clasificacion de riesgo`; el reporte corregido se
   asentó convencionalmente y la segunda corrección usa
   `fix(revision): ampliar dedup a todos los consumidores`; la tercera usa
-  `fix(revision): validar semantica de los flujos`.
+  `fix(revision): validar semantica de los flujos`. Tras el rebase, los hashes
+  alcanzables figuran en la cabecera.
 - [x] Diff solo del alcance del WP: no se editaron BACKLOG, SKILL, ciclo,
   ORQUESTADOR, WORKER ni otros WPs.
 - [x] Riesgo y contraevidencia del brief cubiertos: casos normal e independiente
@@ -202,7 +221,7 @@ Primera contrarrevisión independiente: **DEVUELTO**.
 1. Evidencia automatizada no reproducible por placeholders.
 2. Gate de Eje III insuficiente y clasificación semántica duplicada.
 
-Correcciones aplicadas en `6efbc03`; pendiente de nueva contrarrevisión
+Correcciones aplicadas en el actual `ba383e1`; pendiente de nueva contrarrevisión
 read-only independiente.
 
 Segunda contrarrevisión independiente: **DEVUELTO**.
@@ -210,7 +229,7 @@ Segunda contrarrevisión independiente: **DEVUELTO**.
 1. El gate no cubría consumidores contractuales fuera de `BRIEF.md`.
 2. La evidencia negaba ejecución runtime pese al probe Node con `node:fs`.
 
-Correcciones aplicadas en `4b49398`; pendiente de nueva contrarrevisión
+Correcciones aplicadas en el actual `5e68c49`; pendiente de nueva contrarrevisión
 read-only independiente.
 
 Tercera contrarrevisión independiente: **DEVUELTO**.
@@ -218,5 +237,12 @@ Tercera contrarrevisión independiente: **DEVUELTO**.
 1. El probe aceptaba mutaciones semánticas de los flujos `normal` e
    `independiente`.
 
-Corrección aplicada en `556185f`; pendiente de nueva contrarrevisión read-only
-independiente y decisión del orquestador.
+Corrección aplicada en el actual `f6ffdb9`; pendiente de nueva contrarrevisión
+read-only independiente.
+
+Cuarta revisión pre-integración: **DEVUELTO**.
+
+1. La evidencia del reporte conservaba base y hashes anteriores al rebase.
+
+Corregido sobre el tip `8b11ca7` usando base/merge-base `2464a6d`; pendiente de
+revisión final y decisión del orquestador.
