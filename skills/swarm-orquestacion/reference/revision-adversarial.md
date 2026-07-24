@@ -11,7 +11,7 @@ El orquestador clasifica el WP al preparar su brief:
 
 | `RIESGO_REVISION` | Cuándo corresponde | Flujo |
 | ----------------- | ------------------ | ----- |
-| `normal` | documentación rutinaria, cambios mecánicos o riesgo acotado sin las clases siguientes | worker → revisión ordinaria |
+| `normal` | documentación rutinaria, cambios mecánicos o riesgo acotado sin las clases siguientes | worker → revisión ordinaria (sin contrarrevisión obligatoria) |
 | `independiente` | gate/parser con riesgo de falsos negativos; seguridad, permisos o fronteras de escritura; migración o demolición irreversible; publicación/release; cambio transversal del contrato del método; protocolo operativo que puede autorizar mutaciones | worker → contrarrevisión adversarial → revisión ordinaria |
 
 La lista de riesgo es cerrada por defecto: la mera edición de documentación no
@@ -87,7 +87,9 @@ clasificación en todos los consumidores contractuales de este WP: `BRIEF.md`,
 `REVISION.md` y `plantilla-reporte.md`. Extrae las clases desde la fila
 canónica, sin volver a declararlas en el código. Después inyecta esa
 clasificación en memoria dentro de `REVISION.md` y exige que el detector
-semántico la rechace; no se limita a contar un encabezado o marcador.
+semántico la rechace. También muta por separado los flujos `normal` e
+`independiente` y exige que ambos queden rechazados; no se limita a contar un
+encabezado o marcador.
 
 Runtime del probe: Node y su built-in `node:fs`; no requiere ni añade
 dependencias npm.
@@ -122,22 +124,43 @@ for (const field of fields) {
   }
 }
 
-const rows = canonical.split(/\r?\n/);
-if (!rows.some((line) => line.startsWith("| `normal` |"))) {
-  throw new Error("falta el flujo normal canónico");
-}
-const independentRow = rows.find((line) =>
-  line.startsWith("| `independiente` |"),
-);
-if (!independentRow) {
-  throw new Error("falta el flujo independiente canónico");
-}
+const expectedNormalFlow =
+  "worker → revisión ordinaria (sin contrarrevisión obligatoria)";
+const expectedIndependentFlow =
+  "worker → contrarrevisión adversarial → revisión ordinaria";
 
-const classification = independentRow.split("|")[2].trim();
-const riskClasses = classification.split(";").map((item) => item.trim());
-if (riskClasses.length !== 6 || riskClasses.some((item) => item.length === 0)) {
-  throw new Error(`clasificación canónica inválida: clases=${riskClasses.length}`);
-}
+const validateSelection = (source) => {
+  const contract = source.split("## Probe persistente de contrato y dedup")[0];
+  const rows = contract.split(/\r?\n/);
+  const normalRow = rows.find((line) => line.startsWith("| `normal` |"));
+  const independentRow = rows.find((line) =>
+    line.startsWith("| `independiente` |"),
+  );
+  if (!normalRow || normalRow.split("|")[3].trim() !== expectedNormalFlow) {
+    throw new Error("flujo normal inválido");
+  }
+  if (
+    !independentRow ||
+    independentRow.split("|")[3].trim() !== expectedIndependentFlow
+  ) {
+    throw new Error("flujo independiente inválido");
+  }
+
+  const normalizedContract = normalize(contract);
+  const distinctReviewer = normalize(
+    "REVISOR_DISTINTO_WORKER sí cuando el riesgo es independiente",
+  );
+  const adversarialEvidence = normalize(
+    "si la contraevidencia solo repite el camino feliz",
+  );
+  if (!normalizedContract.includes(distinctReviewer)) {
+    throw new Error("falta revisor distinto para riesgo independiente");
+  }
+  if (!normalizedContract.includes(adversarialEvidence)) {
+    throw new Error("falta prohibir contraevidencia solo feliz");
+  }
+  return independentRow;
+};
 
 const normalize = (text) =>
   text
@@ -146,6 +169,15 @@ const normalize = (text) =>
     .toLowerCase()
     .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
     .trim();
+
+const independentRow = validateSelection(canonical);
+
+const classification = independentRow.split("|")[2].trim();
+const riskClasses = classification.split(";").map((item) => item.trim());
+if (riskClasses.length !== 6 || riskClasses.some((item) => item.length === 0)) {
+  throw new Error(`clasificación canónica inválida: clases=${riskClasses.length}`);
+}
+
 const semanticDuplicates = (text) => {
   const normalizedText = normalize(text);
   return riskClasses.filter((riskClass) =>
@@ -173,9 +205,29 @@ if (rejectedMutant.length !== riskClasses.length) {
   throw new Error(`el gate no rechazó el duplicado semántico: ${rejectedMutant}`);
 }
 
+const expectSelectionRejection = (name, mutant) => {
+  try {
+    validateSelection(mutant);
+  } catch {
+    console.log(`mutante flujo ${name}: RECHAZADO`);
+    return;
+  }
+  throw new Error(`el gate aceptó el mutante del flujo ${name}`);
+};
+expectSelectionRejection(
+  "normal",
+  canonical.replace(expectedNormalFlow, expectedIndependentFlow),
+);
+expectSelectionRejection(
+  "independiente",
+  canonical.replace(expectedIndependentFlow, expectedNormalFlow),
+);
+
 console.log("probe revision-adversarial: PASS");
 console.log("caso normal: revisión ordinaria sin contrarrevisión obligatoria");
-console.log("caso gate: contrarrevisión independiente obligatoria");
+console.log(
+  "caso independiente: worker → contrarrevisión adversarial → revisión ordinaria; revisor distinto; contraevidencia no solo feliz",
+);
 console.log(
   `dedup semántico: PASS (fuente canónica=1; consumidores=${consumerPaths.length}; duplicados=0)`,
 );
