@@ -1,0 +1,159 @@
+# WP-25 · integración del método revisión/semver/idle — reporte
+
+| dato | valor |
+| ---- | ----- |
+| agente | worker fresco WP-25 |
+| fecha | 2026-07-24 |
+| rama | `wp/25-integracion-metodo-revision-semver-idle` |
+| commits | `7e162a8`; commit de este reporte: ver historial de la rama |
+| eje(s) CA | III + IV + ceguera + regla 14 |
+| riesgo de revisión | `independiente` |
+| revisor distinto del worker | `⏳ sin verificar` |
+| estado propuesto | listo para revisión |
+
+## Qué se hizo
+
+Se integró por referencia el contrato de contrarrevisión selectiva, la política
+semver/dependencias y el pulso idle en los puntos de entrada compartidos del
+método. El ciclo distingue selección normal/riesgo, revisión read-only
+pre-aceptación, aceptación/merge del orquestador y gate post-merge.
+
+El preflight apunta al detector canónico de `vigilancia` y precede cualquier
+efecto, incluido el handoff a `estacion-viva`; LOCK vuelve al custodio sin crear
+ni elegir otro clone. La salida dual quedó bidireccional por referencia y el
+gate forward post-release se consume solo desde la fuente local del mundo.
+
+Se añadió un probe embebido en un fichero autorizado. Compone los probes de
+WP-22/23/24 sin duplicar detector, parser, políticas ni calibraciones.
+
+## Archivos tocados
+
+- Modificado `skills/swarm-orquestacion/SKILL.md`: preflight, flujo y recursos
+  canónicos.
+- Modificado `skills/swarm-orquestacion/reference/ciclo.md`: flujo completo,
+  barreras pre/post-merge, campos, dependencias y C8 separado.
+- Modificado
+  `skills/swarm-orquestacion/reference/roles/ORQUESTADOR.md`: recepción/emisión
+  dual, idle, identidad, selección de riesgo y gate forward por referencia.
+- Modificado `skills/swarm-orquestacion/reference/roles/WORKER.md`: preflight,
+  campos de reporte, dependencias, probes y fronteras del rol.
+- Modificado `skills/swarm-orquestacion/reference/lecciones-vnext.md`:
+  lecciones integradas y probe ejecutable.
+- Creado este reporte.
+
+## Evidencia
+
+### Pruebas automatizadas
+
+```text
+$ awk '/^```js integracion-metodo-probe$/{on=1;next} /^```$/{if(on) exit} on' skills/swarm-orquestacion/reference/lecciones-vnext.md | node --input-type=module
+seleccion normal/riesgo: PASS
+identidad PASS/LOCK y cero efectos: PASS
+salida dual valida/invalida: PASS
+dedup contratos: PASS
+semver verdes/invalidos/falsos-negativos: PASS
+segundo cliente semver: PASS
+integracion-metodo: PASS
+pre-merge/post-merge: evidencia separada
+
+$ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
+ceguera: 0
+raiz: /c/S_LAB/skills-library-wp-25/skills/swarm-orquestacion
+
+$ <búsqueda canónica por fragmentos sobre git log -p base..HEAD -- cinco rutas públicas>
+ceguera historial reachable: 0
+
+$ git diff --check 32d6e5c8272f066ef3de370433383277bda293d3...HEAD
+(sin salida; exit 0)
+
+$ git diff --name-status 32d6e5c8272f066ef3de370433383277bda293d3...HEAD
+M skills/swarm-orquestacion/SKILL.md
+M skills/swarm-orquestacion/reference/ciclo.md
+M skills/swarm-orquestacion/reference/lecciones-vnext.md
+M skills/swarm-orquestacion/reference/roles/ORQUESTADOR.md
+M skills/swarm-orquestacion/reference/roles/WORKER.md
+```
+
+El probe compuesto ejecutó los 9 casos de identidad de WP-23 —incluidos siete
+LOCK sin cambios de FS/Git ni `OUT_DIR`—, los 20 casos duales, los 2 casos de
+dedup, los 32 casos semver y el segundo cliente independiente. También extrajo
+y ejecutó el probe de selección de WP-22.
+
+### Evidencia manual
+
+- Inspección manual del diff completo contra PRACTICAS, BACKLOG, VISION, PLAN y
+  BRIEF: cinco rutas de método y este reporte, todas autorizadas.
+- Inspección manual de referencias relativas: detector/contrato de vigilancia
+  y BOOT de estación viva existen en el árbol; no se copiaron sus cuerpos.
+- Inspección manual de autoridad: el contrarrevisor no acepta ni mergea; el
+  vigía no escribe BACKLOG; el worker no opera gate forward.
+- Inspección manual de frontera release: no se editaron versión, CHANGELOG,
+  workflows, paquete ni fuentes downstream; no se usó red.
+- Diagnósticos del editor sobre los cinco ficheros modificados:
+  `No linter errors found.`
+
+## Evidencia de riesgo y contrarrevisión
+
+- `CASOS_ADVERSARIALES`:
+  - `[automatizado]` selección normal — probe WP-22 — revisión ordinaria sin
+    contrarrevisión obligatoria.
+  - `[automatizado]` selección independiente — probe WP-22 — revisor distinto
+    y contraevidencia no limitada al camino feliz.
+  - `[automatizado]` raíz canónica válida — probe WP-23 — PASS y continuidad.
+  - `[automatizado]` raíces inválidas/ambiguas/downstream — probe WP-23 — LOCK
+    antes de efectos.
+  - `[automatizado]` salida dual PASS/bloqueo — fixture WP-23 — estado visible
+    y mismo orden en ambas partes.
+  - `[automatizado]` parte ausente, orden invertido, estado divergente, Parte 1
+    cercada y fluff/no-copiable — probe WP-23 — RECHAZO.
+  - `[automatizado]` políticas semver verdes e inválidas, allow/deny,
+    dependencias runtime y falsos negativos — probe WP-24 — 32/32.
+  - `[automatizado]` orden pre-aceptación → aceptación/merge → post-merge —
+    probe integrado — PASS.
+- `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: el probe integrado usa directamente
+  built-ins `node:fs` y `node:child_process`; los probes compuestos usan
+  built-ins declarados por sus fuentes. Dependencias npm nuevas: cero.
+- `INSTALACION_LIMPIA`: no aplica al cambio documental ni a built-ins de Node.
+  C8 online queda `⏳ sin verificar` por prohibición explícita de red/release.
+- `TEST_AUTOMATIZADO_VS_EVIDENCIA_MANUAL`:
+  - Automatizado: probe integrado, ceguera árbol/historial y `diff --check`.
+  - Manual: alcance, referencias, autoridad de roles y frontera de release.
+- `VEREDICTO_REVISOR`: `⏳ pendiente de revisor distinto`.
+
+## Auto-revisión (PRACTICAS del mundo — con honestidad)
+
+- [x] Diff solo dentro de `ALCANCE_DIFF`: cinco rutas de método y este reporte.
+- [x] Cero árboles/ficheros copiados de otros mundos sin procedencia: contratos
+  de WP-22/23/24 enlazados; no duplicados.
+- [x] Sellos con fuente; rutas citadas existentes: probes y rutas comprobados
+  sobre la base integrada.
+- [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 y contrarrevisión
+  figuran `⏳`.
+- [x] Eje(s) aplicables evidenciado(s): dedup del detector/parser, segundo
+  cliente semver y ceguera árbol/historial.
+- [x] Gates ejecutados de verdad: salidas literales arriba.
+- [x] Commits convencionales: `feat(metodo): integrar revision semver e idle`;
+  este reporte se asienta en commit documental separado.
+- [x] Diff solo del alcance del WP: comprobado contra base exacta
+  `32d6e5c8272f066ef3de370433383277bda293d3`.
+- [x] Riesgo y contraevidencia del brief cubiertos: normal/riesgo, PASS/LOCK,
+  dual inválida, semver y pre/post-merge.
+- [x] Pruebas automatizadas separadas de evidencia manual: secciones distintas.
+
+## Hallazgos fuera de alcance
+
+Ninguno.
+
+## Dudas / bloqueos
+
+- Bloqueo de aceptación esperado: WP-25 requiere contrarrevisión independiente
+  read-only por una identidad distinta. El worker no puede emitir ese PASS.
+- C8 online y cualquier gate forward post-release quedan `⏳ sin verificar`;
+  este WP prohíbe red, publish y operación downstream.
+- Sin bloqueos de implementación ni de gates locales.
+
+---
+
+## Revisión del orquestador
+
+⏳ Pendiente de contrarrevisión independiente y revisión ordinaria.
