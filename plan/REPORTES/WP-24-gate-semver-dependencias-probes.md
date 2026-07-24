@@ -5,28 +5,46 @@
 | agente | worker fresco independiente WP-24 |
 | fecha | 2026-07-24 |
 | rama | `wp/24-gate-semver-dependencias-probes` |
-| commits | `5e8a6be` + commit documental de este reporte |
+| commits | `5e8a6be`, `bb6181b`, `429d1c9`, `d88d468` + commit documental de esta corrección |
 | eje(s) CA | III + IV + ceguera + regla 14 |
-| estado propuesto | listo para contrarrevisión independiente |
+| estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
 
-Se añadió un gate local sin red para políticas `exact`, `caret-semver` y
-`major-band`, con allow/deny e inventario auditable de imports runtime.
-El gate rechaza dependencias transitivas o solo-dev y exige evidencia de
-integración para mínimos `0.x`, además del warning explícito.
-La referencia separa el resultado local de C8 online.
-Veintidós probes ejercitan verdes, inválidos y falsos negativos, incluida una
-versión no resuelta que el gate local deja expresamente para C8.
+Se corrigieron los siete puntos de la devolución en `d88d468`.
+El parser valida prerelease numérico y compara majors con `BigInt`; los
+built-ins `node:` se reconocen mediante Node.
+El gate descubre imports recorriendo `runtimeRoots`, contrasta el inventario,
+ejecuta tests integrados `0.x` y aplica patrones dedup.
+Treinta probes ejercitan verdes, inválidos y falsos negativos.
+Un paquete-fixture con runner propio acredita el segundo cliente.
+La referencia conserva separado el gate local de C8 online.
 No se añadió ninguna dependencia: script y probes usan solo built-ins de
 Node 22; `package.json` y lockfile no cambiaron.
+
+## Devolución numerada corregida
+
+1. `1.2.3-01` se rechaza; probe `prerelease numérico con cero inicial`.
+2. `major-band` usa `BigInt`; el caso sobre `Number.MAX_SAFE_INTEGER` falla.
+3. `node:test`, `node:test/reporters` y `node:sqlite` pasan como built-ins.
+4. `runtimeRoots` se escanea; inventario omitido no desactiva el análisis e
+   inventario incompleto/dependencia directa sin uso fallan.
+5. `integrationTests` ejecuta un script que importa y verifica comportamiento
+   de `alpha@0.x`; ausencia y exit 1 fallan.
+6. `dedupPatterns` cuenta definiciones; el fixture duplicado falla con dos.
+7. `cliente-independiente/` aporta manifiesto, configuración, fuente y runner
+   propios que invocan el CLI fuera del runner matricial.
 
 ## Archivos tocados
 
 - Creado `skills/swarm-orquestacion/reference/politica-dependencias-semver.md`: contrato, configuración y frontera C8.
 - Creado `skills/swarm-orquestacion/scripts/verificar-dependencias-semver.mjs`: gate local determinista.
-- Creado `skills/swarm-orquestacion/examples/fixture-semver/cases.json`: 21 casos declarativos.
+- Modificado `skills/swarm-orquestacion/examples/fixture-semver/cases.json`: 30 casos declarativos.
 - Creado `skills/swarm-orquestacion/examples/fixture-semver/probes.mjs`: runner efímero sin red.
+- Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/package.json`: segundo manifiesto.
+- Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/dependencias-semver.json`: política propia.
+- Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/src/index.mjs`: fuente runtime propia.
+- Creado `skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/probe.mjs`: runner independiente.
 - Creado `plan/REPORTES/WP-24-gate-semver-dependencias-probes.md`: este reporte.
 
 ## Evidencia
@@ -38,11 +56,15 @@ exit 0
 
 $ node skills/swarm-orquestacion/examples/fixture-semver/probes.mjs
 PASS verde exact · exit=0
+PASS prerelease numérico con cero inicial · exit=1
 PASS verde caret · exit=0
 PASS verde major-band · exit=0
+PASS major-band sin pérdida de precisión · exit=1
+PASS built-ins node prefix y subpath · exit=0
 PASS versión no resuelta queda para C8 · exit=0
 PASS verde cero con integración · exit=0
 PASS cero sin integración · exit=1
+PASS cero con integración fallida · exit=1
 PASS tag rechazado · exit=1
 PASS wildcard rechazado · exit=1
 PASS url rechazada · exit=1
@@ -56,10 +78,18 @@ PASS union caret falsa negativa · exit=1
 PASS ceros iniciales falsos negativos · exit=1
 PASS runtime solo dev · exit=1
 PASS runtime transitiva ausente · exit=1
+PASS inventario omitido se descubre desde fuentes · exit=0
+PASS inventario incompleto detectado · exit=1
+PASS dependencia directa sin uso detectada · exit=1
+PASS dedup definición duplicada · exit=1
 PASS deny prevalece · exit=1
 PASS fuera de allow · exit=1
 PASS override por paquete · exit=0
-probes semver: OK (22/22) · sin red
+probes semver: OK (30/30) · sin red
+
+$ node skills/swarm-orquestacion/examples/fixture-semver/cliente-independiente/probe.mjs
+[dependencias-semver] OK: 1 dependencia(s) runtime; 1 fuente(s); 0 integración(es); gate local sin red; C8 no se ejecutó
+cliente independiente: OK · gate ejercitado sin red
 
 $ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
 ceguera: 0
@@ -68,20 +98,13 @@ raiz: /c/S_LAB/skills-library-wp-24/skills/swarm-orquestacion
 $ git log -p -- <rutas WP-24> | rg -q -i -e "$PATTERN"
 ceguera historial: 0
 
-$ git diff --name-only 71e446a..5e8a6be
-skills/swarm-orquestacion/examples/fixture-semver/cases.json
-skills/swarm-orquestacion/examples/fixture-semver/probes.mjs
-skills/swarm-orquestacion/reference/politica-dependencias-semver.md
-skills/swarm-orquestacion/scripts/verificar-dependencias-semver.mjs
-
 C8 online (npm view + instalación limpia + integración):
 ⏳ sin verificar — separado deliberadamente; no se ejecutó red por mandato.
 ```
 
-Eje III: los probes de techo incorrecto, abreviatura, unión de rangos, ceros
-iniciales y dependencia transitiva fallan si el parser deja pasar falsos
-negativos. Eje IV: manifiestos independientes ejercitan las tres políticas y
-una combinación con override por paquete como clientes del mismo gate.
+Eje III: el gate dedup configurable devuelve fallo ante dos definiciones del
+símbolo de contrato. Eje IV: el segundo paquete-fixture tiene manifiesto,
+configuración, fuente y runner propios; ejecutó el CLI con PASS.
 
 ## Auto-revisión (PRACTICAS del mundo — con honestidad)
 
@@ -90,9 +113,9 @@ una combinación con override por paquete como clientes del mismo gate.
 - [x] Sellos con fuente; rutas citadas existentes: evidencia literal de esta rama.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 figura `⏳ sin verificar`.
 - [x] Eje(s) aplicables evidenciado(s): III, IV, ceguera de árbol y regla 14.
-- [x] Gates ejecutados de verdad: sintaxis, 22/22 probes y ceguera.
-- [x] Commits convencionales: `feat(semver): ...`; reporte documental separado.
-- [x] Diff solo del alcance del WP: confirmado contra `71e446a`.
+- [x] Gates ejecutados de verdad: sintaxis, 30/30 probes, segundo cliente y ceguera.
+- [x] Commits convencionales: corrección técnica `d88d468`; reporte separado.
+- [x] Diff solo del alcance del WP: confirmado contra `71e446a`; sin BACKLOG, roles, ciclo ni SKILL.
 
 ## Hallazgos fuera de alcance
 
@@ -100,10 +123,10 @@ Ninguno.
 
 ## Dudas / bloqueos
 
-- La contrarrevisión independiente read-only requerida por el BRIEF queda
-  pendiente del orquestador; este worker no puede autoemitirla ni lanzar otro
-  agente.
-- C8 online queda `⏳ sin verificar` porque este WP prohíbe ejecutar red.
+- C8 online queda `⏳ sin verificar` porque esta corrección prohíbe ejecutar
+  red. No bloquea el gate local; sí queda pendiente para el corte autorizado.
+- La devolución numerada quedó corregida; corresponde al revisor independiente
+  u orquestador revalidarla.
 
 ---
 
