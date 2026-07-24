@@ -5,11 +5,11 @@
 | agente | worker fresco WP-25 |
 | fecha | 2026-07-24 |
 | rama | `wp/25-integracion-metodo-revision-semver-idle` |
-| commits | `7e162a8`; commit de este reporte: ver historial de la rama |
+| commits | `7e162a8`, `12eaf71`, `0408952`; corrección de este reporte: ver historial de la rama |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
 | revisor distinto del worker | `⏳ sin verificar` |
-| estado propuesto | listo para revisión |
+| estado propuesto | devuelto-corregido |
 
 ## Qué se hizo
 
@@ -25,6 +25,26 @@ gate forward post-release se consume solo desde la fuente local del mundo.
 
 Se añadió un probe embebido en un fichero autorizado. Compone los probes de
 WP-22/23/24 sin duplicar detector, parser, políticas ni calibraciones.
+
+## Devolución numerada corregida
+
+1. El método exige ahora las cuatro entradas `WORLD_ROOT`,
+   `CANONICAL_WORLD_ROOT`, `READ_ONLY_ROOTS` y `DOWNSTREAM_PATTERNS` en cada
+   despacho/handoff aunque la plantilla base del brief no las contenga.
+   Orquestador, worker y ciclo bloquean calibración incompleta. El orquestador
+   ejecuta el detector y conserva `identidad-raiz: PASS` antes de construir o
+   entregar un handoff, invocar boot/script/fase 1 de `estacion-viva` o permitir
+   la creación de `OUT_DIR`. LOCK vuelve al custodio sin efectos.
+2. El probe integrado rechaza mutantes sin salida dual del orquestador, sin
+   referencias/handoff a estación, sin cada campo de calibración y con BOOT
+   anterior al detector o sin PASS previo.
+3. El Eje IV de WP-25 se acredita con dos consumidores independientes:
+   `ORQUESTADOR.md` y el cliente `WORKER.md`/`ciclo.md`. Ambos ejercitan
+   calibración, detector, PASS, estación y bloqueo; el segundo cliente semver
+   de WP-24 queda como evidencia compuesta, no como sustituto.
+
+Corrección implementada en `0408952`, sin editar `BOOT.md` ni
+`roles/BRIEF.md`.
 
 ## Archivos tocados
 
@@ -53,6 +73,17 @@ salida dual valida/invalida: PASS
 dedup contratos: PASS
 semver verdes/invalidos/falsos-negativos: PASS
 segundo cliente semver: PASS
+Eje IV consumidor orquestador: PASS
+Eje IV consumidor worker/ciclo: PASS
+mutante orquestador-sin-salida-dual: RECHAZADO
+mutante orquestador-sin-estacion-viva: RECHAZADO
+mutante worker-sin-estacion-viva: RECHAZADO
+mutante orquestador-sin-WORLD_ROOT: RECHAZADO
+mutante orquestador-sin-CANONICAL_WORLD_ROOT: RECHAZADO
+mutante orquestador-sin-READ_ONLY_ROOTS: RECHAZADO
+mutante orquestador-sin-DOWNSTREAM_PATTERNS: RECHAZADO
+mutante orquestador-boot-antes-de-detector: RECHAZADO
+mutante ciclo-sin-pass-previo-al-boot: RECHAZADO
 integracion-metodo: PASS
 pre-merge/post-merge: evidencia separada
 
@@ -76,8 +107,9 @@ M skills/swarm-orquestacion/reference/roles/WORKER.md
 
 El probe compuesto ejecutó los 9 casos de identidad de WP-23 —incluidos siete
 LOCK sin cambios de FS/Git ni `OUT_DIR`—, los 20 casos duales, los 2 casos de
-dedup, los 32 casos semver y el segundo cliente independiente. También extrajo
-y ejecutó el probe de selección de WP-22.
+dedup, los 32 casos semver y el segundo cliente semver. También extrajo y
+ejecutó el probe de selección de WP-22. Para la integración WP-25 ejercitó dos
+clientes y rechazó nueve mutantes contractuales.
 
 ### Evidencia manual
 
@@ -85,6 +117,9 @@ y ejecutó el probe de selección de WP-22.
   BRIEF: cinco rutas de método y este reporte, todas autorizadas.
 - Inspección manual de referencias relativas: detector/contrato de vigilancia
   y BOOT de estación viva existen en el árbol; no se copiaron sus cuerpos.
+- Inspección manual de la devolución: `BOOT.md` y `roles/BRIEF.md` permanecen
+  sin cambios; el cierre vive únicamente en los cinco puntos de método
+  autorizados.
 - Inspección manual de autoridad: el contrarrevisor no acepta ni mergea; el
   vigía no escribe BACKLOG; el worker no opera gate forward.
 - Inspección manual de frontera release: no se editaron versión, CHANGELOG,
@@ -110,6 +145,12 @@ y ejecutó el probe de selección de WP-22.
     dependencias runtime y falsos negativos — probe WP-24 — 32/32.
   - `[automatizado]` orden pre-aceptación → aceptación/merge → post-merge —
     probe integrado — PASS.
+  - `[automatizado]` consumidor ORQUESTADOR — calibración completa,
+    detector→PASS→estación y salida dual bidireccional — PASS.
+  - `[automatizado]` consumidor WORKER/ciclo — calibración ausente bloqueada,
+    detector→PASS→estación y LOCK sin boot/handoff — PASS.
+  - `[automatizado]` eliminación de salida dual, estación, cada campo o PASS
+    previo; inversión BOOT/detector — nueve mutantes — RECHAZADOS.
 - `DEPENDENCIAS_DIRECTAS_VERIFICADAS`: el probe integrado usa directamente
   built-ins `node:fs` y `node:child_process`; los probes compuestos usan
   built-ins declarados por sus fuentes. Dependencias npm nuevas: cero.
@@ -129,11 +170,13 @@ y ejecutó el probe de selección de WP-22.
   sobre la base integrada.
 - [x] Sin fluff ni promesa de futuro sin `<pendiente>`: C8 y contrarrevisión
   figuran `⏳`.
-- [x] Eje(s) aplicables evidenciado(s): dedup del detector/parser, segundo
-  cliente semver y ceguera árbol/historial.
+- [x] Eje(s) aplicables evidenciado(s): dedup del detector/parser, dos
+  consumidores independientes de WP-25, segundo cliente semver compuesto y
+  ceguera árbol/historial.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
-- [x] Commits convencionales: `feat(metodo): integrar revision semver e idle`;
-  este reporte se asienta en commit documental separado.
+- [x] Commits convencionales: integración, reporte y
+  `fix(metodo): bloquear boot sin identidad canonica`; esta corrección de
+  reporte se asienta en commit documental separado.
 - [x] Diff solo del alcance del WP: comprobado contra base exacta
   `32d6e5c8272f066ef3de370433383277bda293d3`.
 - [x] Riesgo y contraevidencia del brief cubiertos: normal/riesgo, PASS/LOCK,
