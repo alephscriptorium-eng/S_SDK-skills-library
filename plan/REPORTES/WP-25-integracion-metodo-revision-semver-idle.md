@@ -5,7 +5,8 @@
 | agente | worker fresco WP-25 |
 | fecha | 2026-07-24 |
 | rama | `wp/25-integracion-metodo-revision-semver-idle` |
-| commits | `7e162a8`, `12eaf71`, `0408952`; corrección de este reporte: ver historial de la rama |
+| base viva / main / merge-base | `d52e91d52c5a5dd010300c057bd0dfca310d829a` |
+| commits alcanzables | `348e4789`, `b67bf625`, `032310ad`, `c8d6c110`; commit post-rebase de este reporte: ver historial de la rama |
 | eje(s) CA | III + IV + ceguera + regla 14 |
 | riesgo de revisión | `independiente` |
 | revisor distinto del worker | `⏳ sin verificar` |
@@ -43,8 +44,26 @@ WP-22/23/24 sin duplicar detector, parser, políticas ni calibraciones.
    calibración, detector, PASS, estación y bloqueo; el segundo cliente semver
    de WP-24 queda como evidencia compuesta, no como sustituto.
 
-Corrección implementada en `0408952`, sin editar `BOOT.md` ni
+Corrección implementada en `032310ad`, sin editar `BOOT.md` ni
 `roles/BRIEF.md`.
+
+## Reconciliación post-rebase
+
+La rama se rebasó sobre `d52e91d52c5a5dd010300c057bd0dfca310d829a`.
+`main` y el merge-base resuelven exactamente al mismo commit. El cambio
+concurrente modifica solo `plan/.sync-map.json`, fuera de los contratos,
+scripts, fixtures y reporte de WP-25; por tanto no altera sus CA ni probes.
+
+```text
+$ git rev-parse main
+d52e91d52c5a5dd010300c057bd0dfca310d829a
+
+$ git merge-base main HEAD
+d52e91d52c5a5dd010300c057bd0dfca310d829a
+
+$ git diff --name-status d52e91d52c5a5dd010300c057bd0dfca310d829a^ d52e91d52c5a5dd010300c057bd0dfca310d829a
+M plan/.sync-map.json
+```
 
 ## Archivos tocados
 
@@ -91,13 +110,14 @@ $ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh
 ceguera: 0
 raiz: /c/S_LAB/skills-library-wp-25/skills/swarm-orquestacion
 
-$ <búsqueda canónica por fragmentos sobre git log -p base..HEAD -- cinco rutas públicas>
+$ <búsqueda canónica por fragmentos sobre git log -p d52e91d52c5a5dd010300c057bd0dfca310d829a..HEAD -- cinco rutas públicas>
 ceguera historial reachable: 0
 
-$ git diff --check 32d6e5c8272f066ef3de370433383277bda293d3...HEAD
+$ git diff --check d52e91d52c5a5dd010300c057bd0dfca310d829a...HEAD
 (sin salida; exit 0)
 
-$ git diff --name-status 32d6e5c8272f066ef3de370433383277bda293d3...HEAD
+$ git diff --name-status d52e91d52c5a5dd010300c057bd0dfca310d829a...HEAD
+A plan/REPORTES/WP-25-integracion-metodo-revision-semver-idle.md
 M skills/swarm-orquestacion/SKILL.md
 M skills/swarm-orquestacion/reference/ciclo.md
 M skills/swarm-orquestacion/reference/lecciones-vnext.md
@@ -174,11 +194,11 @@ clientes y rechazó nueve mutantes contractuales.
   consumidores independientes de WP-25, segundo cliente semver compuesto y
   ceguera árbol/historial.
 - [x] Gates ejecutados de verdad: salidas literales arriba.
-- [x] Commits convencionales: integración, reporte y
-  `fix(metodo): bloquear boot sin identidad canonica`; esta corrección de
-  reporte se asienta en commit documental separado.
+- [x] Commits convencionales y alcanzables post-rebase: `348e4789`,
+  `b67bf625`, `032310ad`, `c8d6c110`; esta reconciliación se asienta en commit
+  documental separado.
 - [x] Diff solo del alcance del WP: comprobado contra base exacta
-  `32d6e5c8272f066ef3de370433383277bda293d3`.
+  `d52e91d52c5a5dd010300c057bd0dfca310d829a`; seis rutas autorizadas.
 - [x] Riesgo y contraevidencia del brief cubiertos: normal/riesgo, PASS/LOCK,
   dual inválida, semver y pre/post-merge.
 - [x] Pruebas automatizadas separadas de evidencia manual: secciones distintas.
