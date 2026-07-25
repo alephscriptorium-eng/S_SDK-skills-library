@@ -658,3 +658,13 @@ orquestador (emulado, claim en estación).
 Circuito: workers Opus ∥ en worktrees `C:\S_LAB\.worktrees\lib\` ·
 contrarrevisión independiente · merge+gate R8-LIB del orquestador
 (emulado, claim en estación).
+- ✅ **WP-32 · perfiles de boot y degradaciones de fundación** —
+  aceptado (2026-07-26). Rama wp/32-perfiles-boot-fundacion · tip
+  obra 5acae16 · merge en main. Perfiles jugador/vigia (tabla
+  fase×perfil cotejada por el revisor contra las 7 fases reales) ·
+  bootstrap de bitácora ausente ejecutable · modo fundación pre-git
+  cruzado contra los scripts · layout consumidor DC-16.
+  Contrarrevisión: PASS directo (reconstrucción independiente;
+  1 nota menor no bloqueante: conteo worktrees agrupado con locks
+  en la tabla). Placeholder <PAQUETE_SKILLS> dictaminado doctrina
+  correcta de ceguera.
