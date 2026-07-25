@@ -255,3 +255,34 @@ preguntas del intake quedan respondidas con la evidencia de estación Z:
   poda-de-worktrees con junctions (→WP-29) · eje de contrarrevisión
   «imponer lo que el hostil omite» (→WP-29) · estándar de evidencia
   enmascarada U141/D-32 en caras públicas (→WP-29).
+
+## DC-30 · Promoción intake V + follow-ups (GO custodio 2026-07-26 · ola 2)
+
+El custodio ordena encolar y ejecutar el backlog pendiente. Se
+promueven INT-V-01..10 y los 4 menores de la contrarrevisión de
+WP-28, agrupados por zona (un skill por WP; estacion-viva partida
+scripts/docs con frontera declarada):
+
+- **WP-31** (estacion-viva/scripts+tests): INT-V-01 (contador solo
+  dirs con SKILL.md + fixture fichero-suelto — cubre menor #4 de
+  WP-28) · INT-V-05 (honrar WORKTREE_BASE externo) · menores #1
+  (fallback BSD en test l.83) y #3 (fixture del umbral en el límite
+  2×INTERVAL) de WP-28.
+- **WP-32** (estacion-viva/SKILL+reference): INT-V-08 (perfiles de
+  boot vigia/jugador; fase GAME_MCP omitida declaradamente en perfil
+  vigía) · INT-V-09 (bootstrap de bitácora ausente documentado) ·
+  INT-V-04 lado-boot (modo pre-git: qué fases corren sin .git) ·
+  INT-V-06 (ejemplos con layout consumidor).
+- **WP-33** (vigilancia/**): INT-V-02 (composición «estación de
+  vigilante» documentada + launcher, SIN fusionar skills — DA-S20
+  vigente) · INT-V-10 (claim-vigia.sh: claim durable en OUT_DIR con
+  origen/ts/PID/versión) · INT-V-04 lado-identidad (LOCK pre-git
+  esperado, documentado sin aflojar fail-closed) · INT-V-03
+  (plantilla de calibración ESTACION completa con entradas
+  identidad/JSON/paths Windows) · menor #2 WP-28 (snippet
+  ESTACION.md:230 con fallback BSD o límite declarado).
+- **WP-34** (swarm-orquestacion/**): INT-V-07 (versión del README
+  del paquete derivada o verificada en el gate de release).
+
+Dedupe: wishlist-V nº4 = INT-V-01. WP-26 (rescatar skill runtime)
+sigue FUERA — decisión aparte, no cubierta por este GO.

@@ -639,3 +639,22 @@ orquestador (emulado, claim en estación).
   - **INT-V-10 · claim-vigia.sh** — tooling del claim durable en
     OUT_DIR (origen, ts, PID, versión de skill); ejecuta la doctrina
     de claim del método v0.7 que hoy es solo doc.
+
+## Ola 2 de promoción DC-30 (2026-07-26 · GO custodio · gorro de Apolo)
+
+- 🔶 **WP-31 · contador y coberturas ONCE/liveness** — despachado.
+  Zona: SOLO skills/estacion-viva/scripts/** (+tests). Rama
+  `wp/31-contador-coberturas`. _Brief:_ `BRIEFS/WP-31-contador-coberturas.md`
+- 🔶 **WP-32 · perfiles de boot y degradaciones de fundación** —
+  despachado. Zona: SOLO skills/estacion-viva/SKILL.md+reference/**.
+  Rama `wp/32-perfiles-boot-fundacion`. _Brief:_ `BRIEFS/WP-32-perfiles-boot-fundacion.md`
+- 🔶 **WP-33 · estación de vigilante: composición, claim y plantilla** —
+  despachado. Zona: SOLO skills/vigilancia/**. Rama
+  `wp/33-estacion-vigilante-claim`. _Brief:_ `BRIEFS/WP-33-estacion-vigilante-claim.md`
+- 🔶 **WP-34 · higiene de release: versión de README** — despachado.
+  Zona: SOLO skills/swarm-orquestacion/**. Rama
+  `wp/34-release-readme-version`. _Brief:_ `BRIEFS/WP-34-release-readme-version.md`
+
+Circuito: workers Opus ∥ en worktrees `C:\S_LAB\.worktrees\lib\` ·
+contrarrevisión independiente · merge+gate R8-LIB del orquestador
+(emulado, claim en estación).
