@@ -52,6 +52,16 @@ calibración ausente o ambigua y diferencia respecto del canónico producen
 se pide al custodio un clone canónico fuera de las raíces observadas. El vigía
 no lo crea, no lo elige y espera nueva calibración.
 
+**Mundo pre-git (LOCK 23 esperado; fail-closed intacto).** En un mundo sin
+`.git` el paso `git rev-parse --show-toplevel` falla y el preflight LOCKea con
+exit `23`. Esto es **comportamiento esperado**, no un defecto: la identidad
+git no está acreditada, así que el watcher **canónico** no debe arrancar. El
+detector **no se afloja** para «tolerar» pre-git. La **fundación** de un mundo
+pre-git no vive en este skill: vive en `estacion-viva` (boot que arranca sobre
+«repo o fixture»). El launcher de composición distingue `LOCK-PRE-GIT`
+(ofrecer modo sesión de estacion-viva) de `LOCK-IDENTIDAD` (pedir clone
+canónico) — ver `ESTACION-DE-VIGILANTE.md §pre-git`.
+
 ```bash
 WORLD_ROOT=/ruta/candidata \
 CANONICAL_WORLD_ROOT=/ruta/canonica \
@@ -226,6 +236,15 @@ recomendado propio: ver `reference/BACKSTAGE-GIT.md`. Convención:
 (FS atlas = checkouts de lectura). Un worktree por rol. Migración
 legacy: `fuentes/` → `cantera/`.
 
+## Composición «estación de vigilante»
+
+Arranque orquestado de una estación completa (preflight identidad → claim →
+watcher) **sin fusionar skills**: `scripts/estacion-de-vigilante.sh` INVOCA
+cada pieza. Claim durable `OUT_DIR/claim-vigia.json` con aviso
+doble-conductor: `scripts/claim-vigia.sh`. Doctrina (qué watcher elegir,
+claim, pre-git): `reference/ESTACION-DE-VIGILANTE.md`. Plantilla de
+calibración instanciable: `reference/plantillas/ESTACION.md.tpl`.
+
 ## Herramienta
 
 `scripts/watcher.sh` (intervalo configurable) → `watch.log` +
@@ -257,10 +276,16 @@ manda y el veredicto es **vivo**. Portable **Git Bash (win) + POSIX**: sin
 Método inline (vigía solo con este skill):
 
 ```bash
-# umbral = 2×INTERVAL; tick = último sello del log
+# umbral = 2×INTERVAL; tick = último sello del log.
+# ts→epoch portable: GNU date (Git Bash/Linux) y respaldo BSD (macOS),
+# idéntica disciplina que ts_to_epoch() de comprobar-vivo.sh (estacion-viva).
 INTERVAL=45; LOG="$OUT_DIR/watch.log"
 tick="$(grep -oE '^\[[0-9-]{10} [0-9:]{8}\]' "$LOG" | tail -1 | tr -d '[]')"
-edad=$(( $(date +%s) - $(date -d "$tick" +%s) ))
+ts_to_epoch() {  # "YYYY-MM-DD HH:MM:SS" → epoch
+  date -d "$1" +%s 2>/dev/null \
+    || date -j -f '%Y-%m-%d %H:%M:%S' "$1" +%s 2>/dev/null
+}
+edad=$(( $(date +%s) - $(ts_to_epoch "$tick") ))
 [ "$edad" -lt $(( 2*INTERVAL )) ] && echo vivo || echo muerto
 ```
 

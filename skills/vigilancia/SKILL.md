@@ -77,12 +77,22 @@ orquestación): `reference/ESTACION.md`.
 ## Recursos
 
 - `reference/ESTACION.md` — protocolo abstraído + multi-carril + supuestos
+- `reference/ESTACION-DE-VIGILANTE.md` — composición canónica (launcher que
+  orquesta preflight→claim→watcher; qué watcher elegir; claim/doble-conductor;
+  pre-git LOCK 23 esperado)
+- `reference/plantillas/ESTACION.md.tpl` — plantilla de calibración
+  instanciable (todas las entradas; JSON válidos; paths Windows Y POSIX)
 - `reference/BACKSTAGE-GIT.md` — layout backstage · convención `cantera/` ·
   worktree por rol · migración `fuentes/` → `cantera/`
 - `reference/ADDENDA-DOS-CARAS.md` — formato §interna / §WP + carril + ceguera
 - `examples/` — fixtures sintéticas mínimas (sin datos de mundo real)
 - `../../instancias/ejemplo-M/` — corpus-instancia de-identificado (bitácora /
   revisiones / addendas / handoffs sintéticos; ceguera = 0)
+- `scripts/estacion-de-vigilante.sh` — launcher de composición (orquesta
+  preflight→claim→watcher; invoca, no fusiona · DA-S20)
+- `scripts/claim-vigia.sh` — claim durable `claim-vigia.json` (5 campos +
+  lease; aviso doble-conductor; liberación al cerrar/expirar)
+- `scripts/probar-estacion-de-vigilante.sh` — test de los 3 modos + claim/lease
 - `scripts/watcher.sh` — muestreo parametrizado (no usa `git status`)
 - `scripts/verificar-identidad-raiz.mjs` + probe — preflight fail-closed
 - `scripts/verificar-salida-dual.mjs` + probe — gate documental dual
