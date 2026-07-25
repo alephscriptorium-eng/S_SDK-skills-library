@@ -108,6 +108,22 @@ handoff. Nunca invocar `estacion-viva`, su script de reproducción ni
 crear `OUT_DIR`. LOCK se devuelve sin boot, handoff ni efectos. No copies ni
 modifiques el protocolo vecino.
 
+## Preflight de identidad (opt-in)
+
+Antes de un **commit de gobierno** (aceptación ✅, brief, 🔶) o de un **merge**,
+correr el guard opt-in `../../scripts/verificar-identidad.mjs` sobre el repo del
+mundo. Comprueba la identidad **efectiva** de git (config `user.name`/`user.email`
++ vars `GIT_AUTHOR_*`/`GIT_COMMITTER_*`) contra una lista de placeholders (default
+`Your Name` / `you@example.com`, ampliable con `--placeholder` o
+`IDENTIDAD_PLACEHOLDERS`). Si la identidad es un placeholder o está sin
+configurar, emite un WARNING con remedios; si es legítima, calla.
+
+- **Warn-only:** exit 0 SIEMPRE. No bloquea, no toca `git config` ni la historia;
+  el remedio lo aplica el operador (identidad por invocación con `git -c`, o
+  aprovisionar el entorno). No sustituye al detector de identidad de raíz del
+  ritual de inicio (concern distinto: aquel es fail-closed sobre la ubicación).
+- **Uso:** `node ../../scripts/verificar-identidad.mjs --repo <repo-del-mundo>`.
+
 ## Salida dual bidireccional
 
 El contrato canónico de la salida del vigía vive en
