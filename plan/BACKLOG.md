@@ -598,3 +598,12 @@ orquestador (emulado, claim en estación).
   estreno en producción del guard WP-30 (warn placeholder en la
   propia release). Ronda de consumo despachada (workspace + z·g·s·e·a;
   o-sdk excluido F3).
+- ⬜ **INT-V-01 · contar-skills-mat cuenta README.md como skill** —
+  intake downstream (estreno del contrato ONCE en la fundación del
+  carril V, 2026-07-26): pulso reporta 8 con 7 skills reales; la
+  fuente única de WP-28 excluye carpetas sin SKILL.md pero no
+  ficheros sueltos del espejo (README.md del sync). Fix candidato:
+  contar solo directorios con SKILL.md. Alcance: estacion-viva
+  contar-skills-mat.sh + fixture nueva (fichero suelto) — cubre
+  además la observación menor #4 de la contrarrevisión de WP-28.
+  Promoción = decisión del orquestador en la próxima ola.
