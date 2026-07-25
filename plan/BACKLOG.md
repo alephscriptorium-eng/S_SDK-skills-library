@@ -523,3 +523,35 @@ Fuente y deduplicación:
 
 Cross-reference cerrado: **DA-S17 → WP-18 / DC-25**; el consumidor proyectó
 `0 WPs`. No reabrir ni duplicar por defecto.
+
+## Ola de promoción DC-29 (2026-07-26 · GO custodio · gorro de Apolo)
+
+- 🔶 **WP-27 · Parser de proyección multi-serie** — despachado
+  (2026-07-26). Promoción explícita DA-S17/DC-25 (WP nuevo, no reabre
+  WP-18). `proyectar-backlog.mjs`: aceptar series de ID configurables
+  del mundo (`IB-nn`,`PD-nn`,`LIB-0nn`,`N0-nn`,`WP-Unnn`,…), fallar
+  ruidoso ante ambigüedad/mixtos no declarados, **cero normalización**
+  de IDs del consumidor. Caso de aceptación real: el BACKLOG de S
+  proyectaba 0 WPs. Rama `wp/27-parser-multi-serie`.
+  _Brief:_ `BRIEFS/WP-27-parser-multi-serie.md`
+- 🔶 **WP-28 · Contrato ONCE + liveness del watcher** — despachado
+  (2026-07-26). INT-Z-01+02 promovidos con contrato DC-29: ONCE
+  refresca `pulso.txt` siempre; liveness por lease de timestamp en
+  `watch.log` (PID = pista secundaria); fuente única para
+  `skills_mat`. Rama `wp/28-contrato-once-liveness`.
+  _Brief:_ `BRIEFS/WP-28-contrato-once-liveness.md`
+- 🔶 **WP-29 · Método v0.7 · lecciones del relevo y del frente** —
+  despachado (2026-07-26). INT-Z-03 + intake nuevo DC-29: sucesión v2
+  «gorro» · claim de carril pre-emulación · poda segura de worktrees
+  con junctions · eje «hostil-omite» en contrarrevisión · estándar de
+  evidencia enmascarada. Solo referencias/docs de método.
+  Rama `wp/29-metodo-v07-lecciones`.
+  _Brief:_ `BRIEFS/WP-29-metodo-v07-lecciones.md`
+- 🔶 **WP-30 · Guard de identidad opt-in** — despachado (2026-07-26).
+  INT-Z-04 promovido: preflight warn-only de placeholders en commits
+  de gobierno. Rama `wp/30-guard-identidad`.
+  _Brief:_ `BRIEFS/WP-30-guard-identidad.md`
+
+Circuito: workers ∥ en worktrees `C:\S_LAB\.worktrees\lib\` ·
+contrarrevisión independiente por WP · merge+gate `Rn-LIB` del
+orquestador (emulado, claim en estación).

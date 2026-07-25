@@ -222,3 +222,36 @@ criterios de promoción, solapes y fronteras:
 
 _(Resueltas: DA-1/DA-2 → DC-16/DC-17; DA-3/DA-4 → DC-4/DC-5;
 DC-22..24 ratificadas por GO 2026-07-20.)_
+
+## DC-29 · Promoción intake Z + lecciones del tercer frente (GO custodio 2026-07-26 · gorro de Apolo)
+
+El custodio ordena «triage y encolar las máximas». Se promueven los
+cuatro INT-Z y se acepta intake nuevo (lecciones del frente). Las
+preguntas del intake quedan respondidas con la evidencia de estación Z:
+
+- **INT-Z-01 (contrato ONCE)** → **WP-28**. Contrato decidido: ONCE
+  escribe SIEMPRE el snapshot canónico `pulso.txt` (con ts fresco) +
+  línea en `watch.log`; la divergencia `skills_mat` fue fuente de
+  conteo distinta — unificar fuente. Es bug si ONCE no refresca.
+- **INT-Z-02 (liveness)** → **WP-28** (mismo WP, misma zona). Señal
+  canónica portable: **lease de timestamp en `watch.log`** (último
+  tick < 2×INTERVAL = vivo); el PID queda como pista secundaria no
+  contractual. Plataformas del contrato: win (Git Bash) + POSIX.
+- **INT-Z-03 (sucesión v2 «gorro»)** → **WP-29**. Piezas obligatorias:
+  handoff volátil del saliente · ronda breve Q&A · herencia de
+  anomalías como anomalía (no normalidad) · rol temporal con origen
+  declarado · claim de carril previo a emulación · anclas activas
+  literales/reproducibles. Ancla histórica inerte se marca con
+  bloque/etiqueta «cita inerte» explícita.
+- **INT-Z-04 (guard identidad)** → **WP-30**. Placeholders a advertir:
+  `Your Name`/`you@example.com` (default git) + lista configurable.
+  Punto del flujo: preflight opt-in del orquestador antes de commits
+  de gobierno/merge. Warn-only; jamás bloquea, ni toca `git config`,
+  ni reescribe historia.
+- **DA-S17/DC-25 (parser)** → **WP-27** como WP NUEVO por GO explícito
+  (no reabre WP-18): multi-serie + fallar ruidoso; **NO** normalizar
+  IDs del consumidor.
+- **Intake nuevo aceptado** (evidencia bitácora Z / gates R16–R20):
+  poda-de-worktrees con junctions (→WP-29) · eje de contrarrevisión
+  «imponer lo que el hostil omite» (→WP-29) · estándar de evidencia
+  enmascarada U141/D-32 en caras públicas (→WP-29).
