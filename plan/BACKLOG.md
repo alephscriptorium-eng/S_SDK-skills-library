@@ -560,3 +560,13 @@ orquestador (emulado, claim en estación).
   Contrarrevisión: PASS DIRECTO (mutation testing 3 mutantes con
   asserts que muerden · 6 bordes de error forzados, exit 0 en todos ·
   cero efectos por hash de .git/config). 14/14 en main.
+- ✅ **WP-28 · contrato ONCE + liveness del watcher** — aceptado
+  (2026-07-26). Rama wp/28-contrato-once-liveness · tip obra 505e178 ·
+  merge en main. Contrarrevisión: PASS con reproducción propia
+  (refresco desde sello rancio 2019 · lease vivo/muerto/dudoso ·
+  pista-secundaria PID · fuente única skills_mat irrompible con
+  ruido). 4 menores follow-up: fallback BSD en test harness (l.83) y
+  snippet ESTACION.md:230 · fixture del umbral sin caso límite 2x ·
+  fixture sin carpeta-huérfana. Dictamen portabilidad: contrato
+  DC-29 (win GitBash + POSIX/Linux GNU) CUMPLIDO; soporte BSD
+  parcial, declarado como límite.
