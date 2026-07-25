@@ -175,6 +175,72 @@ OUT_DIR="$O6" CLAIM_PID=111 bash "$CLAIMER" release >/dev/null 2>&1
 [ ! -f "$O6/claim-vigia.json" ] && ok "release propio libera" || bad "release propio no liberó"
 
 # =========================================================================
+echo "== OBS-3 · claim corrupto ≠ expirado (diagnóstico, no silencio) =="
+O7="$TMP/out7"; mkdir -p "$O7"
+printf '%s\n' '{ "origen_rol": "vigia:x", "pid": 5, esto no es json' > "$O7/claim-vigia.json"
+stc="$(OUT_DIR="$O7" bash "$CLAIMER" status 2>&1)"
+printf '%s\n' "$stc" | sed 's/^/    /'
+assert_grep 'estado=corrupto'  "$stc" "status distingue corrupto"
+assert_grep 'diagnostico='     "$stc" "status emite diagnóstico"
+outco="$(OUT_DIR="$O7" WORLD_ROOT="$W3" ORIGEN='vigia:carril-obra' bash "$CLAIMER" acquire 2>&1)"; rco=$?
+printf '%s\n' "$outco" | sed 's/^/    /'
+assert_grep 'AVISO claim corrupto' "$outco" "acquire avisa del corrupto (no silencio)"
+[ "$rco" -eq 0 ] && ok "acquire reclama corrupto (seguro-por-defecto) exit 0" || bad "acquire exit $rco"
+
+# =========================================================================
+echo "== OBS-2 · adquisición ATÓMICA: N acquire concurrentes sobre claim libre =="
+W8="$(mk_git_world w8)"; O8="$TMP/out8"; mkdir -p "$O8"
+N=8
+for i in $(seq 1 $N); do
+  ( OUT_DIR="$O8" WORLD_ROOT="$W8" ORIGEN="vigia:c$i" bash "$CLAIMER" acquire >/dev/null 2>&1
+    echo $? > "$O8/res.$i" ) &
+done
+wait
+wins=0; loses=0
+for i in $(seq 1 $N); do
+  r="$(cat "$O8/res.$i" 2>/dev/null || echo X)"
+  [ "$r" = "0" ]  && wins=$((wins+1))
+  [ "$r" = "17" ] && loses=$((loses+1))
+done
+echo "    resultado: ganadores(exit0)=$wins  perdedores(exit17)=$loses  de N=$N"
+[ "$wins"  -eq 1 ]        && ok "EXACTAMENTE 1 acquire ganó (sin TOCTOU)" || bad "ganaron $wins (esperaba 1)"
+[ "$loses" -eq $((N-1)) ] && ok "los otros $((N-1)) → exit 17"            || bad "perdedores=$loses (esperaba $((N-1)))"
+
+# =========================================================================
+echo "== OBS-1/OBS-4 · claim renovado cruza el lease + trap real libera y mata watcher =="
+W9="$(mk_git_world w9)"; O9="$TMP/out9"; LS=4
+# Estación VIVA (no SMOKE) en background; se le enviará SIGTERM al final.
+WORLD_ROOT="$W9" CANONICAL_WORLD_ROOT="$W9" \
+  READ_ONLY_ROOTS='[]' DOWNSTREAM_PATTERNS='[]' \
+  OUT_DIR="$O9" INTERVAL=1 LEASE="$LS" ORIGEN='vigia:carril-obra' \
+  bash "$LAUNCHER" >"$O9.log" 2>&1 &
+LPID=$!
+for _ in $(seq 1 50); do
+  [ -f "$O9/claim-vigia.json" ] && [ -f "$O9/watcher.pid" ] && break; sleep 0.2
+done
+WATCHER_PID="$(cat "$O9/watcher.pid" 2>/dev/null || echo "")"
+[ -n "$WATCHER_PID" ] && ok "estación viva arrancó (watcher pid=$WATCHER_PID)" || bad "no arrancó"
+grep -q 'heartbeat=activo' "$O9.log" && ok "heartbeat activo" || bad "sin heartbeat"
+# Cruzar 2×LEASE: sin renovación el claim expiraría (edad ≥ 8s ≥ lease 4s).
+sleep $(( 2 * LS + 1 ))
+stv="$(OUT_DIR="$O9" LEASE="$LS" bash "$CLAIMER" status 2>&1)"
+printf '%s\n' "$stv" | sed 's/^/    /'
+assert_grep 'estado=vivo' "$stv" "claim SIGUE vivo tras 2×LEASE (renovado)"
+# Un rival intenta robar el carril con el conductor vivo → RECHAZADO.
+riv="$(OUT_DIR="$O9" WORLD_ROOT="$W9" ORIGEN='vigia:rival' LEASE="$LS" bash "$CLAIMER" acquire 2>&1)"; rrv=$?
+printf '%s\n' "$riv" | sed 's/^/    /'
+[ "$rrv" -eq 17 ] && ok "rival RECHAZADO tras-lease (exit 17)" || bad "rival exit $rrv (esperaba 17)"
+[ -f "$O9/watcher.pid" ] && [ "$(cat "$O9/watcher.pid")" = "$WATCHER_PID" ] \
+  && ok "sigue habiendo UN solo watcher (mismo pid)" || bad "watcher.pid cambió/desapareció"
+# --- OBS-4: SIGTERM real → el trap libera claim y mata el watcher hijo ---
+kill -TERM "$LPID" 2>/dev/null || true
+wait "$LPID" 2>/dev/null || true
+for _ in $(seq 1 25); do [ ! -f "$O9/claim-vigia.json" ] && break; sleep 0.2; done
+[ ! -f "$O9/claim-vigia.json" ] && ok "trap liberó el claim al recibir SIGTERM" || bad "claim no liberado tras SIGTERM"
+alive=1; kill -0 "$WATCHER_PID" 2>/dev/null || alive=0
+[ "$alive" -eq 0 ] && ok "trap mató el watcher hijo" || { bad "watcher sigue vivo"; kill "$WATCHER_PID" 2>/dev/null || true; }
+
+# =========================================================================
 echo
 if [ "$fails" -eq 0 ]; then
   echo "TODO PASS (estacion-de-vigilante + claim-vigia)"

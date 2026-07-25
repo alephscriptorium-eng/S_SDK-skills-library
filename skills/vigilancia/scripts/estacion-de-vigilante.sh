@@ -94,9 +94,15 @@ fi
 CLAIM_OWNED=1
 log "claim=adquirido origen='$ORIGEN'"
 
-# Teardown: liberar el claim (y matar el watcher hijo) al salir.
-WPID=""
+# Teardown (fuego único): parar el renovador, matar el watcher hijo y
+# liberar el claim. Se registra en EXIT/INT/TERM; guardado contra doble
+# ejecución (TERM dispara y luego EXIT vuelve a dispararse).
+WPID=""; RENEW_PID=""; TEARDOWN_DONE=0
 teardown() {
+  [ "$TEARDOWN_DONE" = 1 ] && return
+  TEARDOWN_DONE=1
+  # Parar el renovador PRIMERO para que no re-adquiera tras el release.
+  [ -n "$RENEW_PID" ] && kill "$RENEW_PID" 2>/dev/null || true
   [ -n "$WPID" ] && kill "$WPID" 2>/dev/null || true
   if [ "${CLAIM_OWNED:-0}" = 1 ]; then
     OUT_DIR="$OUT_DIR" CLAIM_PID="$$" ORIGEN="$ORIGEN" bash "$CLAIMER" release 2>&1 \
@@ -117,6 +123,24 @@ bash "$WATCHER" &
 WPID=$!
 echo "$WPID" > "$OUT_DIR/watcher.pid"
 log "watcher=lanzado (canónico vigilancia) pid=$WPID interval=${INTERVAL}s log=$OUT_DIR/watch.log"
+
+# ---------------------------------------------------------------------------
+# Heartbeat de renovación del claim (INT-V-10). El claim de un conductor VIVO
+# nunca debe expirar: mientras el watcher viva, se refresca su ts con período
+# < LEASE (idempotente: mismo origen+pid → renovación). Sin esto, un rival
+# haría `acquire` al vencer el lease y arrancaría un segundo watcher.
+# ---------------------------------------------------------------------------
+RENEW_PERIOD=$(( LEASE / 3 )); [ "$RENEW_PERIOD" -lt 1 ] && RENEW_PERIOD=1
+(
+  while kill -0 "$WPID" 2>/dev/null; do
+    sleep "$RENEW_PERIOD"
+    kill -0 "$WPID" 2>/dev/null || break
+    OUT_DIR="$OUT_DIR" WORLD_ROOT="$WORLD_ROOT" ORIGEN="$ORIGEN" LEASE="$LEASE" \
+      CLAIM_PID="$$" bash "$CLAIMER" acquire >/dev/null 2>&1 || true
+  done
+) &
+RENEW_PID=$!
+log "heartbeat=activo pid=$RENEW_PID periodo=${RENEW_PERIOD}s (< lease ${LEASE}s)"
 
 if [ "${SMOKE:-0}" = "1" ]; then
   # Espera acotada al primer tick, luego desmonta (trap libera claim + mata watcher).

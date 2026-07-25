@@ -114,5 +114,52 @@ Windows Y POSIX.
   dentro de un JSON de env **no** los auto-convierte MSYS; la instanciación
   usa `cygpath -m` para expresar los paths como haría una calibración real
   en Windows. No afecta a POSIX puro.
-- Contrarrevisión independiente: pendiente (rol de revisión del swarm), no
-  ejecutada por el worker.
+- Contrarrevisión independiente: PASS con devolución (4 obs); ver §Corrección.
+
+## Corrección (devolución de contrarrevisión)
+
+El revisor reprodujo dos agujeros que vaciaban el guard anti-doble-conductor.
+Ambos cerrados en la misma rama; el criterio lease-manda-sobre-PID, DA-S20 y
+la frontera `skills/vigilancia/**` se mantienen sin cambios.
+
+### OBS-1 (BLOQUEANTE) — el claim expiraba con el watcher vivo
+`estacion-de-vigilante.sh` adquiría el claim UNA vez y bloqueaba en `wait`;
+con LEASE=90 el claim quedaba `expirado` a los 90s aunque la estación
+siguiera viva → un rival podía `acquire` (exit 0) = dos watchers.
+**FIX:** heartbeat de renovación — el launcher lanza un lazo en background
+que refresca el claim (`acquire` idempotente, mismo origen+pid) cada
+`LEASE/3` s (≥1) mientras el watcher viva; el teardown lo para ANTES del
+release. El lease de un conductor vivo ya no expira.
+**Prueba nueva (bite):** estación viva con `LEASE=4`; a `2×LEASE+1` s el
+claim sigue `estado=vivo` (edad ~3s) y un rival es **RECHAZADO exit 17**;
+un solo `watcher.pid` (mismo pid). Sin el fix el claim daría `expirado` y el
+rival exit 0.
+
+### OBS-2 (BLOQUEANTE) — TOCTOU en la adquisición
+Sin lock entre leer-estado y escribir, N `acquire` concurrentes sobre claim
+libre daban N ganadores (cada uno lanzaría su watcher).
+**FIX:** adquisición atómica — mutex por `mkdir` de un lockdir
+(`$OUT_DIR/.claim-vigia.lock`; `mkdir` atómico en POSIX y MSYS) alrededor del
+read-check-write, con ruptura de lock rancio (`MUTEX_STALE`, default 10s) por
+si un titular muere en la sección crítica.
+**Prueba nueva (bite):** 8 `acquire` concurrentes sobre claim libre →
+`ganadores(exit0)=1  perdedores(exit17)=7`. Sin el fix serían 8 ganadores.
+
+### OBS-3 (menor) — corrupto tratado como expirado en silencio
+**FIX:** `claim_estado` distingue `corrupto` (sin `ts_iso`, `ts_iso` no
+parseable, o sin `origen_rol`) de `expirado`; `status` lo reporta con
+`diagnostico=…` y `acquire` emite `AVISO claim corrupto (…)`. El
+seguro-por-defecto no cambia: corrupto sigue siendo reclamable.
+
+### OBS-4 (menor) — el trap solo se probaba vía SMOKE
+**Prueba nueva:** estación viva real → `SIGTERM` al launcher → se verifica
+que el claim se **libera** (fichero ausente) y que el **watcher hijo muere**
+(`kill -0` falla). PASS.
+
+Sin cambios (confirmado): (a) lease-manda-sobre-PID — un PID muerto con ts
+fresco RECHAZA el robo (exit 17), coherente con WP-28; (b) DA-S20 (se sigue
+invocando `estacion-viva`, no se absorbe); (c) frontera `skills/vigilancia/**`
++ reporte.
+
+Suite completa tras la corrección: `TODO PASS` (exit 0), con las pruebas de
+OBS-1 y OBS-2 mordiendo. Ceguera 0. Vocabulario prohibido 0.
