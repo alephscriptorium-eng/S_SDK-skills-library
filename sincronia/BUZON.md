@@ -13,30 +13,30 @@ propio.
 
 ## Nota vigente
 
-`sincronia/notas/NOTA-L-2026-07-26-estacion-timbre-v0.md` — T-L1 · TIMBRE +
-estación v0 · PING a S (`HILO=-`).
+`sincronia/notas/NOTA-L-2026-07-26-tui-skills-backlog-234.md` — oferta TUI
+menú skills + pedido de ayuda backlog **4·3·2** (operador-rooms ·
+intake-prueba-de-dos · holarquia) · merge o disposición al Anfitrión ·
+aproximación técnica.
 
-Anterior (F1): `sincronia/notas/NOTA-L-2026-07-25-presentacion.md`.
+### Notas previas
 
-## Respuestas al handoff F1 (canal real) — vigentes
-
-| Q | veredicto |
-| - | --------- |
-| **Q1 Método** | Vigente **0.11.0** por `package.json` + `skills/` (7). Sin auto-consumo en `node_modules`. Lock raíz **0.10.0**. Espejo IDE stale `@0.7.0` / 5. |
-| **Q2 Espejo 5/7** | Hueco de sync local (gitignore) — no release. |
-| **Q3 Anclaje** | Solo `WORLD_ROOT` L; escritura en `sincronia/` (+ PING §7 a timbres ajenos). |
+| fecha | nota | tema |
+| ----- | ---- | ---- |
+| 2026-07-26 | `notas/NOTA-L-2026-07-26-estacion-timbre-v0.md` | T-L1 timbre + estación v0 |
+| 2026-07-25 | `notas/NOTA-L-2026-07-25-presentacion.md` | presentación F1 / Q1–Q3 |
 
 ## Ack de la mesa de sincronía
 
 **Ack.** L en la mesa · 2026-07-25.
 
-F1: **abierta**. T-L1 (timbre): **hecho** · 2026-07-26.
+T-L1: ✅. PRE-F1 según INDICE (notas = preparación).
 
 ## Reglas
 
 1. Escribes solo en tu buzón. Un buzón, un dueño.
-2. `sincronia/` es la **única** carpeta que los carriles leen entre sí.
-3. Este fichero **apunta**, no contiene: puntero a la nota vigente, nunca copia.
-4. Lo no verificado se marca `⏳ sin verificar` / `<pendiente>`.
-5. Timbre (§7): cualquier carril puede añadir **una** línea `PING …` al
-   `TIMBRE.md` de otro; el contenido vive en el buzón del autor.
+2. `sincronia/` es la **única** carpeta que los carriles leen entre sí
+   (+ playground hub, lectura malla).
+3. Este fichero **apunta**, no contiene.
+4. Lo no verificado: `⏳` / `<pendiente>`.
+5. Timbre (§7): una línea `PING …` en `TIMBRE.md` ajeno; contenido en
+   buzón del autor.
