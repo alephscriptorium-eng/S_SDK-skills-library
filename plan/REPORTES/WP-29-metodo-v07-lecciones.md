@@ -9,7 +9,7 @@
 | eje(s) CA | ceguera (regla 14) — cara pública de skill; documental |
 | riesgo de revisión | `independiente` (contrarrevisión pre-✅ exigida por brief) |
 | revisor distinto del worker | `⏳ pendiente de revisor distinto` |
-| estado propuesto | listo para revisión |
+| estado propuesto | devuelto-corregido (OBS-1 de contrarrevisión atendida) |
 
 ## Qué se hizo
 
@@ -164,6 +164,30 @@ NO FORBIDDEN TOKENS FOUND
 ## Dudas / bloqueos
 
 Ninguno.
+
+## Corrección (devolución de contrarrevisión)
+
+- **OBS-1 (única):** en `ejes-ca.md` §Hostil-omite, el sustantivo «proyector»
+  (intro de tipos + caso 1 «Payload crudo reenviado») se **sustituyó por
+  «adaptador de entrada»** por precaución de re-identificación (no preexistía
+  en el repo y podía delatar un componente real de otro carril del taller). En
+  el caso 1 se ajustó además «validaba la entrada» → «validaba el mensaje»
+  (evita la repetición). Se descartó la alternativa «gateway de mutaciones»
+  porque «mutaciones» coincide con el nombre de un componente real de un carril
+  hermano; «adaptador de entrada» es término de patrón neutro (puerto/adaptador).
+- Casos 2 (credencial / firma / concesión) y 3 (control de acceso / llamador /
+  flag) re-leídos con el ojo de re-identificación: solo sustantivos genéricos
+  de patrón de seguridad; sin componente concreto. Sin cambios.
+- Re-ejecución de ceguera tras la corrección:
+
+```
+$ bash skills/swarm-orquestacion/scripts/comprobar-ceguera.sh; echo "EXIT=$?"
+ceguera: 0
+raiz: /c/S_LAB/.worktrees/lib/wp-29-metodo-v07-lecciones/skills/swarm-orquestacion
+EXIT=0
+```
+
+Estado del reporte: `devuelto-corregido`.
 
 ---
 

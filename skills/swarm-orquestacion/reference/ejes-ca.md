@@ -98,8 +98,8 @@ imposición de capa (el swarm ajeno ve el marco contenedor).
 ## Hostil-omite — el ataque por ausencia (CA transversal · contrarrevisión)
 
 Aplica a WPs de **validación**, **autorización** o **frontera de
-confianza**: proyector, control de acceso, verificación de firma, gate de
-payload. Lo ejerce la contrarrevisión (`roles/REVISION.md`).
+confianza**: adaptador de entrada, control de acceso, verificación de firma,
+gate de payload. Lo ejerce la contrarrevisión (`roles/REVISION.md`).
 
 **Fallo típico:** el CA prueba solo el **envío malformado** (input inválido
 explícito) y da por cubierta la frontera. El hostil real no manda algo malo:
@@ -115,9 +115,9 @@ camino por defecto lo deja pasar.
   que **calla** se deniega).
 
 **Casos fundantes (de-identificados):**
-- **Payload crudo reenviado:** un proyector **validaba** la entrada y aun así
-  reenviaba el **payload crudo** aguas abajo — la validación no gobernaba lo
-  que salía.
+- **Payload crudo reenviado:** un adaptador de entrada **validaba** el mensaje
+  y aun así reenviaba el **payload crudo** aguas abajo — la validación no
+  gobernaba lo que salía.
 - **Firma sin verificar:** una credencial con **firma inválida** obtenía
   concesión porque la firma se **recibía pero no se verificaba** (ausencia de
   verificación, no firma mal formada).
