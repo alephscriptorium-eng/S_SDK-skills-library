@@ -668,3 +668,14 @@ contrarrevisión independiente · merge+gate R8-LIB del orquestador
   1 nota menor no bloqueante: conteo worktrees agrupado con locks
   en la tabla). Placeholder <PAQUETE_SKILLS> dictaminado doctrina
   correcta de ceguera.
+- ✅ **WP-34 · higiene de release: versión de README** — aceptado
+  (2026-07-26). Rama wp/34-release-readme-version · tip obra df1313b ·
+  merge en main. Gate verificar-release.mjs (hermano de
+  verificar-changelog; hostil-omite cubierto: sin version/sin
+  README/vacío → ruidoso) · README real corregido (0.10.0×5 + tarball
+  0.3.4 → 0.11.0; 0.9.0 histórico intacto) · doctrina en sede
+  sancionada (precedente WP-14). Contrarrevisión: PASS (repro literal
+  base/tip; caso borde changelog-embebido limpio; mutantes caen).
+  Follow-ups menores: caveat de doctrina «paquete **X.Y.Z** solo
+  versión vigente» (falso positivo sintáctico posible, ruidoso) ·
+  listar el script en SKILL.md/README del skill.
