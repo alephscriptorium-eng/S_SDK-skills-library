@@ -79,7 +79,7 @@ real (28 WPs). `git diff` no toca el bloque de sync-map.
 lo ejecuta el worker. Auto-contrarrevisión realizada (reordenación
 declarado-primero + detector con dígito) y documentada arriba.
 
-## Suite de tests (12/12 verde)
+## Suite de tests (15/15 verde)
 ```
 ok 1 - multi-serie declarado → parsea N WPs con IDs literales (antes 0)
 ok 2 - estilo WP-Unnn con serie por defecto → parsea (WP-U172, WP-I60…)
@@ -93,9 +93,12 @@ ok 9 - serie con ID complejo (dots/dashes) declarada → parsea literal
 ok 10 - mismo ID complejo SIN declarar → FALLA ruidoso (no se omite)
 ok 11 - seriesList parte la alternación para diagnóstico
 ok 12 - cuerpo del WP se acumula hasta el siguiente ítem/encabezado
-1..12
-# tests 12
-# pass 12
+ok 13 - CLI: serie NO declarada → exit 5 + stderr nombra la serie
+ok 14 - CLI: backlog solo-prosa (0 líneas de ítem) → exit 5 + «NINGUNA línea de ítem»
+ok 15 - CLI: fixture válida declarada → exit 0 + proyecta
+1..15
+# tests 15
+# pass 15
 # fail 0
 ```
 
@@ -125,8 +128,44 @@ bug DA-S17/DC-25 reproducido y cerrado sobre datos reales. Decisión de qué
 serie declarar por defecto en este mundo = del orquestador (no se tocó el
 BACKLOG).
 
+## Corrección (devolución de contrarrevisión)
+
+### OBS-1 (BLOQUEANTE) — «parsea 0» ya no es posible en silencio
+El guard antiguo `wps.length === 0 && itemLinesSeen > 0` dejaba pasar el
+caso **sin ninguna línea de ítem** (ruta equivocada / BACKLOG truncado /
+merge roto): `export --dry-run` sobre solo-prosa daba `0 proyectado(s)`,
+exit 0 — y con un sync-map poblado habría cerrado TODOS los issues sin
+aviso. **FIX:** `wps.length === 0` es fallo ruidoso **SIEMPRE** (exit 5),
+con diagnóstico que distingue las dos causas. También se corrigió el
+comentario de cabecera para afirmar lo que el código hace.
+
+Evidencia literal (CLI real):
+```
+# solo-prosa (0 líneas de ítem):
+[proyectar] 0 WPs: el backlog no tiene NINGUNA línea de ítem (- ⬜/🔶/✅). ¿ruta equivocada, fichero truncado o merge roto? No se proyecta en silencio.
+exit=5
+# ítems con estado pero SIN ID de serie declarada:
+[proyectar] 0 WPs de 2 ítem(s): ninguno lleva ID de serie declarada. Revisa --series (series declaradas: WP-[A-Za-z0-9]+). No se proyecta en silencio.
+exit=5
+```
+
+### OBS-2 (menor) — tests que muerden el contrato de exit codes
+Se añadieron tests **a nivel CLI** (`spawnSync` del script real, dir temp
+aislado con `--map` inexistente): (a) serie no declarada → exit 5 + nombra
+la serie; (b) solo-prosa → exit 5 + «NINGUNA línea de ítem»; (c) fixture
+válida → exit 0. **Verificación de mutación** (reproducida): mutando el
+`catch` de `doExport` para tragarse el error y seguir con `wps=[]`, la suite
+cae `pass 13 / fail 2` (tests 13 y 14 esperan exit 5 y obtienen 0):
+```
+not ok 13 - CLI: serie NO declarada → exit 5 + stderr nombra la serie
+not ok 14 - CLI: backlog solo-prosa (0 líneas de ítem) → exit 5 + «NINGUNA línea de ítem»
+# pass 13 # fail 2
+```
+Sin mutación, 15/15 verde.
+
 ## Pendientes honestos
-- CA4 (contrarrevisión independiente): la ejecuta el rol de revisión.
+- CA4 (contrarrevisión independiente): confirmada por el revisor salvo las
+  dos OBS, ya corregidas; segunda pasada del revisor pendiente.
 - El truncado de título en la forma **no-bold** `ID · título` (a la primera
   palabra) es comportamiento **preexistente** del parser (WP-18); no se
   alteró. Los WPs reales usan `**negrita**` (título completo). Fuera de
