@@ -7,7 +7,34 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { parseBacklog, seriesList } from './proyectar-backlog.mjs';
+
+// Ruta absoluta al script (para spawn del CLI real y su contrato de exit).
+const SCRIPT = fileURLToPath(new URL('./proyectar-backlog.mjs', import.meta.url));
+
+// Ejecuta `export --dry-run` del CLI real sobre un backlog sintético en un
+// dir temporal aislado (map inexistente → sin sync-map real). Devuelve
+// { status, stdout, stderr }. CEGUERA_PATTERN no-coincidente para que el
+// gate no interfiera con el contrato de parseo/exit.
+function runExportCLI(backlogText, extraArgs = []) {
+  const dir = mkdtempSync(join(tmpdir(), 'wp27-cli-'));
+  try {
+    const backlog = join(dir, 'BACKLOG.md');
+    writeFileSync(backlog, backlogText);
+    return spawnSync(
+      process.execPath,
+      [SCRIPT, 'export', '--dry-run', '--backlog', backlog, '--map', join(dir, 'nomap.json'), ...extraArgs],
+      { encoding: 'utf-8', env: { ...process.env, CEGUERA_PATTERN: 'zzz_token_que_no_coincide' } }
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 // --- Fixture 1: BACKLOG estilo multi-serie (series declaradas) ---
 const BACKLOG_MULTISERIE = `# BACKLOG
@@ -181,4 +208,29 @@ test('cuerpo del WP se acumula hasta el siguiente ítem/encabezado', () => {
   assert.match(wps[0].body, /cuerpo de AA-1/);
   assert.match(wps[0].body, /más cuerpo/);
   assert.doesNotMatch(wps[0].body, /AA-2/);
+});
+
+// --- Contrato de EXIT CODES a nivel CLI (spawn del script real, OBS-2) ---
+// Muerden el exit code de doExport, no solo parseBacklog. Una mutación que
+// se trague el catch y siga con wps=[] hace caer (a) y (b): esperarían 5
+// pero obtendrían 0 («0 proyectado(s)»).
+
+test('CLI: serie NO declarada → exit 5 + stderr nombra la serie', () => {
+  const r = runExportCLI('# BACKLOG\n\n- ⬜ **ZZ-1 · serie ajena a la default**\n');
+  assert.equal(r.status, 5, `stderr:\n${r.stderr}\nstdout:\n${r.stdout}`);
+  assert.match(r.stderr, /NO declarada/i);
+  assert.match(r.stderr, /ZZ/, 'el diagnóstico nombra la serie detectada');
+});
+
+test('CLI: backlog solo-prosa (0 líneas de ítem) → exit 5 + «NINGUNA línea de ítem»', () => {
+  const r = runExportCLI('# BACKLOG\n\nSolo prosa. Ruta equivocada o fichero truncado.\nSin marcas de estado.\n');
+  assert.equal(r.status, 5, `stderr:\n${r.stderr}\nstdout:\n${r.stdout}`);
+  assert.match(r.stderr, /NINGUNA línea de ítem/);
+  assert.doesNotMatch(r.stdout, /proyectado\(s\)/, 'jamás llega a proyectar');
+});
+
+test('CLI: fixture válida declarada → exit 0 + proyecta', () => {
+  const r = runExportCLI('# BACKLOG\n\n- ⬜ **AA-1 · válida**\n- ✅ **AA-2 · otra válida**\n', ['--series', 'AA-\\d+']);
+  assert.equal(r.status, 0, `stderr:\n${r.stderr}\nstdout:\n${r.stdout}`);
+  assert.match(r.stdout, /2 proyectado\(s\)/);
 });

@@ -16,10 +16,13 @@
 // Los IDs del consumidor NUNCA se normalizan (DA-S17): el ID se conserva
 // literal para clave del sync-map y del marcador `<!-- proyeccion:ID -->`.
 //
-// FALLO RUIDOSO ANTE MIXTOS NO DECLARADOS (DC-25/DC-29). Si el backlog
-// contiene ítems con forma de ID de una serie NO declarada, o si de N ítems
-// se parsean 0 WPs, el parser FALLA (exit ≠ 0) con diagnóstico de las series
-// detectadas — nunca omite WPs en silencio ni proyecta un backlog vacío.
+// FALLO RUIDOSO (DC-25/DC-29). El parser FALLA (exit ≠ 0) con diagnóstico
+// si: (a) hay ítems con forma de ID de una serie NO declarada; (b) el
+// backlog parsea a 0 WPs — SIEMPRE, ya sea porque no tiene NINGUNA línea de
+// ítem (ruta equivocada / fichero truncado / merge roto) o porque los ítems
+// existen pero ninguno lleva ID de serie declarada. Un backlog que parsea a
+// cero JAMÁS es proyectable (proyectar 0 con un sync-map poblado cerraría
+// todos los issues). Nunca omite WPs en silencio ni proyecta un backlog vacío.
 //
 // GATE DE CEGUERA (DC-12): antes de exportar a un tracker PÚBLICO, el
 // contenido se valida contra CEGUERA_PATTERN (regex del mundo, vía env —
@@ -85,7 +88,8 @@ function seriesList(raw) {
 // Fallo ruidoso (throw):
 // - encabezado con ID de serie DECLARADA que no se puede interpretar (WP-18);
 // - ítem con forma de ID de serie NO declarada → mixto (WP-27);
-// - 0 WPs parseados habiendo ítems → posible serie mal declarada (WP-27).
+// - 0 WPs parseados SIEMPRE (sin líneas de ítem, o con ítems pero ninguno de
+//   serie declarada): un backlog que parsea a cero jamás es proyectable (WP-27).
 function parseBacklog(text, seriesRaw = SERIES_RAW) {
   const lines = text.split(/\r?\n/);
   const wps = [];
@@ -165,11 +169,20 @@ function parseBacklog(text, seriesRaw = SERIES_RAW) {
         `NO se proyecta (evita omitir WPs en silencio).`
     );
   }
-  // Fallo ruidoso: había ítems pero se parsearon 0 WPs (serie mal declarada).
-  if (wps.length === 0 && itemLinesSeen > 0) {
+  // Fallo ruidoso SIEMPRE que se parseen 0 WPs: un backlog que proyecta a
+  // cero jamás es proyectable (con un sync-map poblado cerraría todos los
+  // issues). Se distingue el diagnóstico.
+  if (wps.length === 0) {
+    if (itemLinesSeen === 0) {
+      throw new Error(
+        `[proyectar] 0 WPs: el backlog no tiene NINGUNA línea de ítem (- ⬜/🔶/✅). ` +
+          `¿ruta equivocada, fichero truncado o merge roto? No se proyecta en silencio.`
+      );
+    }
     throw new Error(
-      `[proyectar] 0 WPs parseados de ${itemLinesSeen} ítem(s): revisa --series ` +
-        `(series declaradas: ${seriesList(seriesRaw).join(', ')}). No se proyecta en silencio.`
+      `[proyectar] 0 WPs de ${itemLinesSeen} ítem(s): ninguno lleva ID de serie ` +
+        `declarada. Revisa --series (series declaradas: ${seriesList(seriesRaw).join(', ')}). ` +
+        `No se proyecta en silencio.`
     );
   }
   return wps;
