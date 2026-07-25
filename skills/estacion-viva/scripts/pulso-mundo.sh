@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Un pulso puntual del mundo (fase 4). Escribe OUT_DIR/pulso.txt.
+# Un pulso puntual del mundo (fase 4). Delega en watcher-sesion.sh con
+# ONCE=1, que es la ÚNICA fuente del snapshot: escribe OUT_DIR/pulso.txt
+# (ts fresco) más una línea en watch.log con el MISMO conteo skills_mat.
+# Antes este script recontaba por su cuenta y podía divergir del ciclo de
+# sesión (evidencia consumidor: skills_mat 6 vs 8). Ya no: una sola fuente.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,24 +20,6 @@ mkdir -p "$OUT_DIR"
 
 ONCE=1 INTERVAL=1 WORLD_ROOT="$WORLD_ROOT" OUT_DIR="$OUT_DIR" \
   bash "$SCRIPT_DIR/watcher-sesion.sh"
-
-skills_n=0
-if [ -d "$WORLD_ROOT/.claude/skills" ]; then
-  skills_n="$(find "$WORLD_ROOT/.claude/skills" -type f -name 'SKILL.md' 2>/dev/null | grep -c . || true)"
-fi
-
-wt_n=0
-if [ -d "$WORLD_ROOT/.worktrees" ]; then
-  wt_n="$(ls -1 "$WORLD_ROOT/.worktrees" 2>/dev/null | grep -c . || true)"
-fi
-
-{
-  echo "pulso: ok"
-  echo "world_root: $WORLD_ROOT"
-  echo "skills_materializados: $skills_n"
-  echo "worktrees_dir: $wt_n"
-  echo "ts: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-} > "$OUT_DIR/pulso.txt"
 
 echo "pulso escrito: $OUT_DIR/pulso.txt"
 cat "$OUT_DIR/pulso.txt"
