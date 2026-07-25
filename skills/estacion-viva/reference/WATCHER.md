@@ -16,6 +16,67 @@ ruido I71.
 - No instalar como servicio del OS; no sobrevivir al chat/sesión del
   agente.
 
+## Contrato ONCE (snapshot canónico)
+
+`ONCE=1` ejecuta **un** ciclo y deja **siempre** dos artefactos frescos
+en `$OUT_DIR`:
+
+| artefacto | contenido |
+| --------- | --------- |
+| `watch.log` | una línea de tick `[F T] sesion=1 skills_mat=… …` |
+| `pulso.txt` | snapshot canónico con `ts` UTC **fresco** en cada ONCE |
+
+- El snapshot se escribe de forma **atómica** (temporal + `mv`): un lector
+  nunca ve un `pulso.txt` a medio escribir.
+- `pulso-mundo.sh` (fase 4 del boot) es un envoltorio fino: delega en
+  `watcher-sesion.sh ONCE=1`, que es la **única** fuente del snapshot. No
+  recuenta por su cuenta.
+
+Motivo (evidencia consumidor 2026-07-25): un `pulso.txt` con **sello
+rancio** mientras el watcher estaba vivo, porque `ONCE=1` directo no
+refrescaba el snapshot. El contrato lo cierra: ONCE **siempre** refresca.
+
+## Conteo `skills_mat`: fuente única
+
+`scripts/contar-skills-mat.sh` es la **única** implementación del conteo
+de skills materializados (`SKILL.md` bajo `.claude/skills/`). La usan
+tanto el ciclo (`skills_mat=` en `watch.log`) como el snapshot
+(`skills_materializados:` en `pulso.txt`). Al derivar ambos del mismo
+lugar, ONCE y sesión **no divergen** sobre el mismo árbol (evidencia
+consumidor: `skills_mat 6 vs 8`, dos fuentes de conteo distintas).
+
+## Liveness por lease de timestamp (portable)
+
+Señal **contractual** de vida = el **último tick** de `watch.log`:
+
+| estado | condición |
+| ------ | --------- |
+| **vivo** | hay tick parseable y `edad < 2×INTERVAL` |
+| **muerto** | hay tick parseable y `edad ≥ 2×INTERVAL` |
+| **dudoso** | no hay `watch.log`, está vacío, o el tick no es parseable |
+
+El **PID** (`watcher.pid`) es **pista secundaria no contractual**: se
+reporta como evidencia pero **no** decide el veredicto. Un tick fresco con
+PID no verificable (p. ej. distinto árbol de procesos en Git Bash) da
+**vivo** igualmente — el caso «pulso vivo con pid no verificable» del
+consumidor.
+
+Portable **Git Bash (win) + POSIX**: el chequeo no usa `tasklist`/`ps`
+como fuente; la pista de PID usa `kill -0` (señal cero), no un listador.
+
+```bash
+OUT_DIR=<dir> INTERVAL=45 bash scripts/comprobar-vivo.sh
+# → comprobar-vivo: estado=vivo ultimo_tick='…' edad=…s umbral=…s pid=… pid_pista=…
+# exit 0=vivo · 1=muerto · 2=dudoso
+```
+
+## Test reproducible
+
+`scripts/probar-contrato-once-liveness.sh` — fixtures sintéticos
+(árboles + logs) y asserts por `grep`/`diff`: ONCE refresca desde sello
+rancio, lease vivo/muerto/dudoso, PID no contractual y `skills_mat` de
+fuente única. Portable; `exit 0` si todo pasa.
+
 ## Whitelist de materialización (clase I71)
 
 ### Problema
@@ -55,5 +116,16 @@ logar `!!RESIDUO`.
 | param | rol |
 | ----- | --- |
 | `WORLD_ROOT` | repo vigilado |
-| `OUT_DIR` | `watch.log`, `anomalias.log`, `watcher.pid` |
-| `INTERVAL` | segundos (default 45; fixture puede usar 2) |
+| `OUT_DIR` | `watch.log`, `anomalias.log`, `watcher.pid`, `pulso.txt` |
+| `INTERVAL` | segundos (default 45; fixture puede usar 2). También umbral del lease: vivo si `edad < 2×INTERVAL` |
+| `ONCE` | `1` → un ciclo y sale; refresca **watch.log y pulso.txt** |
+
+## Scripts
+
+| script | rol |
+| ------ | --- |
+| `watcher-sesion.sh` | ciclo/loop; escribe tick + snapshot canónico |
+| `pulso-mundo.sh` | pulso puntual (fase 4); envoltorio fino sobre `ONCE=1` |
+| `contar-skills-mat.sh` | **fuente única** del conteo `skills_mat` |
+| `comprobar-vivo.sh` | liveness por lease; `vivo`/`muerto`/`dudoso` |
+| `probar-contrato-once-liveness.sh` | test reproducible del contrato |

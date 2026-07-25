@@ -2,13 +2,23 @@
 # Watcher de estación — clase sesión (muere con el padre) + whitelist
 # .claude/skills/ (clase I71).
 #
+# CONTRATO ONCE (WP-28 · DC-29):
+#   ONCE=1 ejecuta UN ciclo y deja SIEMPRE dos artefactos frescos:
+#     1) una línea de tick en  $OUT_DIR/watch.log  (con sello «[F T]»);
+#     2) el snapshot canónico   $OUT_DIR/pulso.txt (con ts UTC fresco).
+#   El conteo skills_mat sale de UNA fuente única (contar-skills-mat.sh),
+#   de modo que la línea de watch.log (skills_mat=) y el snapshot
+#   (skills_materializados=) nunca divergen sobre el mismo árbol.
+#   El bucle continuo refresca ambos en cada ciclo.
+#
 # Uso:
 #   WORLD_ROOT=… OUT_DIR=… [INTERVAL=45] ./watcher-sesion.sh
-#   ONCE=1 → un ciclo y sale (útil en fixture / pulso)
+#   ONCE=1 → un ciclo y sale (refresca watch.log Y pulso.txt)
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILTRO="$SCRIPT_DIR/filtro-whitelist-skills.sh"
+CONTAR="$SCRIPT_DIR/contar-skills-mat.sh"
 
 WORLD_ROOT="${WORLD_ROOT:-${1:-}}"
 OUT_DIR="${OUT_DIR:-${2:-}}"
@@ -24,6 +34,7 @@ mkdir -p "$OUT_DIR"
 LOG="$OUT_DIR/watch.log"
 ANOM="$OUT_DIR/anomalias.log"
 PIDFILE="$OUT_DIR/watcher.pid"
+PULSO="$OUT_DIR/pulso.txt"
 
 echo $$ > "$PIDFILE"
 
@@ -32,8 +43,24 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# Snapshot canónico atómico: escribe a un temporal y mueve, para que un
+# lector nunca vea un pulso.txt a medio escribir. Recibe el MISMO skills_n
+# que la línea de watch.log de este ciclo (sin recontar → sin divergencia).
+escribir_pulso() {
+  local skills_n="$1" wt_n="$2" tmp
+  tmp="$(mktemp "$OUT_DIR/.pulso.XXXXXX" 2>/dev/null)" || tmp="$PULSO.tmp"
+  {
+    echo "pulso: ok"
+    echo "world_root: $WORLD_ROOT"
+    echo "skills_materializados: $skills_n"
+    echo "worktrees_dir: $wt_n"
+    echo "ts: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  } > "$tmp"
+  mv -f "$tmp" "$PULSO"
+}
+
 cycle() {
-  local ts resid_raw resid filtered
+  local ts resid_raw filtered
   ts="$(date '+%F %T')"
 
   # Residuo IDE: markdowns bajo carpetas de herramienta, EXCEPTO
@@ -61,10 +88,14 @@ cycle() {
     done <<< "$filtered"
   fi
 
-  # Conteo de skills materializados (informativo; no es anomalía)
-  local skills_n=0
-  if [ -d "$WORLD_ROOT/.claude/skills" ]; then
-    skills_n="$(find "$WORLD_ROOT/.claude/skills" -type f -name 'SKILL.md' 2>/dev/null | grep -c . || true)"
+  # Conteo de skills materializados — FUENTE ÚNICA (contar-skills-mat.sh).
+  local skills_n
+  skills_n="$(WORLD_ROOT="$WORLD_ROOT" bash "$CONTAR")"
+
+  # Conteo de worktrees reales (informativo; para el snapshot canónico).
+  local wt_n=0
+  if [ -d "$WORLD_ROOT/.worktrees" ]; then
+    wt_n="$(ls -1 "$WORLD_ROOT/.worktrees" 2>/dev/null | grep -c . || true)"
   fi
 
   # Locks (sin git status)
@@ -78,6 +109,9 @@ cycle() {
   if [ -n "${locks// /}" ]; then
     echo "[$ts] !!LOCK ${locks}" | tee -a "$ANOM" >> "$LOG"
   fi
+
+  # Snapshot canónico SIEMPRE, con el MISMO skills_n de la línea anterior.
+  escribir_pulso "$skills_n" "$wt_n"
 }
 
 if [ "$ONCE" = "1" ]; then

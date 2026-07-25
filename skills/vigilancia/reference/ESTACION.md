@@ -203,6 +203,38 @@ clasificar huérfano por vacío/no-vacío y exigir ≥2 ciclos antes de logar.
 Un proceso = un `WORLD_ROOT`. Multi-root / territorio hermano: ver
 sección siguiente (instancias paralelas o `SIBLING_ROOT` solo lectura).
 
+### Liveness del watcher por lease de timestamp (portable)
+
+Para decidir si **un** watcher (este `watcher.sh` o el `watcher-sesion.sh`
+de estación) sigue vivo, la señal **contractual** es el **último tick** de
+su `watch.log`, no el PID:
+
+| estado | condición |
+| ------ | --------- |
+| **vivo** | último tick con `edad < 2×INTERVAL` |
+| **muerto** | último tick con `edad ≥ 2×INTERVAL` |
+| **dudoso** | sin `watch.log`, vacío, o tick no parseable |
+
+El **PID** es **pista secundaria no contractual**: en Git Bash el árbol de
+procesos puede no ser verificable aunque los ticks estén frescos → el lease
+manda y el veredicto es **vivo**. Portable **Git Bash (win) + POSIX**: sin
+`tasklist`/`ps` como fuente (regla de este skill). Cada ciclo de
+`watcher.sh` ya emite un sello `[F T]`, así que el lease aplica sin cambios.
+
+Método inline (vigía solo con este skill):
+
+```bash
+# umbral = 2×INTERVAL; tick = último sello del log
+INTERVAL=45; LOG="$OUT_DIR/watch.log"
+tick="$(grep -oE '^\[[0-9-]{10} [0-9:]{8}\]' "$LOG" | tail -1 | tr -d '[]')"
+edad=$(( $(date +%s) - $(date -d "$tick" +%s) ))
+[ "$edad" -lt $(( 2*INTERVAL )) ] && echo vivo || echo muerto
+```
+
+Versión empaquetada (con salida de evidencia y pista de PID):
+`comprobar-vivo.sh` del skill `estacion-viva` (composición ya declarada en
+su `reference/WATCHER.md`).
+
 ## Supuestos de convivencia (dep blanda · shape S01)
 
 Supuestos explícitos sobre convivencia multi-orquestador. Fuente canónica
