@@ -34,9 +34,9 @@ de siempre (solo el orquestador escribe BACKLOG).
 
 Determinista e idempotente:
 
-- Cada WP lleva su **ID estable** (`WP-XX`), parseado del BACKLOG aunque
-  el encabezado venga en formato mixto (`**WP-XX · título**`,
-  `**WP-XX** — prosa`, `WP-XX · prosa`, `WP-XX (nota)`).
+- Cada WP lleva su **ID estable**, parseado del BACKLOG aunque el
+  encabezado venga en formato mixto (`**ID · título**`, `**ID** — prosa`,
+  `ID · prosa`, `ID (nota)`).
 - Si el exportador ve una línea de WP que no puede interpretar, **falla
   ruidoso** con la línea y el número de línea; no omite en silencio.
 - `plan/.sync-map.json` (`WP-XX → nº issue`) — git-tracked — permite
@@ -67,6 +67,38 @@ CEGUERA_PATTERN='<patrón del mundo>' \
 CEGUERA_PATTERN='<patrón del mundo>' PROYECCION_GITHUB=1 \
   node scripts/proyectar-backlog.mjs export [--repo owner/name]
 ```
+
+## Series de ID configurables (DC-29) — obligatorio declarar las del mundo
+
+El mundo consumidor no está limitado a `WP-XX`: puede numerar sus WPs con
+**cualquier serie** (`IB-\d+`, `PD-\d+`, `LIB-\d+`, `N0-\d+`, `WP-U?\d+`,
+`GF-[0-9.]+-Z`, …). El parser las acepta por configuración:
+
+- `--series 'REGEX|REGEX|…'` (o env `PROYECCION_SERIES`): **alternación de
+  regex** de ID, separada por `|`. Ej.: `--series 'IB-\d+|PD-\d+|LIB-\d+'`.
+- Sin declaración → serie por defecto `WP-[A-Za-z0-9]+` (retrocompatible con
+  el histórico `WP-XX`, `WP-Unnn`, `WP-I60`).
+- **CERO normalización de IDs (DA-S17):** el ID del consumidor se conserva
+  **literal** (clave del `sync-map` y del marcador `<!-- proyeccion:ID -->`).
+  `BB-02` no se reescribe a `BB-2`; `GF-0.10.0-Z` no se trunca.
+
+**Fallo ruidoso ante mixtos no declarados (DC-25/DC-29).** Si el backlog
+tiene ítems con forma de ID de una serie **no declarada**, o si de N ítems
+se parsean **0 WPs**, el export **falla** (exit ≠ 0) con las series
+detectadas y las declaradas — **nunca** omite WPs en silencio ni proyecta
+un backlog vacío. El operador declara la serie y reintenta.
+
+```bash
+# multi-serie declarada:
+node scripts/proyectar-backlog.mjs export --dry-run \
+  --series 'IB-\d+|PD-\d+|LIB-\d+'
+# serie no declarada → diagnóstico + exit ≠ 0:
+#   [proyectar] IDs de serie(s) NO declarada(s) en el backlog: IB, PD, LIB.
+#     series declaradas: WP-[A-Za-z0-9]+  … declara las series con --series.
+```
+
+Tests del parser: `scripts/proyectar-backlog.test.mjs`
+(`node --test scripts/proyectar-backlog.test.mjs`).
 
 ## Gate de ceguera (DC-12) — obligatorio
 
