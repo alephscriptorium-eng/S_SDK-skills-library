@@ -86,6 +86,32 @@ Antes de entregar §WP:
 La cara §interna puede usar vocabulario de mediación; la prueba de
 ceguera **no** se aplica a §interna.
 
+## Evidencia enmascarada (estándar de cara pública)
+
+A veces la propia evidencia de ceguera **necesita citar el patrón vetado**
+(p. ej. reportar que un token de marco apareció, o mostrar el antes/después de
+una fuga). En cara pública —§WP, reportes copiables al mundo, addenda
+mediada— rige el estándar reforzado:
+
+1. **El patrón vetado se cita ENMASCARADO, nunca literal.** Se rompe por
+   fragmentos, se sustituye por un marcador (`‹token-marco›` / `<vetado>`) o
+   se describe («identificador de marco»), de modo que un `grep` del
+   vocabulario prohibido sobre la cara pública siga dando **0**.
+2. **El conteo va LITERAL.** El número de coincidencias sí es dato real y se
+   reporta tal cual: «el patrón vetado apareció **3** veces en N ficheros». La
+   máscara oculta el **token**, no la **magnitud**.
+3. **§interna puede citar el token literal** (no pasa por ceguera); la cara
+   pública, nunca.
+4. **Aplicación retroactiva.** Endurecer caras públicas **ya emitidas** queda
+   a criterio de **cada mundo** —no es obligación del método reescribir
+   evidencia histórica—; las nuevas cumplen el estándar desde ya. La evidencia
+   histórica que se conserve se trata como **cita inerte** (no se re-emite sin
+   enmascarar).
+
+Corolario del comando de ceguera: valida el **exit / conteo** de `grep -c` /
+`grep -q`, nunca `grep | head && echo OK` (misma regla que `swarm-orquestacion`
+→ `reference/ejes-ca.md` §Ceguera, regla 14).
+
 ## Entrega
 
 - Custodio recibe el documento completo (todas las caras + etiqueta de

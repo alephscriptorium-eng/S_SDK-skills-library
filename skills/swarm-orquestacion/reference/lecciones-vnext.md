@@ -103,6 +103,43 @@ enlaza: el orquestador espera el trigger publish + C8 declarado por esa fuente,
 entrega entonces su handoff y conserva la autoridad externa. No adelanta el
 aviso, no concede GO downstream y no edita ni opera su backlog.
 
+## 10 · Sucesión v2 «gorro» (relevo de estación viva)
+
+Extiende §1. Cuando la estación viva de un carril (vigía u otro rol vivo)
+**releva** a otro agente/proceso, el relevo se rige por «gorro»: un **rol
+temporal** que se pone y se quita, con **origen declarado**. El relevo no
+hereda contexto tribal ni memoria de chat — solo lo que quede escrito en la
+fuente de verdad del mundo (bitácora / plan trazado, regla 15).
+
+Piezas obligatorias del relevo:
+
+- **Handoff volátil.** El saliente entrega un handoff **efímero**: sirve para
+  el arranque del entrante, no es fuente de verdad. Tras el relevo, el handoff
+  **no** se cita como evidencia; la verdad sigue siendo la bitácora / el plan.
+- **Ronda breve Q&A.** Antes de soltar el gorro, el saliente responde una
+  ronda corta de preguntas del entrante (estado real, gates pendientes, qué es
+  residuo y qué es señal). Sin ronda no hay relevo limpio.
+- **Herencia de anomalías COMO anomalía.** Toda anomalía abierta pasa al
+  entrante **marcada como anomalía**, nunca como estado normal. Heredar un
+  huérfano / lock / gate colgado sin marca lo normaliza y lo entierra.
+- **Rol temporal con origen declarado.** El gorro declara **quién lo cede y
+  por qué** (origen del relevo). Emular otro rol/carril sin origen declarado
+  es doble-conductor: exige claim previo de carril
+  (`convivencia-multi-orquestador.md` §10).
+- **Anclas activas literales frente a citas históricas inertes.** El handoff
+  distingue dos clases de referencia y las marca:
+  - **ancla activa** — comando / ruta / gate **literal y reproducible** que el
+    entrante debe poder ejecutar tal cual (fuera de todo bloque de cita);
+  - **cita histórica inerte** — evidencia del pasado que **no** se reproduce;
+    se marca con la etiqueta explícita `[cita inerte]` (o bloque
+    `> cita inerte — no reproducir`). Sin la marca, una cita histórica se
+    confunde con ancla activa y el entrante la re-ejecuta contra un canal ya
+    movido.
+
+La marca `cita inerte` es **contractual**: su ausencia sobre material
+histórico es defecto de handoff. Aplicación en la estación:
+`../../vigilancia/reference/ESTACION.md` §Sucesión de estación.
+
 ## Probe integrado
 
 Este probe ejecuta las fuentes canónicas en vez de recrearlas. Cubre PASS/LOCK

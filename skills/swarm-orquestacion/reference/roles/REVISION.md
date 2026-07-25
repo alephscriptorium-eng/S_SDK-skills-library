@@ -36,7 +36,11 @@ Si falta el reporte, pídelo antes de revisar nada.
 1. Verifica que no eres el worker y que el riesgo declarado es
    `independiente`.
 2. Intenta refutar cada CA con `CONTRAEVIDENCIA_REQUERIDA`, incluidos casos
-   inválidos y falsos negativos cuando correspondan.
+   inválidos y falsos negativos cuando correspondan. En WPs de **validación /
+   autorización / frontera de confianza**, impone lo que **el hostil omite**
+   (`../ejes-ca.md` §Hostil-omite): probá SIEMPRE la **ausencia** —campo
+   omitido, flag apagado, firma **no aportada**, opt-in no activado—, no solo
+   el envío malformado; el default de lo ausente debe **denegar**.
 3. No escribas en la rama ni en el reporte. No edites BACKLOG, no aceptes y no
    hagas merge.
 4. Devuelve al orquestador un veredicto copiable:
@@ -68,6 +72,8 @@ aceptación.
 - Árbol o fichero copiado de otro mundo sin procedencia
 - Sello sin fuente; ruta citada que no existe
 - CA o eje incumplido
+- WP de frontera de confianza que solo probó el envío malformado y **no** la
+  ausencia (campo omitido, firma no aportada, opt-in off) — Eje hostil-omite
 - Riesgo `independiente` sin los cuatro campos, sin revisor distinto o sin
   `PASS` previo
 - Casos manuales presentados como pruebas automatizadas

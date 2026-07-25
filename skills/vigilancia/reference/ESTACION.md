@@ -87,6 +87,39 @@ Toda salida al custodio aplica además el contrato dual de
 operativo copiable. La contrarrevisión read-only pre-merge intenta refutar un
 WP de riesgo; no sustituye el gate final post-merge `Rn-<carril>`.
 
+## Sucesión de estación (v2 «gorro»)
+
+La estación es **viva** (§Rol). Cuando un agente/proceso **releva** a otro en
+la misma estación, el relevo se rige por «gorro»: rol temporal que se pone y
+se quita, con **origen declarado**. Contrato de método (fuente única):
+`swarm-orquestacion` → `reference/lecciones-vnext.md` §Sucesión v2. Aquí, lo
+que hace **la estación** al relevar:
+
+1. **Handoff volátil.** El saliente entrega un arranque **efímero**; la fuente
+   de verdad sigue siendo `OUT_DIR` (bitácora / `watch.log` / `anomalias.log`)
+   y el plan trazado, no el handoff. Tras el relevo, el handoff no se cita
+   como evidencia.
+2. **Ronda breve Q&A.** El entrante pregunta estado real, gates pendientes y
+   qué es residuo vs señal; el saliente responde **antes** de soltar el gorro.
+3. **Herencia de anomalías COMO anomalía.** Cada entrada abierta de
+   `anomalias.log` pasa al entrante **marcada como anomalía**; ninguna se
+   entrega como estado normal. Un huérfano / lock heredado sin marca queda
+   normalizado y se pierde.
+4. **Rol temporal con origen declarado.** El gorro declara quién lo cede y por
+   qué. Antes de **emular** otro rol de carril, **claim previo** (convivencia
+   del swarm → `convivencia-multi-orquestador.md` §10): sin claim en el canal
+   + idle real verificado, el relevo es **doble-conductor = anomalía
+   registrable**.
+5. **Anclas activas vs citas inertes.** El handoff separa comandos / rutas
+   **literales y reproducibles** (anclas activas, ejecutables tal cual) de la
+   **evidencia histórica** que no se reproduce; esta última se marca con
+   `[cita inerte]`. Sin la marca, el entrante re-ejecuta una cita contra un
+   canal ya movido.
+
+El vigía relevado **no** hereda el `✅` ni el veredicto del saliente sin
+re-verificarlo **de facto** en el canal real (misma disciplina que la
+re-verificación post-merge del §Ciclo de trabajo).
+
 ## Doctrina calibrada (señales)
 
 - **Worker muerto = mtime del worktree**, no cadencia de commits (patrón
