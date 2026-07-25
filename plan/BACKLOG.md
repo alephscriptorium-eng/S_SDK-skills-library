@@ -555,3 +555,8 @@ Cross-reference cerrado: **DA-S17 → WP-18 / DC-25**; el consumidor proyectó
 Circuito: workers ∥ en worktrees `C:\S_LAB\.worktrees\lib\` ·
 contrarrevisión independiente por WP · merge+gate `Rn-LIB` del
 orquestador (emulado, claim en estación).
+- ✅ **WP-30 · guard de identidad opt-in** — aceptado (2026-07-26).
+  Rama wp/30-guard-identidad · tip obra bce6ded · merge 19347f7.
+  Contrarrevisión: PASS DIRECTO (mutation testing 3 mutantes con
+  asserts que muerden · 6 bordes de error forzados, exit 0 en todos ·
+  cero efectos por hash de .git/config). 14/14 en main.
