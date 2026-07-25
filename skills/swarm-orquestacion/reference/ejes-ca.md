@@ -95,6 +95,41 @@ imposición de capa (el swarm ajeno ve el marco contenedor).
 
 ---
 
+## Hostil-omite — el ataque por ausencia (CA transversal · contrarrevisión)
+
+Aplica a WPs de **validación**, **autorización** o **frontera de
+confianza**: adaptador de entrada, control de acceso, verificación de firma,
+gate de payload. Lo ejerce la contrarrevisión (`roles/REVISION.md`).
+
+**Fallo típico:** el CA prueba solo el **envío malformado** (input inválido
+explícito) y da por cubierta la frontera. El hostil real no manda algo malo:
+**omite**. Deja el campo fuera, apaga el flag, no aporta la firma — y el
+camino por defecto lo deja pasar.
+
+**CA obligatorio:**
+- Probar SIEMPRE **la ausencia**, no solo el valor inválido: campo omitido,
+  flag apagado, credencial/firma **no aportada**, opt-in no activado.
+- El default de un campo ausente es **denegar / validar**, nunca «pasar por
+  no haber dicho que no».
+- Control positivo (el envío válido pasa) **y** control de omisión (el envío
+  que **calla** se deniega).
+
+**Casos fundantes (de-identificados):**
+- **Payload crudo reenviado:** un adaptador de entrada **validaba** el mensaje
+  y aun así reenviaba el **payload crudo** aguas abajo — la validación no
+  gobernaba lo que salía.
+- **Firma sin verificar:** una credencial con **firma inválida** obtenía
+  concesión porque la firma se **recibía pero no se verificaba** (ausencia de
+  verificación, no firma mal formada).
+- **Control opt-in del llamador:** un control de acceso era **opt-in del
+  llamador** — quien **omitía** activarlo quedaba sin control; la ausencia del
+  flag **abría**, no cerraba.
+
+**Regla:** el ataque no es lo que mandan, es lo que **callan**. Probá la
+omisión, no solo el envío roto.
+
+---
+
 ## Ceguera (CA transversal · reglas 13–14)
 
 Aplica a WPs de **publicación de skill**, **activación de mundo** y
@@ -123,6 +158,7 @@ el marco.
 | auditoría / layout | III | gate dedup de código vivo |
 | contrato / capa compartida | IV | segundo cliente independiente |
 | activación de mundo con skill | IV + 13 | agente fresco (solo skill) |
+| validación / autorización / frontera de confianza | hostil-omite | probar la ausencia (campo omitido, firma no aportada, opt-in off) |
 | publish / cara pública skill | ceguera + 14 | árbol + `git log -p` = 0 |
 | relación con swarms ajenos | V | mediación transparente |
 

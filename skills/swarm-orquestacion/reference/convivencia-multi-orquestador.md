@@ -107,6 +107,27 @@ del ecosistema, se **congelan los pushes de gobierno de ambos carriles**
 hasta liberar el lock y auditar. Un lock de un lado no se «sortea»
 pusheando gobierno del otro.
 
+### §10 · Claim de carril antes de emular
+
+Un agente puede necesitar **emular** temporalmente otro rol o carril (p.
+ej. una estación viva que asume el gorro de un carril vecino, o un
+orquestador que cubre un relevo). Antes de emular:
+
+1. **Claim en el canal de estación.** Anota el claim en el canal común
+   (`OUT_DIR` / bitácora del vigía o canal declarado del mundo): «carril
+   `<carril>` asumido por `<rol temporal>`, origen `<quién cede>`». Sin
+   claim registrado, no hay emulación.
+2. **Verificar idle real.** El carril a emular debe estar **idle de
+   facto** —sin zona de worker viva ni orquestador activo—, no idle
+   supuesto. Idle se verifica por señal (mtime del worktree, ausencia de
+   lock, canal de estación), no por «parece parado».
+3. **Doble-conductor = anomalía registrable.** Dos agentes conduciendo el
+   mismo carril a la vez (claim solapado, o emulación sobre carril no
+   idle) es **anomalía**: se registra y se resuelve **soltando un gorro**,
+   no improvisando en el chat. Enlaza con la sucesión «gorro»
+   (`reference/lecciones-vnext.md` §Sucesión v2): el gorro declara origen;
+   este §10 exige que ese origen sea un carril **libre y reclamado**.
+
 ## Anti-patrones (resumen)
 
 | Síntoma | Mitigación |
@@ -117,6 +138,8 @@ pusheando gobierno del otro.
 | Reportes en carpeta compartida | §5 |
 | E2E vía checkout raíz ajeno | §7 |
 | Push de gobierno con lock ajeno vivo | §9 |
+| Emular otro carril sin claim / sobre carril no idle | §10 |
+| Dos conductores en el mismo carril (doble-conductor) | §10 (anomalía registrable) |
 
 ## Relación con el resto del método
 

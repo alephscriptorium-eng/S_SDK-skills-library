@@ -79,7 +79,8 @@ incidencia del tip integrado; no fabrica un PASS pre-merge retroactivo.
 Antes de declarar la ola cerrada, ejecutar el checklist de
 `reference/reglas-metodo-v05.md`: stash vacío · `plan/` limpio · ramas
 `wp/*` mergeadas borradas o justificadas · `git status` explicado ·
-worktrees huérfanos removidos · **carpetas de IDE sin markdowns de info de
+worktrees huérfanos removidos (**poda segura §10** si hay junctions /
+reparse points) · **carpetas de IDE sin markdowns de info de
 sesión (solo config funcional) y memoria interna no citada como fuente
 (regla 15)** · **run-id VERDE de CI (+ Release/homólogo) citado por cada
 repo tocado (regla 16)** · **si hubo proyección: sync-map post-apply, sin
@@ -95,6 +96,34 @@ No reutilizar un agente con contexto del marco.
 Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 `git log -p` sobre el historial reachable. Medir con `grep -c` /
 `grep -q`, nunca `grep | head && echo OK`. Fuga intermedia → squash.
+
+## 10. Poda segura de worktrees (junctions / reparse points)
+
+Al podar worktrees (higiene de §7, o `git worktree remove` tras
+aceptación), un worktree puede contener **junctions** o directorios
+enlazados (reparse points en Windows; symlinks en POSIX) hacia obra viva
+**fuera** del worktree. Podar «a lo bruto» sigue el enlace y **borra el
+destino**, no solo el worktree.
+
+Protocolo:
+
+1. **Chequeo de reparse points ANTES de podar.** Detectá enlaces / reparse
+   dentro del worktree (`fsutil reparsepoint query` / `dir /AL` en Windows;
+   `find -type l` / `lstat` en POSIX). Un worktree con enlaces no se borra
+   directo con `rm -rf`.
+2. **Desenlazar la junction primero.** Borrá **solo el enlace** —quitar el
+   reparse point: `rmdir` del junction en Windows (**no** `rmdir /s`, que
+   recorre el destino), `rm` del symlink en POSIX—. El destino queda intacto.
+3. **Recién entonces podar** el worktree ya sin enlaces (`git worktree
+   remove` o borrado del directorio).
+4. **Alternativa `symlinkDirectories`.** Si el flujo necesita enlazar obra
+   dentro de worktrees de forma reproducible, preferí el mecanismo declarado
+   de enlaces de directorio del mundo (p. ej. `symlinkDirectories`) sobre
+   junctions ad-hoc: deja el enlace **explícito y auditable**, y la poda sabe
+   qué desenlazar.
+
+Un `worktree remove` puede además dejar residuo si el FS bloquea el directorio
+(clases de huérfano: `../../vigilancia/reference/ESTACION.md`). Poda en quietud.
 
 ## Anti-patrones de costura
 
@@ -119,6 +148,9 @@ Antes de merge/publish: `comprobar-ceguera.sh` sobre el árbol **y**
 | Despacho multi-carril sin `Rn-<carril>` PASS | Convivencia §3 + §8 |
 | E2E vía checkout raíz de territorio ajeno | Convivencia §7 (registry / scratch / post-gate) |
 | Push de gobierno con `index.lock` sostenido | Convivencia §9: freeze de **ambos** carriles |
+| Emular otro carril sin claim / sobre carril no idle | Convivencia §10: claim + idle real; doble-conductor = anomalía |
+| Podar worktree con junction sin desenlazar (borra destino) | §10: chequear reparse + quitar el enlace antes de podar |
+| Relevo de estación sin gorro (handoff citado como verdad, anomalía heredada como normal) | Sucesión v2: `lecciones-vnext.md` §10 + `ESTACION.md` §sucesión |
 | Mutar antes de acreditar la raíz canónica | Detector de `vigilancia` → PASS o LOCK sin efectos |
 | Invocar boot/handoff de estación antes del PASS | LOCK; ni fase 1 ni `OUT_DIR` |
 | Tratar PASS adversarial como aceptación | `revision-adversarial.md`: el orquestador acepta |
