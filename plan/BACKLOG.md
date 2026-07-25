@@ -679,3 +679,16 @@ contrarrevisión independiente · merge+gate R8-LIB del orquestador
   Follow-ups menores: caveat de doctrina «paquete **X.Y.Z** solo
   versión vigente» (falso positivo sintáctico posible, ruidoso) ·
   listar el script en SKILL.md/README del skill.
+- ✅ **WP-31 · contador y coberturas ONCE/liveness** — aceptado
+  (2026-07-26). Rama wp/31-contador-coberturas · tip obra dae0e41 ·
+  merge en main. CORRECCIÓN DE DIAGNÓSTICO del intake INT-V-01: la
+  causa real del «8 con 7» era un SKILL.md ANIDADO sobrecontado por
+  el find recursivo — NO el README (imposible con -name exacto; la
+  hipótesis de ambos observadores refutada por el worker y CONFIRMADA
+  por el revisor con aislamiento de variables sobre el contador base).
+  Fix: conteo por directorio de primer nivel con SKILL.md propio.
+  Además: WORKTREE_BASE externo honrado (con herencia en pulso-mundo)
+  · fallback BSD en test · fixtures razor-edge del umbral (88/89 vivo,
+  90+ muerto) y de ruido. Suite 16/16 · mutaciones muerden ·
+  contrarrevisión PASS. Follow-up micro: symlink de skill dentro del
+  espejo se cuenta (sin test que lo fije; observación del revisor).
