@@ -592,3 +592,9 @@ orquestador (emulado, claim en estación).
   byte-a-byte). Hallazgo real: GF-0.10.0-Z del propio BACKLOG, antes
   descartado en silencio (28→27). DA-S17/DC-25 CERRADOS sobre datos
   reales. Ola DC-29 COMPLETA (27+28+29+30).
+- ✅ **Release 0.11.0** — publicado (2026-07-26). Tag v0.11.0 ·
+  Publish run 30155468555 success · C8 online verde · gate changelog
+  OK (26 WP ✅ referenciados, incluida aceptación tardía WP-19) ·
+  estreno en producción del guard WP-30 (warn placeholder en la
+  propia release). Ronda de consumo despachada (workspace + z·g·s·e·a;
+  o-sdk excluido F3).
