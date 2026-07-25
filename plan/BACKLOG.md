@@ -570,3 +570,13 @@ orquestador (emulado, claim en estación).
   fixture sin carpeta-huérfana. Dictamen portabilidad: contrato
   DC-29 (win GitBash + POSIX/Linux GNU) CUMPLIDO; soporte BSD
   parcial, declarado como límite.
+- ✅ **WP-29 · método v0.7 · lecciones del relevo y del frente** —
+  aceptado (2026-07-26). Rama wp/29-metodo-v07-lecciones · tip obra
+  ed7da05 · merge en main. Seis costuras (sucesión v2 «gorro» · claim
+  pre-emulación · poda-junction · eje transversal hostil-omite ·
+  evidencia enmascarada · v0.7 en SKILL.md, reglas 18-22).
+  Contrarrevisión: DEVOLUCIÓN (sustantivo re-identificable en caso
+  de-identificado) → sustitución con doble descarte del worker →
+  PASS (grep proyector|mutacion = 0 en cara pública; ceguera EXIT=0
+  reproducida). Frontera con WP-28 verificada hunk a hunk por ambos
+  revisores: zonas disjuntas.
