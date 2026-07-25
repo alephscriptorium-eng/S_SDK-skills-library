@@ -607,3 +607,35 @@ orquestador (emulado, claim en estación).
   contar-skills-mat.sh + fixture nueva (fichero suelto) — cubre
   además la observación menor #4 de la contrarrevisión de WP-28.
   Promoción = decisión del orquestador en la próxima ola.
+- ⬜ **Intake V (boot del vigía fundacional, 2026-07-26)** — 9 ítems
+  nuevos (el nº4 del wishlist V dedupe con INT-V-01 ya encolado).
+  Evaluación del emisor (vigía-S): boot ejemplar; LOCK de identidad =
+  fail-closed correcto en pre-git, no defecto. Promoción = próxima ola.
+  - **INT-V-02 · composición «estación de vigilante»** — dos arranques
+    sin puente (watcher-sesion vs vigilancia/watcher+identidad).
+    Composición documentada/launcher, SIN fusionar skills (respeta
+    DA-S20 NO-merge). Alcance: estacion-viva+vigilancia reference.
+  - **INT-V-03 · plantilla ESTACION.md completa** — la plantilla del
+    skill no lista las entradas de calibración plena
+    (CANONICAL_WORLD_ROOT, READ_ONLY_ROOTS, DOWNSTREAM_PATTERNS...) ni
+    ejemplos JSON/paths Windows. Alcance: plantillas + reference.
+  - **INT-V-04 · modo pre-git documentado** — fundación de mundo sin
+    .git: identidad-raíz LOCK esperado; documentar degradación
+    (qué corre y qué no antes de WP de repo) sin aflojar fail-closed.
+  - **INT-V-05 · WORKTREE_BASE externo** — watchers solo miran
+    $WORLD_ROOT/.worktrees; el layout del taller usa base externa.
+    Honrar el param WORKTREE_BASE en pulso/worktrees_dir.
+  - **INT-V-06 · ejemplos con layout de consumidor** — docs tipan
+    layout library; añadir variante consumidor (node_modules espejo).
+  - **INT-V-07 · README del paquete desfasado** — tarball 0.11.0 con
+    README interno 0.10.0; derivar versión o añadirlo al checklist de
+    release (candidato: ampliar gate verificar-changelog).
+  - **INT-V-08 · perfiles de boot vigia/jugador** — las 7 fases exigen
+    GAME_MCP aunque el rol no juegue; perfil vigía omite fase 5
+    declaradamente.
+  - **INT-V-09 · bitácora ausente con degradación** — fase 2
+    (regenerar estado) sin bitácora previa en mundos nuevos: bootstrap
+    documentado (crear linea.mdl vacía + estado inicial).
+  - **INT-V-10 · claim-vigia.sh** — tooling del claim durable en
+    OUT_DIR (origen, ts, PID, versión de skill); ejecuta la doctrina
+    de claim del método v0.7 que hoy es solo doc.
