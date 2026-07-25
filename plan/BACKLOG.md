@@ -580,3 +580,15 @@ orquestador (emulado, claim en estación).
   PASS (grep proyector|mutacion = 0 en cara pública; ceguera EXIT=0
   reproducida). Frontera con WP-28 verificada hunk a hunk por ambos
   revisores: zonas disjuntas.
+- ✅ **WP-27 · parser de proyección multi-serie** — aceptado
+  (2026-07-26). Rama wp/27-parser-multi-serie · tip obra 0917e21 ·
+  merge en main. Multi-serie configurable · cero normalización ·
+  fallo ruidoso SIEMPRE ante 0 WPs (doble diagnóstico; corta antes
+  del plan: imposible el cierre masivo silencioso del sync-map).
+  Contrarrevisión: DEVOLUCIÓN (cero-parse silencioso reproducido con
+  riesgo de cerrar-sobrante total + exit codes sin test que muerda) →
+  corrección (guard incondicional + 3 tests CLI spawnSync) → PASS
+  (mutación del revisor ahora cae 13/2; sin mutación 15/15; regresión
+  byte-a-byte). Hallazgo real: GF-0.10.0-Z del propio BACKLOG, antes
+  descartado en silencio (28→27). DA-S17/DC-25 CERRADOS sobre datos
+  reales. Ola DC-29 COMPLETA (27+28+29+30).
