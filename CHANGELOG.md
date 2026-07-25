@@ -14,6 +14,37 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-07-26
+
+Minor (DC-22/DC-29: cambio compatible de contrato de método): parser de
+proyección multi-serie, contrato ONCE + liveness por lease, método v0.7
+(lecciones del relevo y del frente) y guard de identidad opt-in.
+
+### Added
+
+- **WP-27 · parser de proyección multi-serie** — series de ID
+  configurables por mundo, cero normalización y fallo ruidoso
+  incondicional ante 0 WPs (imposible el cierre masivo silencioso del
+  sync-map); exits testeados a nivel CLI.
+- **WP-28 · contrato ONCE + liveness del watcher** — ONCE refresca
+  siempre el snapshot canónico; liveness por lease de timestamp con el
+  PID como pista secundaria; fuente única para el conteo de skills.
+- **WP-30 · guard de identidad opt-in** — preflight warn-only de
+  placeholders en commits de gobierno; cero efectos secundarios.
+- **WP-19 · salida dual + nota frontera** — aceptado e integrado en
+  `main` con posterioridad al corte 0.10.0; calibración local
+  conservada sin trackear `plan/ESTACION.md` (commits `cbc6865` +
+  `ea9ac0f`).
+
+### Changed
+
+- **WP-29 · método v0.7 · lecciones del relevo y del frente** —
+  sucesión v2 con rol temporal, claim de carril pre-emulación, poda
+  segura de worktrees con junctions, eje transversal «hostil-omite» en
+  contrarrevisión y estándar de evidencia enmascarada (reglas 18–22).
+- Semver del paquete `0.10.0` → `0.11.0`; pins de consumo/docs
+  alineados en la ronda de consumo.
+
 ## [0.10.0] — 2026-07-24
 
 Minor (DC-22/DC-27: cambio compatible de contrato de método): revisión
