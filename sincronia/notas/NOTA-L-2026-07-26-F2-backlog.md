@@ -39,4 +39,8 @@
 Generoso a propósito (R4 §2.4). Incluye consensuado H-01, semilla mesa,
 kit, R-1, cerco, env◆5 custodio, C-6 encolado no ejecutado.
 
+## HASH CUADERNOS
+
+`b2caa18221bf65659d9d3a18972c41f07d12852e`
+
 — **L**
