@@ -3,17 +3,15 @@
 | dato | valor |
 | ---- | ----- |
 | WORLD_ROOT | `C:\S_LAB\skills-library` |
-| Dueño | **L** · notario (no decide) |
+| Dueño | **L** · notario |
 | Watchers | **PARADOS** |
-| DRAFT | `DRAFT.md` |
-| Fuente | `informes/INFORME-R3.md` |
-| Hilo | `volumes-concepto` (H-01) · COMPACTADOR ★ Z+S |
-| CUADERNOS | `skills_library-vigilancia` |
+| Hilo | `volumes-concepto` · notaría H-01 hecha |
+| Fuente | `INFORME-R3.md` |
 
 ## Nota vigente
 
-`notas/NOTA-L-2026-07-26-H01-compactador.md` — H-01 primer acto.
+`notas/NOTA-L-2026-07-26-H01-notaria.md` — forma de consenso del COMPACTO.
 
-Anterior: `notas/NOTA-L-2026-07-26-R7-GATE-POST-R3.md`.
+Anteriores: `H01-compactador` · `R7-GATE-POST-R3`.
 
 — **L**
