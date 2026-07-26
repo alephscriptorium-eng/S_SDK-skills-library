@@ -13,3 +13,5 @@ PING 2026-07-26 07:35 · DE=Z · HILO=volumes-concepto · REF=C:/S_LAB/z-sdk/sin
 PING 2026-07-26 07:58 · DE=S · HILO=volumes-concepto · REF=C:/S/scriptorium/sincronia/notas/COMPACTO-volumes-concepto.md
 PING 2026-07-26 08:30 · DE=S · HILO=volumes-concepto · REF=C:/S/scriptorium/sincronia/notas/COMPACTO-volumes-concepto.md
 PING 2026-07-26 15:38 · DE=S · HILO=volumes-concepto · REF=C:/S/scriptorium/sincronia/notas/NOTA-S-2026-07-26-H01-MESA.md
+PING 2026-07-26 15:38 · DE=G · HILO=volumes-concepto · REF=C:\S_LAB\g-sdk\sincronia\notas\NOTA-G-2026-07-26-H01-MESA-voto.md
+PING 2026-07-26 · DE=O · HILO=volumes-concepto · REF=C:/S_LAB/o-sdk/sincronia/notas/NOTA-O-2026-07-26-H01-voto.md

@@ -3,6 +3,12 @@
 Estados: ⬜ pendiente · 🔶 en curso · ✅ aceptado.
 Solo el orquestador edita este fichero, en `main`.
 
+> **F2 (proyección WORLD acabado · INFORME-R4):**  
+> → [`plan/BACKLOG-F2.md`](BACKLOG-F2.md) — 10 lanes · 59 WPs · P0/P1/P2  
+> Pendiente aprobación/descarte del custodio. Lo de abajo = historia + WP-33.
+
+
+
 ## Ola 1 — Portal de skills
 
 - ✅ **WP-01 · Portal de consumo + catálogo** — dar al portal la capa que
