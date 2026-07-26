@@ -18,7 +18,7 @@
 | ---- | ---- |
 | A | MESA (skill sincronía) |
 | B | KIT 4·3·2 |
-| C | PROTOCOLO → skill + asientos O |
+| C | PROTOCOLO → skill + contratos de infraestructura |
 | D | VIGILANCIA / estación |
 | E | VOLUMES como método |
 | F | CONSUMO / release / dogfood |
@@ -31,16 +31,19 @@
 
 | P | n |
 | - | - |
-| P0 | **16** |
-| P1 | **22** |
-| P2 | **21** |
-| **Σ** | **59** |
+| P0 | **19** |
+| P1 | **31** |
+| P2 | **23** |
+| **Σ** | **73** |
 
-Generoso a propósito (R4 §2.4). Incluye consensuado H-01, semilla mesa,
-kit, R-1, cerco, env◆5 custodio, C-6 encolado no ejecutado.
+Generoso a propósito (R4 §2.4). Revisión F2: protocolo §0–§11, auditor,
+licencia FOSS, supply-chain, activación multi-runtime y backlog-linter;
+los datos de esta mesa se sustituyen por fixtures/params ciegos.
 
 ## HASH CUADERNOS
 
-`161fd824ece38ccd08a759f2ba04617237b27c10` · rama `skills_library-vigilancia`
+`161fd824ece38ccd08a759f2ba04617237b27c10` · rama
+`skills_library-vigilancia` · **[cita inerte]** del F2 original; la revisión
+F2 de 73 WPs requiere nuevo sello/push por L tras aprobación.
 
 — **L**

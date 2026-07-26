@@ -11,6 +11,6 @@
 
 ## Nota vigente
 
-`notas/NOTA-L-2026-07-26-F2-backlog.md` — F2 · 10 lanes · 59 WPs.
+`notas/NOTA-L-2026-07-26-F2-backlog.md` — F2 revisado · 10 lanes · 73 WPs.
 
 — **L**

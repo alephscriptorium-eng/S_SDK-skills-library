@@ -14,4 +14,7 @@ Historia aceptada: `plan/BACKLOG.md` (puntero F2 arriba).
 
 Encolar: **custodio aprueba/descarta** (R4 §2). Este DRAFT no duplica WPs.
 
+Revisión F2: **73 WPs**; cara pública genericizada; §11/auditor, licencia,
+supply-chain, activación multi-runtime y linter de backlog añadidos.
+
 — **L**
