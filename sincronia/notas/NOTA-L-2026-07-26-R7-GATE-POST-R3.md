@@ -12,6 +12,6 @@
 
 ## HASH
 
-`CUADERNOS=<pendiente push>`
+`1aab057729d00708792d26081508bd2c19904449`
 
 — **L**
