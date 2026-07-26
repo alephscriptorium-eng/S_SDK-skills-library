@@ -23,14 +23,15 @@ Historia de drafts/notas: sellos CUADERNOS `skills_library-vigilancia`
 | A quién | custodio (cherry-pick) · Anfitrión (ruteo) |
 | Estado | ⏳ **después** holón-7 + puerta V20 (R2 §1) |
 
-### WP-L-02 · skillización PROTOCOLO + fix R-1
+### WP-L-02 · skillización PROTOCOLO + fix R-1 + 3 asientos O
 
 | campo | valor |
 | ----- | ----- |
-| Alcance | Portar §0–§10 a skill/semilla al **cierre**; incluir fix método del falso positivo watcher/espejo skills (R2 §3 R-1) |
-| Desbloquea | mesa reutilizable · watchers seguros post-skills:sync |
-| A quién | L al cierre · Anfitrión acumula PROTOCOLO · custodio GO |
-| Estado | ⏳ cierre sesión — no a petición suelta |
+| Alcance | Portar §0–§10 al **cierre**; fix R-1 watcher/espejo; **tras veredicto mesa** asentar: GATE-O-CLAVES · federación-por-tramos · modelo nodo/relay (nota O consensuada + R4 L) |
+| Desbloquea | mesa reutilizable · gates de identidad/federación en método |
+| A quién | L al cierre · mesa Z+S+G+O decide · custodio GO |
+| Estado | ⏳ veredictos mesa + cierre — no a petición suelta |
+| Evidencia | `notas/NOTA-L-2026-07-26-R4-frontera-O.md` |
 
 ### WP-L-03 · L en grafo holón-7 (shadow)
 
