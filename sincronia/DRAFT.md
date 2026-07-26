@@ -1,59 +1,64 @@
-# DRAFT · backlog encolable · carril L
+# DRAFT · L · compacto R3 (reemplaza borradores previos)
 
 | dato | valor |
 | ---- | ----- |
 | Carril | **L** · `C:\S_LAB\skills-library` |
-| Paquete | `@alephscript/skills-scriptorium@0.11.0` |
-| Actualizado | 2026-07-26 · respuesta INFORME-R1 / TICK R2-L |
-| Encolar | **solo tras check final del custodio** (§9) |
+| Fuente | `informes/INFORME-R2.md` (R1 = `[cita inerte]`) |
+| Actualizado | 2026-07-26 · TICK R3-L |
+| Encolar | ⛔ sin check custodio |
 
-Formato tentativo compatible con `swarm-orquestacion` (BRIEF + CA). Nada
-despachado.
-
----
-
-## Candidatos que bloquean el hilado
-
-### BLOQUEA: WP-L-DRAFT-01 · kit / cadena método 4·3·2
-
-| campo | valor |
-| ----- | ----- |
-| Alcance | Formalizar cómo se operan juntos `operador-rooms` (4) · `intake-prueba-de-dos` (3) · `holarquia` (2) — kit blando ★ o merge (◆ Anfitrión/custodio) |
-| CA tentativo | Semilla de backlog (2–4 WPs) o skill-fachada documentada; cero mutación de `skills/` sin GO aparte |
-| Desbloquea | Hilado método↔Ciudad (peercard/rooms + junturas + intakes→skills) |
-| A quién | mesa entera · Anfitrión (ruteo) · custodio (cherry-pick) |
-| Evidencia | `sincronia/notas/NOTA-L-2026-07-26-tui-skills-backlog-234.md` |
-
-### BLOQUEA: WP-L-DRAFT-02 · skillización PROTOCOLO §0–§10
-
-| campo | valor |
-| ----- | ----- |
-| Alcance | Portar `PROTOCOLO.md` parametrizado (§0) a skill de mesa / ampliación de semilla `SEMILLA-SKILL-MESA.md` — **al cierre**, no a petición suelta |
-| CA tentativo | Skill o semilla con §1–§10 + fixture sintético; ceguera 0; calibración fuera del tarball |
-| Desbloquea | Que la mesa deje de vivir solo en FS hub; método reutilizable |
-| A quién | L (ejecuta al cierre) · Anfitrión (acumula cambios en PROTOCOLO) · custodio (GO cierre) |
-
-### BLOQUEA: WP-L-DRAFT-03 · L en grafo starter-kit (shadow custodio)
-
-| campo | valor |
-| ----- | ----- |
-| Alcance | Cliente MCP + peercard de L en `playground/prueba-de-dos` (INFORME-R1 §2.c) — anotar holón, no mandar obra |
-| CA tentativo | Fila L marcada en grafo con peercard; bitácora apunta al grafo; sin editar mundos ajenos |
-| Desbloquea | Prueba del holón «7» / entrada de todos al starter-kit |
-| A quién | L · custodio (auth ciudad) · S (barrio) |
+Historia de drafts/notas: sellos CUADERNOS `skills_library-vigilancia`
+(`76a1165` tip R2). Aquí solo lo vivo.
 
 ---
 
-## Candidatos no bloqueantes (higiene / cola F2)
+## BLOQUEA: (orden de cherry-pick R2 §1 — L tras holón-7)
 
-| id | alcance | nota |
-| -- | ------- | ---- |
-| WP-L-DRAFT-04 | Higiene fuente: `package-lock` 0.10.0→0.11.0 + `skills:sync` espejo 7/7 | cola post-freeze · no bloquea hilado Ciudad |
-| WP-L-DRAFT-05 | Cerrar/aceptar **WP-33** estación vigilante (claim) si sigue 🔶 | obra L · gate propio |
-| WP-L-DRAFT-06 | TUI menú skills (oferta consola) → ¿probe/script en skill? | solo si mesa lo pide |
+### WP-L-01 · kit método 4·3·2
+
+| campo | valor |
+| ----- | ----- |
+| Alcance | Operar juntos `operador-rooms` · `intake-prueba-de-dos` · `holarquia` (kit blando ★ / merge ◆) |
+| Desbloquea | hilado método↔Ciudad |
+| A quién | custodio (cherry-pick) · Anfitrión (ruteo) |
+| Estado | ⏳ **después** holón-7 + puerta V20 (R2 §1) |
+
+### WP-L-02 · skillización PROTOCOLO + fix R-1
+
+| campo | valor |
+| ----- | ----- |
+| Alcance | Portar §0–§10 a skill/semilla al **cierre**; incluir fix método del falso positivo watcher/espejo skills (R2 §3 R-1) |
+| Desbloquea | mesa reutilizable · watchers seguros post-skills:sync |
+| A quién | L al cierre · Anfitrión acumula PROTOCOLO · custodio GO |
+| Estado | ⏳ cierre sesión — no a petición suelta |
+
+### WP-L-03 · L en grafo holón-7 (shadow)
+
+| campo | valor |
+| ----- | ----- |
+| Alcance | Entrada L al grafo (`GRAFO-STARTERKIT.md`) tras Z-runtime / ticks de marca |
+| Desbloquea | holón-7 completo |
+| A quién | L · custodio auth ciudad |
+| Estado | ⏳ espera tick de entrada (R2 §4) |
 
 ---
 
-`ESTADO: DRAFT=✅; BLOQUEA=3; ENCOLAR=⛔ sin check custodio`
+## Cola F2 (no bloquea hilado)
+
+| id | alcance |
+| -- | ------- |
+| L-F2-01 | higiene lock 0.10.0→0.11.0 + espejo `skills:sync` 7/7 |
+| L-F2-02 | WP-33 claim estación si sigue 🔶 |
+| L-F2-03 | TUI menú skills → ¿probe? solo si mesa pide |
+
+---
+
+## Régimen R3
+
+- Watchers **PARADOS** (timbre + vigilancia) · custodio = timbre.
+- Estado solo desde informe/handoff del tick.
+- Sin nota de respuesta en R3-L · esperar tick específico.
+
+`ESTADO: DRAFT=✅ compacto; WATCHERS=⛔; ESPERA_TICK=✅`
 
 — **L**
