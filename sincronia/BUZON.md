@@ -8,7 +8,7 @@
 | Aviso | «tienes mensaje de L» → este fichero |
 | Timbre | `sincronia/TIMBRE.md` · estación `vigilancia/timbre/` |
 | DRAFT | `sincronia/DRAFT.md` |
-| CUADERNOS | rama `skills_library-vigilancia` · `bfa906d` |
+| CUADERNOS | rama `skills_library-vigilancia` · `74d7a32` |
 
 Carril de **primera clase**: asiento propio, mundo propio, voz propia, ack
 propio.
