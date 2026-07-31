@@ -159,7 +159,7 @@ node --test skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs
 # tests 43 · pass 43 · fail 0
 
 node --test skills/swarm-orquestacion/scripts/*.test.mjs
-# tests 60 · pass 60 · fail 0      (las suites previas siguen verdes)
+# tests 62 · pass 62 · fail 0      (43 nuevas + 19 previas, todas verdes)
 ```
 
 ## Ataques probados (hostil-omite: lo que CALLA, no lo malformado)
@@ -287,7 +287,7 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
       falsos negativos, en «Límites honestos» y con test.
 - [x] Eje(s) evidenciado(s): I (suite + dogfood), ceguera 13/14 (árbol +
       historial con control positivo), hostil-omite (8 vectores de ausencia).
-- [x] Gates ejecutados de verdad: 43/43 y 60/60 en verde, salida pegada.
+- [x] Gates ejecutados de verdad: 43/43 y 62/62 en verde, salida pegada.
 - [x] Commits convencionales en castellano, un repo por commit.
 - [x] Riesgo y contraevidencia cubiertos: sección «Ataques probados»; dos
       agujeros hallados por auto-ataque y cerrados con código + test.
