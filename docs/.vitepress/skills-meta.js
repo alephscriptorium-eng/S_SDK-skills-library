@@ -31,6 +31,11 @@ export default {
     estado: 'estable',
     version: '0.1.0',
   },
+  'mesa-sincronia': {
+    categoria: 'Coordinación',
+    tags: ['mesa', 'tick', 'timbre', 'hilos', 'sellos', 'auditor'],
+    estado: 'estable',
+  },
   'plantilla-skill': {
     categoria: 'Plantilla',
     tags: ['stub', 'scaffold'],
