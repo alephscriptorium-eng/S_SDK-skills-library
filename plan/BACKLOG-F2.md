@@ -136,7 +136,7 @@ exacto, ceguera 0, dogfood en este WORLD_ROOT.
 | **L-H03** | P1 | Plantilla BRIEF+CA cinco ejes para WPs de skillización | ejemplo L-A01 |
 | **L-H04** | P2 | Roles plan/ por referencia; cero copia divergente | check |
 | **L-H05** | P2 | Re-plan protocolo tras F2 custodio (descartes) | — |
-| **L-H06** | P1 | Linter de BACKLOG despachable (lane/WP/BRIEF/CA/P/deps/ejes) | fixture inválida falla por CA ornamental o dependencia circular |
+| **L-H06** 🔶 | P1 | Linter de BACKLOG despachable (lane/WP/BRIEF/CA/P/deps/ejes). **Ola 3, despachado 2026-07-31** (`wp/lh06-linter-backlog`, worktree `wt/l-h06`) · **contrarrevisión obligatoria** (gate que concede): backlog vacío o sin filas debe caer ruidosamente, nunca verde por vacío | fixture inválida falla por CA ornamental o dependencia circular |
 
 ## Lane I · SITE-WEB / piel / verdad
 
