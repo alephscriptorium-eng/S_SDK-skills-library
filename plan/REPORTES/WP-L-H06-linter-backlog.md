@@ -5,11 +5,11 @@
 | agente | worker L-H06 |
 | fecha | 2026-08-01 |
 | rama | `wp/lh06-linter-backlog` (base `main`) |
-| commits | `d8d9705` (skill) · `0eaf98c`+`a5027d4` (reporte) · `b1a36e8` (corrección de la devolución) |
+| commits | `d8d9705` (skill) · `0eaf98c`+`a5027d4` (reporte) · `b1a36e8` (1ª devolución) · `ff0f60f` (2ª devolución: D-A/D-B/D-C) |
 | eje(s) CA | I (consumidor real: la suite y el dogfood) · ceguera 13/14 (cara pública del skill) · hostil-omite (probar la ausencia) |
 | riesgo de revisión | `independiente` — gate que **concede** |
 | revisor distinto del worker | sí (contrarrevisión adversarial read-only) |
-| estado propuesto | corregido tras devolución · listo para nueva contrarrevisión |
+| estado propuesto | corregido tras la 2ª devolución · listo para contrarrevisión final (D-A, D-B, D-C) |
 
 ## Qué se hizo
 
@@ -32,9 +32,9 @@ duplicar lógica: distinto propósito, distinto fichero.
 | ruta (relativa a la raíz del repo) | qué es |
 | ---------------------------------- | ------ |
 | `skills/swarm-orquestacion/scripts/verificar-backlog.mjs` | el linter (Node ≥18, sin dependencias) |
-| `skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs` | suite de 67 casos (`node --test`) |
+| `skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs` | suite de 91 casos (`node --test`) |
 | `skills/swarm-orquestacion/reference/backlog-despachable.md` | contrato de los 7 campos + definición de CA ornamental + límites |
-| `skills/swarm-orquestacion/examples/fixture-backlog/` | 21 fixtures en cuatro caras + `casos.json` + README |
+| `skills/swarm-orquestacion/examples/fixture-backlog/` | 26 fixtures en cuatro caras + `casos.json` + README |
 | `skills/swarm-orquestacion/SKILL.md` | regla 23 + 3 filas en Recursos |
 | `skills/swarm-orquestacion/README.md` | sección «Gate · BACKLOG despachable» |
 
@@ -89,10 +89,12 @@ declarado y parametrizable (`--min-palabras-brief` 3, `--min-palabras-ca` 2).
    comparador (`= 0`), con unidad de medida (`0 hits`, `1 definicion`) o pegada
    a otra ancla (`exit 0`). Antes, «…en 2 sitios» convertía cualquier frase en
    verificable.
-2. **Concatenar no diluye.** El CA se analiza además **por segmentos** (`·`,
-   `;`, `<br>`, salto de línea): «queda elegante · el probe deniega el mensaje
-   sin firma» se cita por su segmento en vez de esconderse en el ratio. Los
-   fragmentos de medida (`exit 0`) no se juzgan sueltos.
+2. **Concatenar con los separadores declarados no diluye** (acotado, d10). El
+   CA se analiza por segmentos, pero **solo** por `·`, `;`, `<br>` y salto de
+   línea: «queda elegante · el probe deniega el mensaje sin firma» se cita por
+   su segmento en vez de esconderse en el ratio. Con coma, punto, paréntesis,
+   guion o «y además», la dilución **vuelve**: es un límite acotado, no una
+   propiedad general. Los fragmentos de medida (`exit 0`) no se juzgan sueltos.
 
 **Por qué no es una lista negra de palabras.** Una lista negra se esquiva con un
 sinónimo y castiga CAs legítimos que mencionan calidad de paso. La regla
@@ -123,14 +125,16 @@ las dos caras del error — y por eso avisa en vez de bloquear.
    propia cualquier serie; los conjuntos los fija el BRIEF.
 
 Medida del rechazo indebido, con los 12 CAs legítimos que citó la
-contrarrevisión: **pasan 9** (antes 4). Los 3 restantes —uno en inglés y dos
-telegráficos— solo **avisan**, y su corrección está escrita.
+contrarrevisión (el juego contra el que **calibré**, así que no es medida
+independiente): pasan 9. En el juego **independiente** de la contrarrevisión
+siguiente la medida real fue **7 de 12**. Los que no pasan solo **avisan**, y el
+ratio de ruido del avisador está medido y publicado en el contrato §3.
 
 ## Fixtures: veredicto esperado vs salida real
 
 Serie sintética `FX-[A-Z]\d{2}`, lanes `ALFA`/`BETA`, cero datos de instancia.
-21 fixtures en **cuatro caras**: 2 válidas (exit 0), 1 de avisos (exit 0 con CA
-ornamental citado), 12 inválidas (exit 1) y 6 de ausencia (exit 3). Cada una cae
+26 fixtures en **cuatro caras**: 5 válidas (exit 0), 1 de avisos (exit 0 con CA
+ornamental citado), 12 inválidas (exit 1) y 8 de ausencia (exit 3). Cada una cae
 por **su** motivo, con recuento exacto de defectos **y** de avisos
 (`casos.json`), no por un error genérico.
 
@@ -138,6 +142,9 @@ por **su** motivo, con recuento exacto de defectos **y** de avisos
 | ------- | ---- | ------------------ | ----------- |
 | `backlog-valido.md` | válida | despachable | `4 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
 | `backlog-dep-enlace.md` | válida | dep en enlace resuelve | `3 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
+| `backlog-deps-prosa.md` | válida | deps en prosa («y», `Ninguna.`, paréntesis) | `4 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
+| `backlog-fence-anidado.md` | válida | fence de 4 con uno de 3 dentro | `2 WP · 0 defecto(s)` · **exit 0** |
+| `backlog-region-declarada.md` | válida | solo se lintea la región declarada | `2 WP · 0 defecto(s)` · **exit 0** |
 | `backlog-ca-ornamental.md` | aviso | 5 avisos, 0 bloqueos | `valoracion=3 · sin-ancla=1 · sin-objeto=1` · **exit 0** |
 | `backlog-ciclo-corto.md` | inválida | `dep-ciclo` A→B→A | `dep-ciclo=1` · exit 1 |
 | `backlog-ciclo-largo.md` | inválida | `dep-ciclo` A→B→C→A | `dep-ciclo=1` · exit 1 |
@@ -157,6 +164,8 @@ por **su** motivo, con recuento exacto de defectos **y** de avisos
 | `backlog-lista-sin-tabla.md` | ausencia | `sin-wps` | `sin-wps=1` · **exit 3** |
 | `backlog-tabla-indentada.md` | ausencia | `sin-wps` (indentado) | `sin-wps=1 · indentado=4` · **exit 3** |
 | `backlog-tabla-en-cita.md` | ausencia | `sin-wps` (cita) | `sin-wps=1 · cita=3` · **exit 3** |
+| `backlog-fence-tilde.md` | ausencia | `~~~` no cierra backticks | `sin-wps=1 · fence=7` · **exit 3** |
+| `backlog-envolturas-html.md` | ausencia | front-matter · `<pre>` · `<details>` · 3 espacios+tab | `sin-wps=1 · indentado=3 · html=11 · front-matter=7` · **exit 3** |
 
 Salida literal de los casos que sostienen el WP:
 
@@ -194,10 +203,10 @@ EXIT=1
 
 ```
 node --test skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs
-# tests 67 · pass 67 · fail 0
+# tests 91 · pass 91 · fail 0
 
 node --test skills/swarm-orquestacion/scripts/*.test.mjs
-# tests 86 · pass 86 · fail 0      (67 nuevas + 19 previas, todas verdes)
+# tests 110 · pass 110 · fail 0    (91 nuevas + 19 previas, todas verdes)
 ```
 
 
@@ -357,7 +366,7 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 - [x] Eje(s) evidenciado(s): I (suite + dogfood), ceguera 13/14 (árbol +
       historial con control positivo), hostil-omite (13 vectores de ausencia y
       de argumentos).
-- [x] Gates ejecutados de verdad: 67/67 y 86/86 en verde, salida pegada.
+- [x] Gates ejecutados de verdad: 91/91 y 110/110 en verde, salida pegada.
 - [x] Commits convencionales en castellano, un repo por commit.
 - [x] Riesgo y contraevidencia cubiertos: sección «Ataques probados»; dos
       agujeros por auto-ataque y seis vías de la contrarrevisión, todos
@@ -368,7 +377,7 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 
 ## Evidencia de riesgo y contrarrevisión
 
-- `CASOS_ADVERSARIALES`: `[automatizado]` los 21 casos de `casos.json` con
+- `CASOS_ADVERSARIALES`: `[automatizado]` los 26 casos de `casos.json` con
   recuento exacto de defectos **y** de avisos · `[automatizado]` 13 vectores de
   ausencia y de argumentos (las 6 vías de exit 0 de la contrarrevisión, cada una
   con su caso rojo `[B1]`…`[B4]`, `[M1]`…`[M5]`) · `[automatizado]` 3 intentos
@@ -381,12 +390,13 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 - `INSTALACION_LIMPIA`: no aplica (sin dependencias nuevas; el script corre con
   el Node del repo, ≥22 declarado en `engines`).
 - `TEST_AUTOMATIZADO_VS_EVIDENCIA_MANUAL`:
-  - Automatizado: `node --test …/verificar-backlog.test.mjs` (67) y la suite
-    completa de `scripts/` (86).
+  - Automatizado: `node --test …/verificar-backlog.test.mjs` (91) y la suite
+    completa de `scripts/` (110).
   - Manual: corridas del CLI fixture por fixture, dogfood y greps de ceguera.
-- `VEREDICTO_REVISOR`: **DEVUELTO** en la primera contrarrevisión (6 vías de
-  exit 0 + 8/12 CAs legítimos rechazados) → corregido en `b1a36e8`; ⏳ pendiente
-  de la nueva contrarrevisión.
+- `VEREDICTO_REVISOR`: **DEVUELTO** dos veces — 1ª: 6 vías de exit 0 + falsos
+  rechazos de CA (→ `b1a36e8`); 2ª: D-A (fence con toggle ingenuo), D-B (cuatro
+  envolturas más) y D-C (`deps` en prosa rechazada con diagnóstico falso) →
+  `ff0f60f`. ⏳ pendiente de la contrarrevisión final.
 
 ## Dudas / bloqueos
 
@@ -444,12 +454,14 @@ arreglaron igual** en el aviso.
    (`exit 0`) no se juzgan sueltos. `queda elegante · el probe deniega …` se
    cita por su segmento.
 
-### Falsos rechazos: de 4/12 a 9/12
+### Falsos rechazos: 9/12 en el juego de calibración, 7/12 en uno independiente
 
 Anclas por **lema** (`ejecu-`, `verific-`, `grep-`, `fall-`, `deneg-`,
 `compara-`…) y **negación universal** (`ningún/ninguna`, `nadie`, `nunca`) como
 ancla comprobable. De los 12 CAs legítimos citados por la contrarrevisión pasan
-**9**; los 3 restantes solo **avisan**:
+**9** — pero ese es el juego contra el que calibré, así que **no es una medida
+independiente**: en un juego independiente la medida es **7/12**. Los que no
+pasan solo **avisan**:
 
 | CA | antes | ahora |
 | -- | ----- | ----- |
@@ -482,6 +494,120 @@ ciclos, los exit 2 de E/S, el fence y el comentario HTML, la ceguera de árbol e
 historial. La precisión sobre el hallazgo de ceguera está incorporada: el patrón
 de `comprobar-ceguera.sh` **cubre menos de lo que cree** (rutas de máquina *y*
 tokens de marco no enumerados), y sigue yendo a WP aparte.
+
+
+## Corrección de la segunda devolución (D-A · D-B · D-C)
+
+Commit: `ff0f60f`, misma rama, sin reescribir historia. Suite **91 propias /
+110 con las previas**, verde. Fixtures: **26 en cuatro caras** (5 válidas, 1 de
+avisos, 12 inválidas, 8 de ausencia).
+
+### D-C · el falso rechazo de `deps` (el que más importaba)
+
+El diagnóstico era falso *y* bloqueante sobre prosa que mi propio contrato no
+prohibía. Ahora la convención está **declarada** en
+`reference/backlog-despachable.md` §1 y el lector la aplica con holgura:
+
+| celda | antes | ahora |
+| ----- | ----- | ----- |
+| `FX-A01 y FX-A03` | «depende de «y», que no es ningún WP» | dos dependencias |
+| `Ninguna.` | `dep-inexistente` | token nulo |
+| `ninguna (WP raiz)` | `deps-contradictorias` + 2 × `dep-inexistente` | token nulo, prosa ignorada |
+| `[FX-A01](#x); FX-A03.` | dependía del enlace | dos dependencias |
+| `FXA01` | dependencia inventada | **`dep-no-interpretable`** (bloqueante) |
+
+Regla escrita: separadores naturales y conectores en prosa (`y`, `e`, `and`,
+parametrizables), puntuación y paréntesis ignorados, enlaces resueltos, prosa
+sin dígitos ignorada, y **token con dígitos que no es ID legible → defecto**,
+para no tragarse un ID roto en silencio. Fixture nueva `backlog-deps-prosa.md`
+(cuarta cara válida) + 5 casos rojos `[D-C]`.
+
+**Por qué no lo vi**: ninguna fixture cubría multi-dep salvo con coma, y el
+dogfood no ejerció `deps` porque ese backlog **no tiene esa columna**. La
+cobertura no llegó al caso más frecuente — anotado como lección del WP.
+
+### D-A · el fence, con su regla real
+
+`enFence = !enFence` era un toggle ingenuo. Ahora sigue CommonMark: el cierre es
+el **mismo carácter**, de longitud **≥** la apertura, sin nada más en la línea; y
+un fence de backticks no admite backticks en su info string. Cierra las **dos**
+direcciones, cada una con fixture y test:
+
+- `~~~` ya no cierra un fence de backticks → `backlog-fence-tilde.md`, exit 3
+  (antes: exit 0 con la tabla oculta aprobada);
+- un fence de 4 backticks que contiene uno de 3 ya no se cierra antes de tiempo
+  → `backlog-fence-anidado.md`, **exit 0 con el backlog real linteado** (antes:
+  exit 3 con todo velado, falso rechazo).
+
+### D-B · la familia entera, por estructura — y el cierre estructural
+
+Apliqué las **dos** salidas que ofrecías:
+
+**(a) estructura de bloque de CommonMark** para lo que importa: código indentado
+con **expansión de tabulador** (3 espacios + tab = 4 columnas — el casi-acierto
+que faltaba), **bloques HTML** tipo 1 (`<pre>`, `<script>`, `<style>`,
+`<textarea>`, hasta su cierre) y tipo 6 (`<details>`, `<div>`…, hasta línea en
+blanco), y **front-matter** YAML/TOML. Que el tipo 6 acabe en línea en blanco no
+es un detalle: un `<details>` con línea en blanco **sí** deja ver su tabla, y hay
+test de que el linter la lintea — la regla es la de markdown, no «velar todo lo
+que huela a HTML».
+
+**(b) cierre estructural opt-in**: `--region-inicio` / `--region-fin`. Si el
+mundo declara su región, **todo lo de fuera se ignora por construcción** y las
+envolturas dejan de importar; la marca ausente es `region-ausente` → exit 3
+limpio. Fixture `backlog-region-declarada.md` (con dos tablas fuera de la región
+que el linter ignora) y dos tests.
+
+Cada línea velada se cuenta **por causa** (`fence=`, `indentado=`, `html=`,
+`front-matter=`, `comentario=`, `cita=`, `fuera-de-region=`) y el diagnóstico las
+nombra.
+
+### Menores
+
+| # | cierre |
+| - | ------ |
+| **d4** | la ayuda solo se sirve si es **lo único** que se pide; `--backlog X -h` → exit 2 |
+| **d5** | patrón vacío en `--series`/`--patron-lane` → exit 2, coherente con el conjunto vacío |
+| **d6** | toda fila tras el separador de cabecera es fila de **datos**; `\| - \| - \| - \|` → `campo-ausente`, no omisión |
+| **d7** | el BRIEF recibe `BRIEF-ornamental/valoracion`; no se le exige ancla ni objeto (describe trabajo, no comprobación) y así se declara |
+| **d8** | `limpiarCelda` quita etiquetas HTML antes de buscar comparadores: `<b>2</b>` ya no es medida |
+| **d10** | frase acotada en contrato y reporte: la garantía de segmentos cubre `·`, `;`, `<br>` y salto de línea — con coma, punto o «y además» la dilución vuelve |
+| **d11** | fuera los dos recorridos `O(n²)` (índice `id→WP`); el límite de tamaño queda **declarado** en el contrato §4.12 con su umbral (~20 000 filas, cadena de ~30 000 desborda) y su fail-closed (exit 2) |
+
+### El ruido del avisador — medido, publicado y declarado
+
+Publicado en el contrato (§3, «El aviso es de BARRIDO AMPLIO»):
+
+| medida | valor |
+| ------ | ----- |
+| avisos por WP en el backlog real de 73 WPs | **35 → 48 %** |
+| de ellos, CAs telegráficos (≤4 palabras distintas) | **26 → 74 % de los avisos** |
+| CAs legítimos de un juego independiente que avisan | ~5 de 12 (**42 %**) |
+
+**Decisión declarada**: el aviso es de **barrido amplio**, no cola curada. Sirve
+para *mirar dónde*, no para concluir. Afiné solo lo que tenía regla (verbos de
+variación: `no baja del 80%`, `no supera los 2 segundos`, ambos con test) y
+quité `veces` de las unidades, que dejaba pasar prosa adornada. El resto se
+declara, no se vende.
+
+### Contabilidad honesta del 9/12
+
+Mi «9/12» estaba medido **sobre el juego que la revisión anterior me dio y
+contra el que calibré**: no es una medida independiente y no debí presentarla
+como tal. La medida independiente es la de la contrarrevisión: **7/12**. Esta
+ronda añade los verbos de variación, que arreglan al menos el caso citado
+(`el informe de cobertura no baja del 80%…`); el resto del juego independiente
+**no lo he vuelto a medir** — ⏳ sin verificar, por definición: no lo tengo.
+
+### Lo que no toqué
+
+Lo que la contrarrevisión validó: argv (ningún camino evalúa un fichero no
+pedido), la familia de ciclos, los exit 2 de E/S, «ninguna excepción tragada
+hacia 0», BOM/CRLF, fichero grande, el suelo por palabras distintas, las 6
+mutaciones de hostil-omite, cero cableado, la contabilidad exacta y la ceguera.
+Y queda registrado el hallazgo del revisor a mi favor: `plan/BACKLOG-F2.md`
+aparece en el diff de dos puntos porque lo movió el custodio en `main`;
+`git log main..HEAD` sobre ese fichero está vacío.
 
 
 ---
