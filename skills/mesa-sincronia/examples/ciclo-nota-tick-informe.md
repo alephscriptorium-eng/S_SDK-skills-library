@@ -2,12 +2,13 @@
 
 Sobre la calibración de [`mesa-sintetica.md`](mesa-sintetica.md). Fechas,
 hashes y contenidos inventados; el objetivo es ver el protocolo entero en
-un caso pequeño.
+un caso pequeño. Los ficheros de este ciclo, materializados:
+[`fixture-buzones/`](fixture-buzones/README.md).
 
 ## 1 · NOR emite una nota (§1 + §7)
 
 NOR termina un censo local y escribe en su buzón
-`/mundos/nor/sincronia/notas/2030-01-05-censo-piezas.md`:
+`/mundos/nor/sincronia/notas/NOTA-NOR-2030-01-05-censo-piezas.md`:
 
 ```markdown
 | Emisor | NOR |
@@ -25,7 +26,7 @@ NOR termina un censo local y escribe en su buzón
 Y añade **una línea** al timbre del hub (`/mundos/faro/sala/TIMBRE.md`):
 
 ```text
-PING 2030-01-05 10:12 · DE=NOR · HILO=- · REF=/mundos/nor/sincronia/notas/2030-01-05-censo-piezas.md
+PING 2030-01-05 10:12 · DE=NOR · HILO=- · REF=/mundos/nor/sincronia/notas/NOTA-NOR-2030-01-05-censo-piezas.md
 ```
 
 La estación de Faro registra en su log: `TIMBRE: 1 ping(s) nuevos`.
@@ -37,7 +38,7 @@ Faro eleva el ping al custodio en su parte de ronda. El custodio decide que
 SUR debe contrastar el censo y entrega en la consola de SUR:
 
 ```text
-TICK 7 · TO=SUR · ALCANCE=leer la nota de NOR 2030-01-05-censo-piezas.md y contrastar el conteo con tu vista de runtime; una nota de respuesta
+TICK 7 · TO=SUR · ALCANCE=leer la nota de NOR NOTA-NOR-2030-01-05-censo-piezas.md y contrastar el conteo con tu vista de runtime; una nota de respuesta
 ```
 
 ## 3 · SUR procesa (pull-on-tick §7.2 + una nota por turno §9.3)
@@ -45,7 +46,7 @@ TICK 7 · TO=SUR · ALCANCE=leer la nota de NOR 2030-01-05-censo-piezas.md y con
 Antes de tocar el alcance, SUR lee su propio `TIMBRE.md` entero desde
 `base`: encuentra 1 ping pendiente de un hilo no autorizado → **lo reporta,
 no lo procesa**. Después ejecuta el alcance y responde en su buzón
-`/mundos/sur/sincronia/notas/2030-01-05-contraste-censo.md`:
+`/mundos/sur/sincronia/notas/NOTA-SUR-2030-01-05-contraste-censo.md`:
 
 ```markdown
 | Emisor | SUR |
