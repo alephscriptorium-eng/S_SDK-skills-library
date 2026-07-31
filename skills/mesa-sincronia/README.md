@@ -10,6 +10,11 @@ Activar desde el paquete; calibrar §0 en el consumidor (`CUSTODIO`, `HUB`,
 `SALA`, `CARRILES`, `WORLD_ROOT(X)`, …). Datos de mesas reales → fuera de
 este directorio; fixture sintético en `examples/`.
 
+Capa operativa del carril: `reference/BUZON-Y-NOTAS.md` (buzón-puntero +
+notas + montaje ejecutable) con plantillas en `reference/plantillas/`;
+ciclo materializado hub + 2 carriles en `examples/fixture-buzones/` y CA de
+montaje en `examples/simulacion-montaje-buzon.md`.
+
 Ceguera del skill: `scripts/comprobar-ceguera.sh` → `ceguera: 0` (veto de
 marcas de instancia y de marco; el vocabulario de método es propio).
 
