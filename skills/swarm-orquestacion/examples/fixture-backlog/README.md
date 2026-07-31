@@ -1,46 +1,64 @@
-# fixture-backlog — las dos caras del BACKLOG despachable
+# fixture-backlog — las cuatro caras del BACKLOG despachable
 
 Fixture **sintética** del linter `../../scripts/verificar-backlog.mjs`. Serie
 inventada `FX-[A-Z]\d{2}`, lanes `ALFA` / `BETA`. Ningún dato de mundo real.
 
 Contrato y doctrina: `../../reference/backlog-despachable.md`.
-Veredicto esperado de cada fichero: `casos.json` (recuento **exacto** por
-motivo + citas obligatorias del mensaje). La suite
+Veredicto esperado de cada fichero: `casos.json` (recuento **exacto** de
+defectos bloqueantes y de avisos + citas obligatorias del mensaje). La suite
 `../../scripts/verificar-backlog.test.mjs` ejecuta esa tabla contra el linter.
 
-## Cara que pasa
+Cuatro caras, porque el veredicto tiene cuatro formas: **pasa** (exit 0),
+**pasa con avisos** (exit 0 + CA ornamental citado), **cae por un defecto
+decidible** (exit 1) y **cae por ausencia** (exit 3).
+
+## Cara que pasa (exit 0)
 
 | fichero | por qué pasa |
 | ------- | ------------ |
 | `backlog-valido.md` | 4 WPs, 2 lanes, los siete campos, deps sin ciclos, CA con ancla y objeto |
+| `backlog-dep-enlace.md` | deps escritas como enlace markdown resuelven; CA de negación universal («ninguna referencia queda…») es verificable |
 
-## Cara que cae (cada una por SU motivo)
+## Cara del AVISO (exit 0, pero informa)
 
-| fichero | motivo | exit |
+| fichero | avisos | exit |
 | ------- | ------ | ---- |
-| `backlog-ca-ornamental.md` | `CA-ornamental/valoracion` ×3, `sin-ancla`, `sin-objeto` | 1 |
-| `backlog-ciclo-corto.md` | `dep-ciclo` (A → B → A) | 1 |
-| `backlog-ciclo-largo.md` | `dep-ciclo` (A → B → C → A) | 1 |
-| `backlog-campo-ausente.md` | `campo-ausente` (celda vacía, `—`, `?`) | 1 |
-| `backlog-prioridad-invalida.md` | `prioridad-invalida` (`P3`, `alta`) | 1 |
-| `backlog-serie-no-declarada.md` | `serie-no-declarada` (filas ajenas no se omiten) | 1 |
-| `backlog-id-duplicado.md` | `id-duplicado` | 1 |
-| `backlog-dep-inexistente.md` | `dep-inexistente` | 1 |
-| `backlog-fila-fuera-de-tabla.md` | `fila-fuera-de-tabla-wp` (WP colado fuera del lint) | 1 |
-| `backlog-columna-ausente.md` | `columna-requerida-ausente` (`deps`, `ejes`) | 1 |
-| `backlog-sin-lane.md` | `columna-requerida-ausente` (`lane`) | 1 |
+| `backlog-ca-ornamental.md` | `valoracion` ×3 · `sin-ancla` · `sin-objeto` | **0** |
 
-## Cara de la AUSENCIA (lo que calla, no lo malformado)
+La calidad del CA es juicio: se cita con su motivo y su texto literal, pero no
+decide el despacho. Un gate que rechaza CAs correctos acaba desactivado.
 
-| fichero | motivo | exit |
-| ------- | ------ | ---- |
-| `backlog-vacio.md` | `backlog-vacio` (fichero de 0 bytes) | 3 |
-| `backlog-sin-wps.md` | `sin-wps` (prosa; ninguna tabla con columna de WP) | 3 |
-| `backlog-tabla-sin-filas.md` | `sin-wps` (cabecera y separador, sin filas) | 3 |
-| `backlog-lista-sin-tabla.md` | `sin-wps` (formato de lista, no despachable) | 3 |
+## Cara que cae (exit 1 — cada una por SU motivo)
 
-Ninguno de estos cuatro es «verde por vacío»: un backlog que lintea a cero
-jamás es despachable.
+| fichero | motivo bloqueante |
+| ------- | ----------------- |
+| `backlog-ciclo-corto.md` | `dep-ciclo` (A → B → A) |
+| `backlog-ciclo-largo.md` | `dep-ciclo` (A → B → C → A) |
+| `backlog-campo-ausente.md` | `campo-ausente` (celda vacía, `—`, `?`) |
+| `backlog-prioridad-invalida.md` | `prioridad-invalida` (`P3`, `alta`) |
+| `backlog-suelo-minimo.md` | `brief-insuficiente` + `ca-insuficiente` (palabras repetidas) |
+| `backlog-contradicciones.md` | `deps-contradictorias` + `ejes-contradictorios` |
+| `backlog-serie-no-declarada.md` | `serie-no-declarada` (filas ajenas no se omiten) |
+| `backlog-id-duplicado.md` | `id-duplicado` |
+| `backlog-dep-inexistente.md` | `dep-inexistente` |
+| `backlog-fila-fuera-de-tabla.md` | `fila-fuera-de-tabla-wp` (WP colado fuera del lint) |
+| `backlog-columna-ausente.md` | `columna-requerida-ausente` (`deps`, `ejes`) |
+| `backlog-sin-lane.md` | `columna-requerida-ausente` (`lane`) |
+
+## Cara de la AUSENCIA (exit 3 — lo que calla, no lo malformado)
+
+| fichero | causa |
+| ------- | ----- |
+| `backlog-vacio.md` | fichero de 0 bytes |
+| `backlog-sin-wps.md` | prosa; ninguna tabla con columna de WP |
+| `backlog-tabla-sin-filas.md` | cabecera y separador, sin filas |
+| `backlog-lista-sin-tabla.md` | formato de lista, no despachable |
+| `backlog-tabla-indentada.md` | tabla en bloque indentado (4 espacios) |
+| `backlog-tabla-en-cita.md` | tabla dentro de una cita `>` |
+
+Ninguno de estos seis es «verde por vacío»: un backlog que lintea a cero jamás
+es despachable, y el diagnóstico dice la **causa** (`fence=`, `comentario=`,
+`indentado=`, `cita=`) en vez de afirmar que no había ninguna tabla.
 
 ## Reproducir a mano
 

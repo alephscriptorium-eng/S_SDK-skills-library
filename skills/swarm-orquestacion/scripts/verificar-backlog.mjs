@@ -3,29 +3,42 @@
 // verificar-backlog.mjs — LINTER de BACKLOG DESPACHABLE
 // ----------------------------------------------------------------------------
 // Decide si un BACKLOG puede despacharse: cada WP declara los SIETE campos
-// (`lane`, `WP`, `BRIEF`, `CA`, `P`, `deps`, `ejes`), la prioridad está en el
-// conjunto declarado, las dependencias resuelven y no ciclan, y el CA es
-// VERIFICABLE (no ornamental). Marco-agnóstico y sin dependencias (Node ≥18).
+// (`lane`, `WP`, `BRIEF`, `CA`, `P`, `deps`, `ejes`), la prioridad y los ejes
+// están en los conjuntos declarados, las dependencias resuelven y no ciclan, y
+// ningún campo está por debajo del suelo declarado. Marco-agnóstico y sin
+// dependencias (Node ≥18).
 //
 // Contrato, doctrina y límites honestos: `../reference/backlog-despachable.md`.
 // Fixtures de las dos caras: `../examples/fixture-backlog/`.
 //
+// QUÉ BLOQUEA Y QUÉ AVISA (política v2, tras contrarrevisión)
+//   BLOQUEA lo DECIDIBLE sin opinar: campo ausente, columna ausente, prioridad
+//   o eje fuera del conjunto, contradicciones declaradas, serie no declarada,
+//   ID duplicado o ilegible, dependencia que no resuelve, ciclo, suelo de
+//   BRIEF/CA y AUSENCIA (vacío / 0 WPs).
+//   AVISA, sin decidir el exit: `CA-ornamental/*`. La calidad de un CA es
+//   juicio, y un gate no puede arrogárselo sin producir falsos rechazos que lo
+//   maten: un gate que rechaza CAs correctos acaba desactivado, y entonces no
+//   protege de nada. El aviso se emite igual, con su motivo y la cita literal.
+//
 // DOCTRINA — CONCEDER EN FALSO ES PEOR QUE NO TENER LINTER (hereda DC-25/DC-29
 // de `proyectar-backlog.mjs`): la AUSENCIA es fallo ruidoso. Fichero vacío,
-// backlog sin ninguna tabla de WPs, tabla sin filas o filas que no producen
-// ningún WP → exit 3. Un backlog que lintea a cero JAMÁS es despachable.
+// backlog sin ninguna tabla de WPs, tabla sin filas, o WPs que solo viven donde
+// el lector no los ve (fence, comentario HTML, bloque indentado, cita) → exit 3.
+// Un backlog que lintea a cero JAMÁS es despachable.
 //
 // PARAMETRIZADO (nada cableado a un mundo concreto): rutas, serie(s) de ID,
-// conjunto de prioridades, conjunto de ejes, patrón de lane, alias de columnas,
-// tokens de «sin dependencias», léxico de CA y umbral de valoración.
+// conjuntos de prioridades / ejes / lanes, patrón de lane, alias de columnas,
+// tokens de «sin dependencias», léxico de CA, umbral y suelos.
 //
 // Uso:
 //   node verificar-backlog.mjs --backlog plan/BACKLOG.md \
 //        [--series 'FX-[A-Z]\d{2}'] [--prioridades P0,P1,P2] \
 //        [--ejes I,II,III,IV,V,ceguera,hostil-omite,ninguno] \
-//        [--deps-externas 'EXT-\d+'] [--ca-estricto] [--json] [--ayuda]
+//        [--lanes A,B,C] [--deps-externas 'EXT-\d+'] [--ca-estricto] [--json]
+//   (también admite la forma `--flag=valor`; toda flag desconocida es exit 2)
 //
-// Exit: 0 despachable · 1 defectos · 2 uso/E-S · 3 AUSENCIA (vacío / 0 WPs).
+// Exit: 0 despachable · 1 defectos · 2 uso/config/E-S · 3 AUSENCIA (vacío/0 WPs).
 // ============================================================================
 
 import { readFileSync, existsSync, realpathSync } from 'node:fs';
@@ -39,12 +52,23 @@ import { fileURLToPath } from 'node:url';
 const STOPWORDS = `a al ante bajo cada como con contra cual cuando cuyo de del desde donde durante e el ella ellas ellos en entre es esa ese eso esos esta estan estas este esto estos ha hacia han hasta hay la las le les lo los mas menos mi mientras misma mismo mucha mucho muy ni no nos o otra otras otro otros para pero por porque que quien se segun ser sera si sin sobre son su sus tambien tan tanto tiene tienen todas todo todos tras tu un una unas unos y ya debe deben puede pueden sea sean solo`.split(/\s+/);
 
 // ANCLAS de verificación: nombran el acto observable que decide (comando,
-// gate, probe, conteo, exit, veredicto). Sin ancla, un CA no se puede ejecutar.
-const ANCLAS = `falla fallar falle fallo fallan fallara rechaza rechazar rechazado rechaza-se deniega denegar denegado pasa pasar pasan supera verde rojo exit exitcode salida stdout stderr comando script gate gates probe probes prueba pruebas test tests suite fixture fixtures caso casos grep conteo cuenta contador contar build compila ci run-id checksum hash sha snapshot assert verifica verificar verificado verificada verificable comprueba comprobar comprobado mide medir medida ejecuta ejecutar ejecutado reproduce reproducible npm node bash diff log retorna devuelve aborta abortar bloquea bloquear lock hits ocurrencias dry-run cero`.split(/\s+/);
+// gate, probe, conteo, exit, veredicto, negación universal comprobable).
+const ANCLAS = `pasa pasar pasan supera verde rojo exit exitcode salida stdout stderr comando script gate gates probe probes prueba pruebas test tests suite fixture fixtures caso casos conteo cuenta contador contar recuento build ci run-id checksum hash sha snapshot assert mide medir medida ejecuta npm node bash diff log retorna devuelve aborta abortar bloquea bloquear bloqueado bloqueada bloqueados lock hits ocurrencias dry-run nadie nunca jamas`.split(/\s+/);
+
+// Lemas de ancla (coincidencia por prefijo). Cubren la morfología sin cerrar el
+// léxico en formas exactas: «ejecuciones», «grepables», «verificable» son
+// anclas tanto como «ejecuta», «grep» o «verifica».
+const ANCLAS_LEMA = `ejecu verific comprob comprueb grep fall rechaz deneg denieg reproduc valid compil compara ningun`.split(/\s+/);
 
 // VALORACIONES: juicios sobre el resultado. Describen una impresión, no una
 // comprobación. Su presencia no está prohibida; su DOMINANCIA sí.
-const ORNAMENTALES = `elegante elegancia bonito bonita bello bella precioso limpio limpia limpieza pulido pulida pulcro prolijo mejor mejores mejora mejorar mejorado mejorada optimo optima optimizado optimizada calidad robusto robusta robustez solido solida solidez adecuado adecuada correcto correcta correctamente coherente coherencia claro clara claridad legible legibilidad sencillo sencilla simple simplificado razonable aceptable consistente consistencia decente apropiado apropiada satisfactorio suficiente bueno buena buen bien revisa revisar revisado revision repasa repasar queda quedar quede luce parece agradable amigable intuitivo usable moderno profesional estetico estetica presentable armonioso fluido comodo ordenado ordenada organizado organizada`.split(/\s+/);
+const ORNAMENTALES = `bonito bonita bello bella precioso prolijo optimo optima calidad solido solida solidez decente satisfactorio suficiente bueno buena buen bien luce parece agradable amigable intuitivo usable moderno profesional presentable armonioso fluido comodo`.split(/\s+/);
+const ORNAMENTALES_LEMA = `elegan mejor limpi pulid pulcr robust coheren clarid clar legib sencill simple simplific razonab aceptab consisten apropiad adecuad correct estetic ordenad organizad revis qued`.split(/\s+/);
+
+// UNIDADES de medida: promueven una cantidad suelta a ancla («0 hits»,
+// «1 definicion»). Sin unidad, comparador ni ancla al lado, un dígito NO ancla
+// nada: si bastara un número, «queda elegante en 2 sitios» sería verificable.
+const UNIDADES = `hits ocurrencias apariciones coincidencias definicion definiciones linea lineas fila filas fichero ficheros veces caso casos wps wp errores defectos avisos consumidor consumidores cliente clientes commits builds segundos ms bytes kb mb`.split(/\s+/);
 
 // Valores MARCADORES: la celda existe pero no dice nada.
 const VACIAS = `- -- --- — – ? ?? ??? . .. ... … * _ tbd todo wip pendiente n/a na x xx xxx idem varios ver`.split(/\s+/);
@@ -65,18 +89,47 @@ export const DEFAULTS = {
   series: 'WP-[A-Za-z0-9]+',
   prioridades: ['P0', 'P1', 'P2'],
   ejes: ['I', 'II', 'III', 'IV', 'V', 'ceguera', 'hostil-omite', 'ninguno'],
+  ejesNinguno: ['ninguno', 'ninguna', 'none'],
+  lanes: [], // vacío = no se valida el conjunto de lanes (solo su presencia)
   patronLane: '^#{1,6}\\s*(?:lane|carril)\\b[\\s·:.\\-]*(.*)$',
   sinDeps: ['ninguna', 'ninguno', 'sin-deps', 'sin deps', 'none'],
   depsExternas: '', // regex; '' = ninguna dependencia externa permitida
   umbralValoracion: 0.5,
-  minPalabrasBrief: 3,
+  minPalabrasBrief: 3, // tokens significativos DISTINTOS
+  minPalabrasCa: 2, // tokens significativos DISTINTOS
   caEstricto: false,
   alias: ALIAS,
-  lexico: { stopwords: STOPWORDS, anclas: ANCLAS, ornamentales: ORNAMENTALES, vacias: VACIAS, vaciasFrase: VACIAS_FRASE },
+  lexico: {
+    stopwords: STOPWORDS,
+    anclas: ANCLAS,
+    anclasLema: ANCLAS_LEMA,
+    ornamentales: ORNAMENTALES,
+    ornamentalesLema: ORNAMENTALES_LEMA,
+    unidades: UNIDADES,
+    vacias: VACIAS,
+    vaciasFrase: VACIAS_FRASE,
+  },
 };
 
 // Campos exigidos por WP (el orden es el del reporte).
 export const CAMPOS = ['lane', 'WP', 'BRIEF', 'CA', 'P', 'deps', 'ejes'];
+
+// Motivos que NO bloquean: se emiten como aviso (ver cabecera).
+export const MOTIVOS_AVISO = [
+  'CA-ornamental/valoracion',
+  'CA-ornamental/sin-ancla',
+  'CA-ornamental/sin-objeto',
+  'CA-ornamental/sin-referente',
+];
+
+/** Error de uso/configuración: siempre exit 2, nunca un veredicto sobre el backlog. */
+export class ErrorUso extends Error {
+  constructor(mensaje) {
+    super(mensaje);
+    this.name = 'ErrorUso';
+    this.codigo = 2;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // 2. Utilidades de texto
@@ -85,10 +138,11 @@ export const CAMPOS = ['lane', 'WP', 'BRIEF', 'CA', 'P', 'deps', 'ejes'];
 const sinAcentos = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const norm = (s) => sinAcentos(String(s || '')).toLowerCase().trim();
 
-/** Quita énfasis markdown, backticks y marcas de estado de una celda. */
+/** Quita énfasis markdown, backticks, enlaces y marcas de estado de una celda. */
 function limpiarCelda(s) {
   return String(s || '')
     .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{23E9}-\u{23FA}\u{FE0F}]/gu, ' ')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // enlace markdown → su texto
     .replace(/\*\*/g, '')
     .replace(/(^|\s)\*(\S)/g, '$1$2')
     .replace(/`/g, '')
@@ -108,55 +162,100 @@ function esMarcador(valor, lex) {
 
 /** Tokeniza para el análisis de CA/BRIEF: palabras, cantidades y rutas. */
 export function tokenizar(texto) {
-  const plano = norm(texto);
+  const plano = norm(limpiarCelda(texto));
   const brutos = plano.match(/[a-z0-9][a-z0-9_.:/\\-]*/g) || [];
   return brutos.map((t) => t.replace(/[.:,;]+$/, '')).filter(Boolean);
 }
 
+const empiezaPor = (t, lemas) => lemas.some((l) => l && t.startsWith(l));
+const esCantidad = (t) => /^\d+([.,]\d+)?%?$/.test(t);
+
+/** Tokens significativos DISTINTOS: el suelo cuenta palabras, no repeticiones. */
+export function significativosDistintos(texto, cfg) {
+  const stop = cfg.lexico.stopwords;
+  return [...new Set(tokenizar(texto).filter((t) => !stop.includes(t)))];
+}
+
 function clasificarToken(t, lex) {
   if (lex.stopwords.includes(t)) return 'vacia';
-  if (lex.ornamentales.includes(t)) return 'valoracion';
-  if (lex.anclas.includes(t)) return 'ancla';
-  if (/^\d+([.,]\d+)?%?$/.test(t)) return 'ancla'; // cantidad pura: 0, 1, 100%
+  if (lex.ornamentales.includes(t) || empiezaPor(t, lex.ornamentalesLema || [])) return 'valoracion';
+  if (lex.anclas.includes(t) || empiezaPor(t, lex.anclasLema || [])) return 'ancla';
+  if (esCantidad(t)) return 'cantidad'; // se promueve (o no) por contexto
   return 'contenido';
 }
 
 // ---------------------------------------------------------------------------
-// 3. EL CORAZÓN: ¿es este CA verificable o es ornamental?
+// 3. EL AVISO: ¿este CA nombra una comprobación o solo una impresión?
 // ---------------------------------------------------------------------------
 //
-// Un CA es DESPACHABLE cuando nombra las dos mitades de una comprobación:
+// Un CA es VERIFICABLE cuando nombra las dos mitades de una comprobación:
 //
-//   (1) ANCLA  — el acto observable que decide: un comando, un gate, un probe,
-//                una fixture, un conteo, un exit, un veredicto («falla»,
-//                «deniega», «pasa»), una cantidad o un comparador.
+//   (1) ANCLA  — el acto observable que decide: comando, gate, probe, fixture,
+//                conteo, exit, veredicto («falla», «deniega», «pasa»),
+//                negación universal («ninguna referencia queda en el árbol»),
+//                comparador o cantidad CON medida.
 //   (2) OBJETO — sobre QUÉ recae: al menos una palabra de contenido que no sea
 //                ancla, ni valoración, ni palabra función.
 //
 // Es ORNAMENTAL cuando falta cualquiera de las dos, o cuando el juicio de valor
-// DOMINA el enunciado (ratio de valoraciones ≥ umbral). Ornamental = describe
-// una impresión sobre el resultado; nadie puede ejecutarlo ni verlo dar rojo.
+// DOMINA el enunciado (ratio ≥ umbral). Esto NO bloquea el despacho: es un
+// aviso citado. La lista de motivos vive en MOTIVOS_AVISO.
 //
-// Motivos (estables, grepables):
-//   CA-ornamental/valoracion   la valoración domina («queda elegante»)
-//   CA-ornamental/sin-ancla    no nombra ninguna comprobación
-//   CA-ornamental/sin-objeto   comprueba… ¿el qué? («el test pasa»)
-//   CA-ornamental/sin-referente  (solo --ca-estricto) sin comando/ruta/cantidad
+// Dos asimetrías cerradas tras la contrarrevisión:
+//   · un dígito suelto NO ancla nada (solo con comparador, unidad o ancla al
+//     lado): antes «…en 2 sitios» convertía cualquier frase en verificable;
+//   · el CA se analiza además POR SEGMENTOS (`·`, `;`, `<br>`, salto de línea),
+//     para que concatenar un CA ornamental con uno bueno no lo diluya en el
+//     ratio. Los fragmentos de medida («exit 0», «ceguera 0») no se juzgan
+//     sueltos: solo dentro del conjunto.
 //
 export function analizarCA(texto, cfg = configurar()) {
+  const global = analizarFragmento(texto, cfg);
+  if (!global.ok) return { ...global, alcance: 'ca' };
+  const segmentos = partirSegmentos(texto);
+  if (segmentos.length > 1) {
+    for (const seg of segmentos) {
+      const a = analizarFragmento(seg, cfg);
+      if (a.ok) continue;
+      if (a.valoraciones.length === 0 && a.significativos <= 2) continue; // fragmento de medida
+      return { ...a, alcance: 'segmento', segmento: seg, detalle: `segmento «${limpiarCelda(seg)}» → ${a.detalle}` };
+    }
+  }
+  return { ...global, alcance: 'ca' };
+}
+
+export function partirSegmentos(texto) {
+  return String(texto || '')
+    .split(/·|;|<br\s*\/?>|\r?\n/i)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function analizarFragmento(texto, cfg) {
   const lex = cfg.lexico;
   const toks = tokenizar(texto);
-  const clas = toks.map((t) => [t, clasificarToken(t, lex)]);
-  const valoraciones = clas.filter(([, c]) => c === 'valoracion').map(([t]) => t);
-  const anclas = clas.filter(([, c]) => c === 'ancla').map(([t]) => t);
-  const contenido = clas.filter(([, c]) => c === 'contenido').map(([t]) => t);
-  // Comparadores explícitos (`= 0`, `≥ 1`, `≠ 0`) cuentan como ancla aunque el
-  // tokenizador descarte el símbolo.
-  if (/[=≥≤≠<>]\s*\d/.test(texto)) anclas.push('comparador');
+  const clases = toks.map((t) => clasificarToken(t, lex));
+  const hayComparador = /[=≥≤≠<>]\s*\d|\d\s*[=≥≤≠<>]/.test(String(texto));
+
+  // Promoción de cantidades: una cifra suelta no es una comprobación.
+  for (let i = 0; i < clases.length; i++) {
+    if (clases[i] !== 'cantidad') continue;
+    const anterior = toks[i - 1];
+    const siguiente = toks[i + 1];
+    const pegadaAncla = clases[i - 1] === 'ancla' || clases[i + 1] === 'ancla';
+    const conUnidad = lex.unidades.includes(anterior) || lex.unidades.includes(siguiente);
+    clases[i] = hayComparador || pegadaAncla || conUnidad ? 'ancla' : 'contenido';
+  }
+
+  const dame = (clase) => toks.filter((_, i) => clases[i] === clase);
+  const valoraciones = dame('valoracion');
+  const anclas = dame('ancla');
+  const contenido = dame('contenido');
+  if (hayComparador && !anclas.length) anclas.push('comparador');
 
   const significativos = valoraciones.length + anclas.length + contenido.length;
   const ratio = significativos ? valoraciones.length / significativos : 0;
-  const base = { valoraciones, anclas, contenido, ratio: Number(ratio.toFixed(3)) };
+  const base = { valoraciones, anclas, contenido, significativos, ratio: Number(ratio.toFixed(3)) };
   const cita = limpiarCelda(texto);
 
   if (valoraciones.length && ratio >= cfg.umbralValoracion) {
@@ -165,7 +264,7 @@ export function analizarCA(texto, cfg = configurar()) {
       ok: false,
       motivo: 'CA-ornamental/valoracion',
       detalle:
-        `la valoracion domina el CA (${valoraciones.length}/${significativos} = ${base.ratio} >= ${cfg.umbralValoracion}): ` +
+        `la valoracion domina (${valoraciones.length}/${significativos} = ${base.ratio} >= ${cfg.umbralValoracion}): ` +
         `«${valoraciones.join('», «')}». Anclas de verificacion: ${anclas.length ? anclas.join(', ') : '(ninguna)'}. ` +
         `CA citado: «${cita}»`,
     };
@@ -176,8 +275,8 @@ export function analizarCA(texto, cfg = configurar()) {
       ok: false,
       motivo: 'CA-ornamental/sin-ancla',
       detalle:
-        'el CA no nombra ninguna comprobacion observable (comando, gate, probe, fixture, conteo, exit, ' +
-        `veredicto falla/deniega/pasa, cantidad o comparador). CA citado: «${cita}»`,
+        'no nombra ninguna comprobacion observable (comando, gate, probe, fixture, conteo, exit, ' +
+        `veredicto falla/deniega/pasa, negacion universal o comparador). CA citado: «${cita}»`,
     };
   }
   if (contenido.length === 0) {
@@ -185,9 +284,7 @@ export function analizarCA(texto, cfg = configurar()) {
       ...base,
       ok: false,
       motivo: 'CA-ornamental/sin-objeto',
-      detalle:
-        `el CA nombra la comprobacion (${anclas.join(', ')}) pero no su OBJETO: no dice sobre que recae. ` +
-        `CA citado: «${cita}»`,
+      detalle: `nombra la comprobacion (${anclas.join(', ')}) pero no su OBJETO: no dice sobre que recae. CA citado: «${cita}»`,
     };
   }
   if (cfg.caEstricto && !tieneReferenteFuerte(texto)) {
@@ -196,7 +293,7 @@ export function analizarCA(texto, cfg = configurar()) {
       ok: false,
       motivo: 'CA-ornamental/sin-referente',
       detalle:
-        'modo --ca-estricto: el CA no cita ningun referente fuerte (codigo entre backticks, ruta/fichero, ' +
+        'modo --ca-estricto: no cita ningun referente fuerte (codigo entre backticks, ruta/fichero, ' +
         `cantidad o comparador). CA citado: «${cita}»`,
     };
   }
@@ -256,53 +353,73 @@ function extraerId(celda, reSerie) {
 }
 
 /**
- * Oculta lo que el lector del backlog tampoco ve: bloques de código y
- * comentarios HTML. Un WP escondido en un fence o comentado NO cuenta como
- * despachable (y una tabla de ejemplo dentro de un fence no salva a un backlog
- * sin WPs reales). Se blanquea la línea para conservar la numeración.
+ * Vela lo que el lector del backlog tampoco ve como tabla: bloques de código
+ * (fence o indentados), comentarios HTML y citas. Un WP escondido ahí NO cuenta
+ * como despachable, y una tabla de ejemplo dentro de un bloque no salva a un
+ * backlog sin WPs reales. Se blanquea la línea para conservar la numeración y
+ * se cuenta la CAUSA, para que el diagnóstico no mienta.
  */
 function velarNoVisible(lineas, stats) {
   let enFence = false;
   let enComentario = false;
+  const oculta = (causa) => {
+    stats.ocultas[causa]++;
+    stats.lineasOcultas++;
+    return '';
+  };
   return lineas.map((l) => {
     if (/^\s*(?:```|~~~)/.test(l)) {
       enFence = !enFence;
-      stats.lineasOcultas++;
-      return '';
+      return oculta('fence');
     }
-    if (enFence) {
-      stats.lineasOcultas++;
-      return '';
-    }
+    if (enFence) return oculta('fence');
+
     let linea = l.replace(/<!--.*?-->/g, '');
     if (enComentario) {
-      stats.lineasOcultas++;
       if (/-->/.test(linea)) {
         enComentario = false;
-        linea = linea.replace(/^[\s\S]*?-->/, '');
-        return linea;
+        stats.ocultas.comentario++;
+        stats.lineasOcultas++;
+        return linea.replace(/^[\s\S]*?-->/, '');
       }
-      return '';
+      return oculta('comentario');
     }
     if (/<!--/.test(linea)) {
       enComentario = true;
+      stats.ocultas.comentario++;
       stats.lineasOcultas++;
       return linea.replace(/<!--[\s\S]*$/, '');
     }
+    // Bloque de código INDENTADO (4 espacios o tabulador): markdown no lo
+    // renderiza como tabla. Hermano del fence; sin esto, el mismo contenido
+    // indentado aprobaría como backlog.
+    if (/^(?: {4,}|\t)/.test(linea) && linea.trim()) return oculta('indentado');
+    // Cita: la tabla se ve, pero citada — no es el BACKLOG, es lo que cita.
+    if (/^\s*>/.test(linea)) return oculta('cita');
     return linea;
   });
 }
 
 /**
- * Parsea el backlog. Devuelve WPs, defectos estructurales y estadísticas de
- * AUSENCIA (para que un backlog que lintea a cero nunca pase en silencio).
+ * Parsea el backlog. Devuelve WPs, defectos estructurales, avisos y
+ * estadísticas de AUSENCIA (para que un backlog que lintea a cero nunca pase
+ * en silencio).
  */
 export function parsearBacklog(texto, cfg = configurar()) {
   const laneRe = new RegExp(cfg.patronLane, 'i');
   const reSerie = new RegExp(`^(?:${cfg.series})$`);
-  const defectos = [];
   const wps = [];
-  const stats = { tablasWp: 0, tablasIgnoradas: 0, filasDato: 0, filasVacias: 0, lineasLista: 0, lineasOcultas: 0 };
+  const defectos = [];
+  const avisos = [];
+  const stats = {
+    tablasWp: 0,
+    tablasIgnoradas: 0,
+    filasDato: 0,
+    filasVacias: 0,
+    lineasLista: 0,
+    lineasOcultas: 0,
+    ocultas: { fence: 0, comentario: 0, indentado: 0, cita: 0 },
+  };
   const lineas = velarNoVisible(texto.split(/\r?\n/), stats);
 
   let lane = null;
@@ -351,7 +468,7 @@ export function parsearBacklog(texto, cfg = configurar()) {
             continue;
           }
           stats.filasDato++;
-          procesarFila(fila, mapa, lane, cfg, reSerie, wps, defectos, cabeceras, i + 1);
+          procesarFila(fila, mapa, lane, cfg, reSerie, wps, defectos, avisos, cabeceras, i + 1);
         }
       }
       i = j;
@@ -359,10 +476,12 @@ export function parsearBacklog(texto, cfg = configurar()) {
     }
     i++;
   }
-  return { wps, defectos, stats };
+  return { wps, defectos, avisos, stats };
 }
 
-function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, cabeceras, cabeceraLinea) {
+// ---------------------------------------------------------------------------
+
+function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avisos, cabeceras, cabeceraLinea) {
   const celda = (campo) => (mapa[campo] === undefined ? undefined : fila.celdas[mapa[campo]]);
   const { id, token, roto } = extraerId(celda('wp') || '', reSerie);
 
@@ -455,6 +574,19 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, cabe
     }
   }
 
+  // --- lane dentro del conjunto declarado (si el mundo lo declara) ---
+  if (cfg.lanes.length && wp.lane && !esMarcador(wp.lane, cfg.lexico)) {
+    if (!cfg.lanes.some((x) => norm(x) === norm(wp.lane))) {
+      defectos.push({
+        wp: id,
+        campo: 'lane',
+        motivo: 'lane-desconocida',
+        linea: fila.n,
+        detalle: `lane «${wp.lane}» fuera del conjunto declarado {${cfg.lanes.join(', ')}}`,
+      });
+    }
+  }
+
   // --- prioridad dentro del conjunto declarado ---
   if (wp.p !== undefined && !esMarcador(wp.p, cfg.lexico)) {
     const p = limpiarCelda(wp.p);
@@ -469,7 +601,7 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, cabe
     }
   }
 
-  // --- ejes dentro del conjunto declarado ---
+  // --- ejes: conjunto declarado y sin contradicciones ---
   if (wp.ejes !== undefined && !esMarcador(wp.ejes, cfg.lexico)) {
     const tokensEjes = limpiarCelda(wp.ejes).split(/[\s,;+/·]+/).filter(Boolean);
     for (const t of tokensEjes) {
@@ -483,39 +615,74 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, cabe
         });
       }
     }
+    const nulos = tokensEjes.filter((t) => cfg.ejesNinguno.some((x) => norm(x) === norm(t)));
+    if (nulos.length && tokensEjes.length > nulos.length) {
+      defectos.push({
+        wp: id,
+        campo: 'ejes',
+        motivo: 'ejes-contradictorios',
+        linea: fila.n,
+        detalle:
+          `declara «${nulos.join(', ')}» junto a otros ejes (${tokensEjes.join(', ')}): o no aplica ninguno, ` +
+          'o aplican los que se listan. La contradiccion no se resuelve sola.',
+      });
+    }
   }
 
-  // --- BRIEF con contenido real ---
+  // --- suelo del BRIEF: palabras DISTINTAS, no repeticiones ---
   if (wp.brief !== undefined && !esMarcador(wp.brief, cfg.lexico)) {
-    const sig = tokenizar(wp.brief).filter((t) => !cfg.lexico.stopwords.includes(t));
+    const sig = significativosDistintos(wp.brief, cfg);
     if (sig.length < cfg.minPalabrasBrief) {
       defectos.push({
         wp: id,
         campo: 'BRIEF',
         motivo: 'brief-insuficiente',
         linea: fila.n,
-        detalle: `el BRIEF tiene ${sig.length} palabra(s) significativa(s), minimo ${cfg.minPalabrasBrief}: «${limpiarCelda(wp.brief)}»`,
+        detalle:
+          `el BRIEF tiene ${sig.length} palabra(s) significativa(s) DISTINTA(S) [${sig.join(', ')}], ` +
+          `minimo ${cfg.minPalabrasBrief}: «${limpiarCelda(wp.brief)}»`,
       });
     }
   }
 
-  // --- CA verificable (el corazón) ---
+  // --- suelo del CA (bloqueante) + análisis ornamental (aviso) ---
   if (wp.ca !== undefined && !esMarcador(wp.ca, cfg.lexico)) {
-    const an = analizarCA(wp.ca, cfg);
-    if (!an.ok) defectos.push({ wp: id, campo: 'CA', motivo: an.motivo, linea: fila.n, detalle: an.detalle });
+    const sig = significativosDistintos(wp.ca, cfg);
+    if (sig.length < cfg.minPalabrasCa) {
+      defectos.push({
+        wp: id,
+        campo: 'CA',
+        motivo: 'ca-insuficiente',
+        linea: fila.n,
+        detalle:
+          `el CA tiene ${sig.length} palabra(s) significativa(s) DISTINTA(S) [${sig.join(', ')}], ` +
+          `minimo ${cfg.minPalabrasCa}: «${limpiarCelda(wp.ca)}». Suelo objetivo, no juicio de calidad.`,
+      });
+    } else {
+      const an = analizarCA(wp.ca, cfg);
+      if (!an.ok) avisos.push({ wp: id, campo: 'CA', motivo: an.motivo, linea: fila.n, detalle: an.detalle });
+    }
   }
 
   // --- deps: se declaran SIEMPRE, incluso para decir «ninguna» ---
   wp.depsIds = [];
   if (wp.deps !== undefined && !esMarcador(wp.deps, cfg.lexico)) {
     const crudo = limpiarCelda(wp.deps);
-    if (!cfg.sinDeps.some((x) => norm(x) === norm(crudo))) {
-      const tokensDeps = crudo.split(/[\s,;+/·→>]+/).filter(Boolean);
-      for (const t of tokensDeps) {
-        if (cfg.sinDeps.some((x) => norm(x) === norm(t))) continue;
-        wp.depsIds.push(t);
-      }
+    const tokensDeps = crudo.split(/[\s,;+/·→>]+/).filter(Boolean);
+    const nulos = tokensDeps.filter((t) => cfg.sinDeps.some((x) => norm(x) === norm(t)));
+    const reales = tokensDeps.filter((t) => !cfg.sinDeps.some((x) => norm(x) === norm(t)));
+    if (nulos.length && reales.length) {
+      defectos.push({
+        wp: id,
+        campo: 'deps',
+        motivo: 'deps-contradictorias',
+        linea: fila.n,
+        detalle:
+          `declara «${nulos.join(', ')}» junto a dependencias reales (${reales.join(', ')}): ` +
+          'o no depende de nada, o depende de esas. La contradiccion no se resuelve sola.',
+      });
     }
+    if (!cfg.sinDeps.some((x) => norm(x) === norm(crudo))) wp.depsIds = reales;
   }
   wps.push(wp);
 }
@@ -596,7 +763,8 @@ function verificarDeps(wps, cfg, defectos) {
 
 export function verificarBacklog(texto, cfg = configurar()) {
   const defectos = [];
-  const resumen = { wps: 0, defectos: 0, porMotivo: {} };
+  const avisos = [];
+  const resumen = { wps: 0, defectos: 0, avisos: 0, porMotivo: {}, porMotivoAviso: {} };
 
   if (!texto || !texto.trim()) {
     defectos.push({
@@ -606,18 +774,19 @@ export function verificarBacklog(texto, cfg = configurar()) {
       linea: 0,
       detalle: 'el fichero esta vacio (0 caracteres utiles): no hay nada que despachar. Nunca es verde.',
     });
-    return finalizar({ ok: false, exit: 3, defectos, resumen, wps: [], stats: null });
+    return finalizar({ ok: false, exit: 3, defectos, avisos, resumen, wps: [], stats: null });
   }
 
-  const { wps, defectos: dParse, stats } = parsearBacklog(texto, cfg);
+  const { wps, defectos: dParse, avisos: aParse, stats } = parsearBacklog(texto, cfg);
   defectos.push(...dParse);
+  avisos.push(...aParse);
   verificarDeps(wps, cfg, defectos);
 
   if (wps.length === 0) {
     let detalle;
     if (stats.tablasWp === 0 && stats.tablasIgnoradas === 0) {
       detalle =
-        `0 WPs: el backlog no contiene NINGUNA tabla. ${stats.lineasLista} linea(s) de lista detectada(s). ` +
+        `0 WPs: el backlog no contiene NINGUNA tabla legible. ${stats.lineasLista} linea(s) de lista detectada(s). ` +
         'El formato despachable es una tabla con columna de WP (ver reference/backlog-despachable.md). ' +
         'Ruta equivocada, fichero truncado o formato ajeno: no se concede en verde.';
     } else if (stats.tablasWp === 0) {
@@ -632,69 +801,178 @@ export function verificarBacklog(texto, cfg = configurar()) {
         '(ID ausente o de serie no declarada). Revisa --series.';
     }
     if (stats.lineasOcultas) {
+      const causas = Object.entries(stats.ocultas)
+        .filter(([, n]) => n > 0)
+        .map(([c, n]) => `${c}=${n}`)
+        .join(', ');
       detalle +=
-        ` Ademas se ignoraron ${stats.lineasOcultas} linea(s) por estar en bloque de codigo o comentario HTML: ` +
-        'lo que el lector no ve tampoco se despacha.';
+        ` Ademas se ignoraron ${stats.lineasOcultas} linea(s) NO legibles como tabla (${causas}): ` +
+        'lo que el lector no ve como tabla del backlog tampoco se despacha.';
     }
     defectos.push({ wp: '(backlog)', campo: 'WP', motivo: 'sin-wps', linea: 0, detalle });
-    return finalizar({ ok: false, exit: 3, defectos, resumen, wps, stats });
+    return finalizar({ ok: false, exit: 3, defectos, avisos, resumen, wps, stats });
   }
 
   const exit = defectos.length ? 1 : 0;
-  return finalizar({ ok: exit === 0, exit, defectos, resumen, wps, stats });
+  return finalizar({ ok: exit === 0, exit, defectos, avisos, resumen, wps, stats });
 }
 
 function finalizar(r) {
   r.resumen.wps = r.wps.length;
   r.resumen.defectos = r.defectos.length;
+  r.resumen.avisos = r.avisos.length;
   for (const d of r.defectos) r.resumen.porMotivo[d.motivo] = (r.resumen.porMotivo[d.motivo] || 0) + 1;
-  r.defectos.sort((a, b) => (a.linea || 0) - (b.linea || 0) || String(a.wp).localeCompare(String(b.wp)));
+  for (const a of r.avisos) r.resumen.porMotivoAviso[a.motivo] = (r.resumen.porMotivoAviso[a.motivo] || 0) + 1;
+  const ordenar = (l) => l.sort((a, b) => (a.linea || 0) - (b.linea || 0) || String(a.wp).localeCompare(String(b.wp)));
+  ordenar(r.defectos);
+  ordenar(r.avisos);
   return r;
 }
 
 // ---------------------------------------------------------------------------
-// 7. Configuración (CLI + env)
+// 7. Configuración (CLI + env) — fail-closed ante cualquier duda
 // ---------------------------------------------------------------------------
 
+const FLAGS_BOOL = ['--ca-estricto', '--json', '--ayuda', '--help', '-h'];
+const FLAGS_VALOR = [
+  '--backlog', '--series', '--prioridades', '--ejes', '--ejes-ninguno', '--lanes', '--patron-lane',
+  '--sin-deps', '--deps-externas', '--umbral-valoracion', '--min-palabras-brief', '--min-palabras-ca',
+  '--lexico', '--lexico-modo', '--alias', '--alias-modo',
+];
+
+/**
+ * Parseo ESTRICTO de argv: admite `--flag valor` y `--flag=valor`, y rechaza
+ * (exit 2) cualquier flag desconocida, argumento suelto o valor ausente. Una
+ * flag mal escrita NO puede caer al valor por defecto: el linter contestaría
+ * sobre un fichero que nadie pidió y en CI solo se lee el exit.
+ */
+export function parsearArgv(argv) {
+  const opciones = {};
+  const errores = [];
+  for (let i = 0; i < argv.length; i++) {
+    const bruto = argv[i];
+    if (!bruto.startsWith('-')) {
+      errores.push(`argumento suelto «${bruto}»: este linter no toma posicionales (usa --backlog RUTA)`);
+      continue;
+    }
+    const igual = bruto.indexOf('=');
+    const nombre = igual >= 0 ? bruto.slice(0, igual) : bruto;
+    const valorIgual = igual >= 0 ? bruto.slice(igual + 1) : undefined;
+    if (FLAGS_BOOL.includes(nombre)) {
+      if (valorIgual !== undefined) errores.push(`la flag «${nombre}» no toma valor (recibido «${valorIgual}»)`);
+      opciones[nombre] = true;
+      continue;
+    }
+    if (FLAGS_VALOR.includes(nombre)) {
+      let valor = valorIgual;
+      if (valor === undefined) {
+        valor = argv[i + 1];
+        if (valor === undefined || valor.startsWith('--')) {
+          errores.push(`la flag «${nombre}» exige un valor`);
+          continue;
+        }
+        i++;
+      }
+      opciones[nombre] = valor;
+      continue;
+    }
+    const parecidas = [...FLAGS_BOOL, ...FLAGS_VALOR].filter((f) => f.slice(0, 5) === nombre.slice(0, 5));
+    errores.push(
+      `flag desconocida «${nombre}»${parecidas.length ? ` (¿querias ${parecidas.join(' | ')}?)` : ''}`
+    );
+  }
+  if (errores.length) {
+    throw new ErrorUso(`argumentos invalidos:\n  - ${errores.join('\n  - ')}\n  (--ayuda lista las flags admitidas)`);
+  }
+  return opciones;
+}
+
+function numeroValido(nombre, bruto, { min, max, entero }) {
+  const n = Number(bruto);
+  if (bruto === '' || bruto === null || !Number.isFinite(n)) {
+    throw new ErrorUso(`${nombre}: «${bruto}» no es un numero. Una config invalida NO desactiva la regla en silencio.`);
+  }
+  if (entero && !Number.isInteger(n)) throw new ErrorUso(`${nombre}: «${bruto}» debe ser entero`);
+  if (n < min || n > max) throw new ErrorUso(`${nombre}: ${n} fuera del rango [${min}, ${max}]`);
+  return n;
+}
+
+function regexValida(nombre, patron, envoltorio = (p) => p) {
+  try {
+    new RegExp(patron);
+    new RegExp(envoltorio(patron));
+  } catch (e) {
+    throw new ErrorUso(`${nombre}: expresion regular invalida (${e.message})`);
+  }
+  return patron;
+}
+
+function listaValida(nombre, bruto) {
+  const l = String(bruto).split(/[,;]/).map((x) => x.trim()).filter(Boolean);
+  if (!l.length) throw new ErrorUso(`${nombre}: conjunto vacio (un conjunto vacio rechazaria todo)`);
+  return l;
+}
+
 export function configurar(over = {}, argv = [], env = {}) {
-  const has = (f) => argv.includes(f);
-  const val = (f, d) => {
-    const i = argv.indexOf(f);
-    return i >= 0 && argv[i + 1] !== undefined ? argv[i + 1] : d;
+  const op = parsearArgv(argv);
+  const val = (flag, envVar, def) => {
+    if (op[flag] !== undefined) return op[flag];
+    if (envVar && env[envVar] !== undefined && env[envVar] !== '') return env[envVar];
+    return def;
   };
-  const lista = (s) => String(s).split(/[,;]/).map((x) => x.trim()).filter(Boolean);
 
   const cfg = {
     ...DEFAULTS,
-    backlog: val('--backlog', env.BACKLOG_RUTA || DEFAULTS.backlog),
-    series: val('--series', env.BACKLOG_SERIES || DEFAULTS.series),
-    prioridades: lista(val('--prioridades', env.BACKLOG_PRIORIDADES || DEFAULTS.prioridades.join(','))),
-    ejes: lista(val('--ejes', env.BACKLOG_EJES || DEFAULTS.ejes.join(','))),
-    patronLane: val('--patron-lane', env.BACKLOG_PATRON_LANE || DEFAULTS.patronLane),
-    sinDeps: lista(val('--sin-deps', env.BACKLOG_SIN_DEPS || DEFAULTS.sinDeps.join(','))),
-    depsExternas: val('--deps-externas', env.BACKLOG_DEPS_EXTERNAS || DEFAULTS.depsExternas),
-    umbralValoracion: Number(val('--umbral-valoracion', env.BACKLOG_UMBRAL || DEFAULTS.umbralValoracion)),
-    minPalabrasBrief: Number(val('--min-palabras-brief', env.BACKLOG_MIN_BRIEF || DEFAULTS.minPalabrasBrief)),
-    caEstricto: has('--ca-estricto') || env.BACKLOG_CA_ESTRICTO === '1',
+    backlog: val('--backlog', 'BACKLOG_RUTA', DEFAULTS.backlog),
+    series: regexValida('--series', val('--series', 'BACKLOG_SERIES', DEFAULTS.series), (p) => `^(?:${p})$`),
+    prioridades: listaValida('--prioridades', val('--prioridades', 'BACKLOG_PRIORIDADES', DEFAULTS.prioridades.join(','))),
+    ejes: listaValida('--ejes', val('--ejes', 'BACKLOG_EJES', DEFAULTS.ejes.join(','))),
+    ejesNinguno: listaValida('--ejes-ninguno', val('--ejes-ninguno', 'BACKLOG_EJES_NINGUNO', DEFAULTS.ejesNinguno.join(','))),
+    lanes: (() => {
+      const bruto = val('--lanes', 'BACKLOG_LANES', '');
+      return bruto ? listaValida('--lanes', bruto) : [];
+    })(),
+    patronLane: regexValida('--patron-lane', val('--patron-lane', 'BACKLOG_PATRON_LANE', DEFAULTS.patronLane)),
+    sinDeps: listaValida('--sin-deps', val('--sin-deps', 'BACKLOG_SIN_DEPS', DEFAULTS.sinDeps.join(','))),
+    depsExternas: (() => {
+      const bruto = val('--deps-externas', 'BACKLOG_DEPS_EXTERNAS', DEFAULTS.depsExternas);
+      return bruto ? regexValida('--deps-externas', bruto, (p) => `^(?:${p})$`) : '';
+    })(),
+    umbralValoracion: numeroValido('--umbral-valoracion', val('--umbral-valoracion', 'BACKLOG_UMBRAL', DEFAULTS.umbralValoracion), { min: 0, max: 1, entero: false }),
+    minPalabrasBrief: numeroValido('--min-palabras-brief', val('--min-palabras-brief', 'BACKLOG_MIN_BRIEF', DEFAULTS.minPalabrasBrief), { min: 1, max: 100, entero: true }),
+    minPalabrasCa: numeroValido('--min-palabras-ca', val('--min-palabras-ca', 'BACKLOG_MIN_CA', DEFAULTS.minPalabrasCa), { min: 1, max: 100, entero: true }),
+    caEstricto: op['--ca-estricto'] === true || env.BACKLOG_CA_ESTRICTO === '1',
     alias: { ...DEFAULTS.alias },
     lexico: { ...DEFAULTS.lexico },
-    json: has('--json'),
+    json: op['--json'] === true,
   };
 
   // Léxico y alias sustituibles por fichero JSON del consumidor.
-  const rutaLexico = val('--lexico', env.BACKLOG_LEXICO || '');
+  const rutaLexico = val('--lexico', 'BACKLOG_LEXICO', '');
   if (rutaLexico) {
-    const extra = JSON.parse(readFileSync(rutaLexico, 'utf-8'));
-    const modo = val('--lexico-modo', 'extender');
+    let extra;
+    try {
+      extra = JSON.parse(readFileSync(rutaLexico, 'utf-8'));
+    } catch (e) {
+      throw new ErrorUso(`--lexico: no se pudo leer/parsear «${rutaLexico}» (${e.message})`);
+    }
+    const modo = val('--lexico-modo', null, 'extender');
+    if (!['extender', 'reemplazar'].includes(modo)) throw new ErrorUso(`--lexico-modo: «${modo}» (usa extender|reemplazar)`);
     for (const clave of Object.keys(cfg.lexico)) {
       if (!extra[clave]) continue;
       cfg.lexico[clave] = modo === 'reemplazar' ? extra[clave] : [...cfg.lexico[clave], ...extra[clave]];
     }
   }
-  const rutaAlias = val('--alias', env.BACKLOG_ALIAS || '');
+  const rutaAlias = val('--alias', 'BACKLOG_ALIAS', '');
   if (rutaAlias) {
-    const extra = JSON.parse(readFileSync(rutaAlias, 'utf-8'));
-    const modo = val('--alias-modo', 'extender');
+    let extra;
+    try {
+      extra = JSON.parse(readFileSync(rutaAlias, 'utf-8'));
+    } catch (e) {
+      throw new ErrorUso(`--alias: no se pudo leer/parsear «${rutaAlias}» (${e.message})`);
+    }
+    const modo = val('--alias-modo', null, 'extender');
+    if (!['extender', 'reemplazar'].includes(modo)) throw new ErrorUso(`--alias-modo: «${modo}» (usa extender|reemplazar)`);
     for (const campo of Object.keys(cfg.alias)) {
       if (!extra[campo]) continue;
       cfg.alias[campo] = modo === 'reemplazar' ? extra[campo].map(norm) : [...cfg.alias[campo], ...extra[campo].map(norm)];
@@ -710,18 +988,28 @@ const AYUDA = `verificar-backlog.mjs — linter de BACKLOG despachable
   --series REGEX|REGEX      serie(s) de ID del mundo (def. WP-[A-Za-z0-9]+)
   --prioridades P0,P1,P2    conjunto de prioridades admitido
   --ejes I,II,...           conjunto de ejes de CA admitido
+  --ejes-ninguno ninguno    tokens que declaran «sin eje» (contradiccion si van con otros)
+  --lanes A,B,C             conjunto de lanes admitido (def. vacio = no se valida)
   --patron-lane REGEX       encabezado que abre una lane (grupo 1 = nombre)
   --sin-deps ninguna,none   tokens que declaran «sin dependencias»
   --deps-externas REGEX     IDs permitidos fuera del backlog (def. ninguno)
-  --umbral-valoracion 0.5   ratio de valoracion que vuelve ornamental un CA
-  --min-palabras-brief 3    minimo de palabras significativas del BRIEF
-  --ca-estricto             exige ademas referente fuerte en el CA
+  --umbral-valoracion 0.5   ratio de valoracion que vuelve ornamental un CA (aviso)
+  --min-palabras-brief 3    suelo del BRIEF en palabras DISTINTAS
+  --min-palabras-ca 2       suelo del CA en palabras DISTINTAS
+  --ca-estricto             el aviso de CA exige ademas referente fuerte
   --lexico F.json [--lexico-modo extender|reemplazar]
   --alias  F.json [--alias-modo  extender|reemplazar]
   --json                    reporte en JSON
   --ayuda
 
-Exit: 0 despachable · 1 defectos · 2 uso/E-S · 3 AUSENCIA (vacio / 0 WPs).
+Admite tambien la forma --flag=valor. Toda flag desconocida, argumento suelto,
+numero no numerico o regex invalida es exit 2 (nunca un veredicto).
+
+BLOQUEA lo decidible (campos, conjuntos, contradicciones, deps, ciclos, suelos,
+ausencia). AVISA sin bloquear sobre CA ornamental: la calidad de un CA es
+juicio, y un gate que rechaza CAs correctos acaba desactivado.
+
+Exit: 0 despachable · 1 defectos · 2 uso/config/E-S · 3 AUSENCIA (vacio / 0 WPs).
 Doctrina y limites: reference/backlog-despachable.md`;
 
 // ---------------------------------------------------------------------------
@@ -730,20 +1018,41 @@ Doctrina y limites: reference/backlog-despachable.md`;
 
 function imprimir(r, cfg) {
   if (cfg.json) {
-    console.log(JSON.stringify({ ok: r.ok, exit: r.exit, resumen: r.resumen, defectos: r.defectos, wps: r.wps.map((w) => ({ id: w.id, lane: w.lane, p: limpiarCelda(w.p), deps: w.depsIds })) }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          ok: r.ok,
+          exit: r.exit,
+          resumen: r.resumen,
+          defectos: r.defectos,
+          avisos: r.avisos,
+          wps: r.wps.map((w) => ({ id: w.id, lane: w.lane, p: limpiarCelda(w.p), deps: w.depsIds })),
+        },
+        null,
+        2
+      )
+    );
     return;
   }
-  console.log(`[verificar-backlog] ${cfg.backlog} · ${r.resumen.wps} WP · ${r.resumen.defectos} defecto(s)`);
+  console.log(
+    `[verificar-backlog] ${cfg.backlog} · ${r.resumen.wps} WP · ${r.resumen.defectos} defecto(s) · ${r.resumen.avisos} aviso(s)`
+  );
   for (const d of r.defectos) {
     console.log(`  x ${d.wp} · campo ${d.campo} · ${d.motivo} · linea ${d.linea}`);
     console.log(`      ${d.detalle}`);
   }
+  for (const a of r.avisos) {
+    console.log(`  ! ${a.wp} · campo ${a.campo} · ${a.motivo} · linea ${a.linea} (AVISO, no bloquea)`);
+    console.log(`      ${a.detalle}`);
+  }
+  const avisoResumen = Object.entries(r.resumen.porMotivoAviso).map(([m, n]) => `${m}=${n}`).join(' · ');
   if (r.resumen.defectos) {
     const porMotivo = Object.entries(r.resumen.porMotivo).map(([m, n]) => `${m}=${n}`).join(' · ');
     console.log(`[verificar-backlog] NO DESPACHABLE · ${porMotivo}`);
   } else {
-    console.log('[verificar-backlog] DESPACHABLE: los 7 campos declarados, prioridades y ejes en conjunto, deps sin ciclos, CA verificables.');
+    console.log('[verificar-backlog] DESPACHABLE: los 7 campos declarados, conjuntos respetados, deps sin ciclos, suelos cumplidos.');
   }
+  if (r.resumen.avisos) console.log(`[verificar-backlog] avisos (no bloquean) · ${avisoResumen}`);
 }
 
 const invocado = process.argv[1] ? realpathSync(process.argv[1]) : '';
@@ -758,7 +1067,7 @@ if (esMain) {
   try {
     cfg = configurar({}, argv, process.env);
   } catch (e) {
-    console.error(`[verificar-backlog] configuracion invalida: ${e.message}`);
+    console.error(`[verificar-backlog] ${e instanceof ErrorUso ? e.message : `configuracion invalida: ${e.message}`}`);
     process.exit(2);
   }
   if (!existsSync(cfg.backlog)) {
@@ -772,7 +1081,13 @@ if (esMain) {
     console.error(`[verificar-backlog] no se pudo leer ${cfg.backlog}: ${e.message}`);
     process.exit(2);
   }
-  const r = verificarBacklog(texto, cfg);
+  let r;
+  try {
+    r = verificarBacklog(texto, cfg);
+  } catch (e) {
+    console.error(`[verificar-backlog] fallo interno al lintear: ${e.message}`);
+    process.exit(2);
+  }
   imprimir(r, cfg);
   process.exit(r.exit);
 }

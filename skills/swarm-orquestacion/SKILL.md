@@ -141,9 +141,13 @@ ejemplo: `examples/`.
     **enmascarado** con **conteo literal** —
     `../vigilancia/reference/ADDENDA-DOS-CARAS.md`.
 23. BACKLOG despachable antes de la ola: cada WP declara `lane`, `WP`,
-    `BRIEF`, `CA`, `P`, `deps`, `ejes`; el CA nombra **ancla y objeto** de una
-    comprobación (no valoración ornamental); deps sin ciclos; y la **ausencia**
-    (fichero vacío, 0 WPs, tabla sin filas) es fallo ruidoso, nunca verde —
+    `BRIEF`, `CA`, `P`, `deps`, `ejes`; conjuntos declarados, sin
+    contradicciones, deps sin ciclos, suelo por campo; la **ausencia** (fichero
+    vacío, 0 WPs, tabla sin filas, WP solo visible en fence/comentario/bloque
+    indentado/cita) es fallo ruidoso, nunca verde. El gate **bloquea lo
+    decidible y avisa de lo opinable**: el CA ornamental (sin ancla ni objeto)
+    se cita como aviso y no decide el exit, porque un gate que rechaza CAs
+    correctos acaba desactivado —
     `reference/backlog-despachable.md` + `scripts/verificar-backlog.mjs`.
 
 ## Método v0.7 (costuras)
@@ -201,13 +205,13 @@ convivencia.)
 | `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola (base de v0.4) |
 | `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
-| `reference/backlog-despachable.md` | contrato de BACKLOG despachable (7 campos) + qué hace **ornamental** a un CA y límites del linter |
+| `reference/backlog-despachable.md` | contrato de BACKLOG despachable (7 campos), qué **bloquea** vs qué **avisa**, qué hace ornamental a un CA y los límites del linter |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
-| `examples/fixture-backlog/` | fixture de las dos caras del BACKLOG (1 válida + 15 inválidas con su motivo en `casos.json`) |
+| `examples/fixture-backlog/` | fixture del BACKLOG en cuatro caras (2 válidas · 1 de avisos · 12 inválidas · 6 de ausencia) con su veredicto exacto en `casos.json` |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` + MAPA-RAIZ/REPO/TALLER (#19) |
 | `reference/plantillas/MAPA-*.md.tpl` | mapas de territorio con regla al pie |
 | `scripts/comprobar-ceguera.sh` | grep de ceguera sobre este skill |
 | `scripts/verificar-changelog.mjs` | gate opt-in del CHANGELOG de **gobierno** (WP-id ↔ BACKLOG; `--role gobierno` + rutas); no aplica a CHANGELOG de paquete |
 | `scripts/proyectar-backlog.mjs` | proyección del backlog a issues (export/import; sin sync; gate ceguera) — ver `reference/proyeccion-issues.md` |
-| `scripts/verificar-backlog.mjs` | linter de BACKLOG **despachable**: 7 campos por WP, CA verificable, prioridades/ejes del conjunto declarado, deps sin ciclos; exit 3 si el backlog está vacío o lintea a 0 WPs |
+| `scripts/verificar-backlog.mjs` | linter de BACKLOG **despachable**: 7 campos por WP, conjuntos declarados, deps sin ciclos, suelos; CA ornamental como **aviso**; exit 3 si está vacío o lintea a 0 WPs, exit 2 ante cualquier duda de uso |

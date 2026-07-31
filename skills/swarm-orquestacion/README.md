@@ -53,10 +53,12 @@ node skills/swarm-orquestacion/scripts/verificar-changelog.mjs \
 ## Gate · BACKLOG despachable (antes de la ola)
 
 `scripts/verificar-backlog.mjs` decide si el BACKLOG del mundo se puede
-repartir: los siete campos por WP (`lane`, `WP`, `BRIEF`, `CA`, `P`, `deps`,
-`ejes`), CA **verificable** (ancla + objeto, no valoración ornamental),
-prioridad y ejes dentro del conjunto declarado, y `deps` que resuelven sin
-ciclos.
+repartir. **Bloquea lo decidible**: los siete campos por WP (`lane`, `WP`,
+`BRIEF`, `CA`, `P`, `deps`, `ejes`), prioridad/ejes/lanes dentro de los
+conjuntos declarados, contradicciones (`ninguna` junto a una dep real), `deps`
+que resuelven sin ciclos y el suelo de BRIEF/CA en palabras distintas.
+**Avisa sin bloquear** del CA ornamental (sin ancla ni objeto): la calidad de un
+CA es juicio, y un gate que rechaza CAs correctos acaba desactivado.
 
 ```bash
 node skills/swarm-orquestacion/scripts/verificar-backlog.mjs \
@@ -64,12 +66,14 @@ node skills/swarm-orquestacion/scripts/verificar-backlog.mjs \
   --prioridades P0,P1,P2
 ```
 
-Exit `0` despachable · `1` defectos (citados por WP y campo) · `2` uso/E-S ·
-`3` **ausencia**: fichero vacío o 0 WPs. La ausencia nunca es verde.
+Exit `0` despachable (puede llevar avisos) · `1` defectos (citados por WP y
+campo) · `2` uso/configuración (flag desconocida, número inválido, regex rota) ·
+`3` **ausencia**: fichero vacío o 0 WPs. La ausencia nunca es verde, y una duda
+de uso nunca es un veredicto.
 
-Series, prioridades, ejes, nombres de columna, patrón de lane y léxico de CA
-son del consumidor (`--ayuda`). Contrato y límites honestos:
-`reference/backlog-despachable.md`. Fixtures de las dos caras:
+Series, prioridades, ejes, lanes, nombres de columna, patrón de lane, suelos y
+léxico de CA son del consumidor (`--ayuda`). Contrato y límites honestos:
+`reference/backlog-despachable.md`. Fixtures en cuatro caras:
 `examples/fixture-backlog/` (`node --test scripts/verificar-backlog.test.mjs`).
 
 ## Ceguera (cara pública)

@@ -1,10 +1,10 @@
 // Suite del linter de BACKLOG despachable (verificar-backlog.mjs).
-// Ejecutar: node --test skills/swarm-orquestacion/scripts/
+// Ejecutar: node --test skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs
 //
-// Dos caras: la fixture válida PASA (exit 0) y cada fixture inválida CAE POR SU
-// MOTIVO (recuento exacto por motivo, no «hubo algún error»). La cara de
-// AUSENCIA (fichero vacío, sin tabla, tabla sin filas, formato ajeno) es fallo
-// ruidoso con exit 3: un linter que concede en falso es peor que no tenerlo.
+// Política verificada aquí (v2, tras contrarrevisión): BLOQUEA lo decidible
+// (campos, conjuntos, contradicciones, deps, ciclos, suelos, AUSENCIA) y AVISA
+// sin bloquear sobre CA ornamental. Los casos rojos permanentes de la
+// devolución están marcados con [B1]…[B4] y [M1]…[M5].
 //
 // Fixtures SINTÉTICAS (serie FX-…), sin nombres ni rutas de ningún mundo.
 
@@ -13,20 +13,33 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { readFileSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { join, dirname } from 'node:path';
+import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { analizarCA, parsearBacklog, detectarCiclos, verificarBacklog, configurar, CAMPOS } from './verificar-backlog.mjs';
+import {
+  analizarCA,
+  parsearBacklog,
+  detectarCiclos,
+  verificarBacklog,
+  configurar,
+  parsearArgv,
+  significativosDistintos,
+  ErrorUso,
+  CAMPOS,
+  MOTIVOS_AVISO,
+} from './verificar-backlog.mjs';
 
 const SCRIPT = fileURLToPath(new URL('./verificar-backlog.mjs', import.meta.url));
 const FIXTURES = fileURLToPath(new URL('../examples/fixture-backlog/', import.meta.url));
 const CASOS = JSON.parse(readFileSync(join(FIXTURES, 'casos.json'), 'utf-8'));
 
+/** CLI con la calibración de la fixture. */
 function correr(ruta, extra = []) {
-  const r = spawnSync(
-    process.execPath,
-    [SCRIPT, '--backlog', ruta, '--series', CASOS.series, '--prioridades', CASOS.prioridades, ...extra],
-    { encoding: 'utf-8' }
-  );
+  return crudo(['--backlog', ruta, '--series', CASOS.series, '--prioridades', CASOS.prioridades, ...extra]);
+}
+
+/** CLI con argv literal (para probar el contrato de uso). */
+function crudo(argv) {
+  const r = spawnSync(process.execPath, [SCRIPT, ...argv], { encoding: 'utf-8' });
   return { status: r.status, salida: `${r.stdout}\n${r.stderr}` };
 }
 
@@ -35,7 +48,17 @@ function correrJson(ruta, extra = []) {
   return { ...r, reporte: JSON.parse(r.salida.trim()) };
 }
 
-// --- 1. Tabla de casos: cada fixture con su veredicto y su motivo ---------
+const cfg = configurar();
+const cfgFx = configurar({ series: 'FX-[A-Z][0-9]{2}' });
+
+function backlogDe(filas, cabecera = '| WP | P | BRIEF | CA | deps | ejes |') {
+  return `# BACKLOG\n\n## Lane A · ALFA\n\n${cabecera}\n| -- | - | ----- | -- | ---- | ---- |\n${filas.join('\n')}\n`;
+}
+const FILA_OK = '| **FX-A01** | P0 | extraer el kit de plantillas a un paquete propio | el probe del consumidor sintetico devuelve exit 0 | ninguna | I |';
+
+// ===========================================================================
+// 1. Tabla de casos: cada fixture con su veredicto, sus defectos y sus avisos
+// ===========================================================================
 
 for (const caso of CASOS.casos) {
   test(`fixture ${caso.cara}: ${caso.fixture} → exit ${caso.exit} (${caso.descripcion})`, () => {
@@ -45,30 +68,99 @@ for (const caso of CASOS.casos) {
 
     const { reporte } = correrJson(ruta);
     assert.equal(reporte.resumen.wps, caso.wps, `WPs parseados inesperados.\n${salida}`);
-    assert.deepEqual(
-      reporte.resumen.porMotivo,
-      caso.motivos,
-      `el recuento por motivo debe ser exacto: cada fixture cae por SU motivo.\n${salida}`
-    );
+    assert.deepEqual(reporte.resumen.porMotivo, caso.motivos, `defectos bloqueantes: recuento exacto.\n${salida}`);
+    assert.deepEqual(reporte.resumen.porMotivoAviso, caso.avisos, `avisos: recuento exacto.\n${salida}`);
     for (const cita of caso.citas) {
       assert.ok(salida.includes(cita), `el mensaje debe citar «${cita}».\n${salida}`);
     }
-    // Cada defecto nombra el WP y el campo (regla del encargo).
-    for (const d of reporte.defectos) {
-      assert.ok(d.wp, 'todo defecto nombra el WP');
+    for (const d of [...reporte.defectos, ...reporte.avisos]) {
+      assert.ok(d.wp, 'todo defecto/aviso nombra el WP');
       assert.ok(CAMPOS.includes(d.campo), `campo desconocido: ${d.campo}`);
-      assert.ok(d.detalle && d.detalle.length > 20, 'todo defecto explica el motivo');
+      assert.ok(d.detalle && d.detalle.length > 20, 'todo defecto/aviso explica el motivo');
+    }
+    // Ningún motivo de aviso puede aparecer como bloqueante, ni al revés.
+    for (const m of Object.keys(reporte.resumen.porMotivo)) {
+      assert.ok(!MOTIVOS_AVISO.includes(m), `${m} es aviso: no puede decidir el exit`);
+    }
+    for (const m of Object.keys(reporte.resumen.porMotivoAviso)) {
+      assert.ok(MOTIVOS_AVISO.includes(m), `${m} no está declarado como aviso`);
     }
   });
 }
 
-test('la fixture válida es la ÚNICA con exit 0', () => {
-  const verdes = CASOS.casos.filter((c) => c.exit === 0);
-  assert.equal(verdes.length, 1);
-  assert.equal(verdes[0].cara, 'valida');
+test('coherencia de la tabla: solo valida/aviso salen en verde; ausencia siempre exit 3', () => {
+  for (const c of CASOS.casos) {
+    if (c.exit === 0) assert.ok(['valida', 'aviso'].includes(c.cara), `${c.fixture} verde con cara ${c.cara}`);
+    if (c.cara === 'invalida') assert.equal(c.exit, 1, `${c.fixture}`);
+    if (c.cara === 'ausencia') assert.equal(c.exit, 3, `${c.fixture}`);
+  }
+  assert.ok(CASOS.casos.filter((c) => c.cara === 'valida').length >= 2, 'al menos dos fixtures válidas');
+  assert.ok(CASOS.casos.filter((c) => c.cara === 'ausencia').length >= 4, 'al menos cuatro caras de ausencia');
 });
 
-// --- 2. Ausencia: probar lo que CALLA, no solo lo malformado --------------
+// ===========================================================================
+// 2. Política: el aviso de CA informa pero NO bloquea
+// ===========================================================================
+
+test('CA ornamental: se cita con su motivo y su texto literal, y el exit sigue siendo 0', () => {
+  const { status, salida, reporte } = correrJson(join(FIXTURES, 'backlog-ca-ornamental.md'));
+  assert.equal(status, 0, 'la calidad del CA es juicio: no decide el despacho');
+  assert.equal(reporte.resumen.defectos, 0);
+  assert.equal(reporte.resumen.avisos, 5, salida);
+  assert.equal(reporte.avisos[0].wp, 'FX-A01');
+  assert.match(reporte.avisos[0].detalle, /queda elegante/);
+});
+
+test('un backlog con TODOS los CA ornamentales sigue siendo despachable, con sus avisos', () => {
+  const texto = backlogDe([
+    '| **FX-A01** | P0 | extraer el kit de plantillas a un paquete propio | queda elegante | ninguna | I |',
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | mejor estructurado | FX-A01 | II |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0);
+  assert.equal(r.resumen.avisos, 2);
+  assert.equal(r.resumen.defectos, 0);
+});
+
+// ===========================================================================
+// 3. [B1] Ausencia: probar lo que CALLA, no solo lo malformado
+// ===========================================================================
+
+test('[B1] tabla INDENTADA 4 espacios → exit 3 (hermano del fence, no aprueba)', () => {
+  const texto = `# BACKLOG
+
+## Lane A · ALFA
+
+    | WP | P | BRIEF | CA | deps | ejes |
+    | -- | - | ----- | -- | ---- | ---- |
+    ${FILA_OK}
+`;
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 3, 'un documento que solo documenta el formato no es un backlog');
+  assert.equal(r.resumen.wps, 0);
+  assert.match(r.defectos.at(-1).detalle, /indentado=3/);
+});
+
+test('[B1] el mismo contenido en fence, comentario, indentado o cita da SIEMPRE exit 3', () => {
+  const tabla = `| WP | P | BRIEF | CA | deps | ejes |\n| -- | - | ----- | -- | ---- | ---- |\n${FILA_OK}`;
+  const envolturas = {
+    fence: '```\n' + tabla + '\n```',
+    comentario: '<!--\n' + tabla + '\n-->',
+    indentado: tabla.split('\n').map((l) => `    ${l}`).join('\n'),
+    cita: tabla.split('\n').map((l) => `> ${l}`).join('\n'),
+  };
+  for (const [causa, cuerpo] of Object.entries(envolturas)) {
+    const r = verificarBacklog(`# BACKLOG\n\n## Lane A · ALFA\n\n${cuerpo}\n`, cfgFx);
+    assert.equal(r.exit, 3, `envoltura ${causa} concedió`);
+    assert.match(r.defectos.at(-1).detalle, new RegExp(`${causa}=`), `el diagnóstico debe nombrar la causa ${causa}`);
+  }
+});
+
+test('[M5] el diagnóstico de ausencia no miente sobre la causa', () => {
+  const { salida } = correr(join(FIXTURES, 'backlog-tabla-en-cita.md'));
+  assert.match(salida, /cita=3/, 'dice que la tabla estaba citada');
+  assert.match(salida, /NO legibles como tabla/);
+});
 
 test('AUSENCIA: fichero inexistente → exit 2, nunca verde', () => {
   const { status, salida } = correr(join(FIXTURES, 'no-existe-este-backlog.md'));
@@ -90,15 +182,8 @@ test('AUSENCIA: fichero solo con espacios en blanco → exit 3', () => {
 });
 
 test('AUSENCIA: todas las filas de serie ajena → 0 WPs y exit 3 (jamás verde por vacío)', () => {
-  const texto = `# BACKLOG
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **ZZ-01** | P0 | fila de serie ajena al mundo | el probe de la fixture falla sin firma | ninguna | I |
-`;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
+  const texto = backlogDe(['| **ZZ-01** | P0 | fila de serie ajena al mundo | el probe de la fixture falla sin firma | ninguna | I |']);
+  const r = verificarBacklog(texto, cfgFx);
   assert.equal(r.exit, 3);
   assert.equal(r.resumen.wps, 0);
   assert.equal(r.resumen.porMotivo['serie-no-declarada'], 1);
@@ -106,31 +191,115 @@ test('AUSENCIA: todas las filas de serie ajena → 0 WPs y exit 3 (jamás verde 
 });
 
 test('AUSENCIA: deps en blanco NO significa «sin dependencias» (se declara o cae)', () => {
-  const fila = (deps) => `# B
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ${deps} | I |
-`;
-  const cfg = configurar({ series: 'FX-[A-Z][0-9]{2}' });
-  assert.equal(verificarBacklog(fila('ninguna'), cfg).exit, 0, 'declarar «ninguna» pasa');
-  const omitido = verificarBacklog(fila(' '), cfg);
+  const fila = (deps) =>
+    backlogDe([`| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ${deps} | I |`]);
+  assert.equal(verificarBacklog(fila('ninguna'), cfgFx).exit, 0, 'declarar «ninguna» pasa');
+  const omitido = verificarBacklog(fila(' '), cfgFx);
   assert.equal(omitido.exit, 1, 'omitir el campo NO pasa');
   assert.equal(omitido.defectos[0].motivo, 'campo-ausente');
   assert.equal(omitido.defectos[0].campo, 'deps');
 });
 
-// --- 3. El corazón: qué hace ornamental a un CA --------------------------
+// ===========================================================================
+// 4. [B2][B3][M1] Contrato de uso: una duda de configuración es exit 2
+// ===========================================================================
 
-const cfg = configurar();
+const VALIDA = join(FIXTURES, 'backlog-valido.md');
+
+test('[B2] --umbral-valoracion no numérico → exit 2 (NO desactiva la regla en silencio)', () => {
+  const r = crudo(['--backlog', VALIDA, '--series', CASOS.series, '--umbral-valoracion', 'perro']);
+  assert.equal(r.status, 2, r.salida);
+  assert.match(r.salida, /no es un numero/);
+});
+
+test('[B2] --min-palabras-brief y --min-palabras-ca inválidos → exit 2', () => {
+  for (const flag of ['--min-palabras-brief', '--min-palabras-ca']) {
+    assert.equal(crudo(['--backlog', VALIDA, flag, 'NaN']).status, 2, flag);
+    assert.equal(crudo(['--backlog', VALIDA, flag, '0']).status, 2, `${flag} fuera de rango`);
+    assert.equal(crudo(['--backlog', VALIDA, flag, '1.5']).status, 2, `${flag} no entero`);
+  }
+  assert.equal(crudo(['--backlog', VALIDA, '--umbral-valoracion', '7']).status, 2, 'umbral fuera de [0,1]');
+});
+
+test('[B3] flag desconocida o mal escrita → exit 2, jamás lintea el fichero por defecto', () => {
+  const r = crudo(['--backlgo', VALIDA]);
+  assert.equal(r.status, 2, r.salida);
+  assert.match(r.salida, /flag desconocida «--backlgo»/);
+  assert.match(r.salida, /querias --backlog/);
+  assert.doesNotMatch(r.salida, /DESPACHABLE/, 'no puede contestar sobre otro fichero');
+});
+
+test('[B3] argumento posicional suelto → exit 2', () => {
+  const r = crudo([VALIDA]);
+  assert.equal(r.status, 2, r.salida);
+  assert.match(r.salida, /argumento suelto/);
+});
+
+test('[B3] la forma GNU --flag=valor se admite de verdad', () => {
+  const r = crudo([`--backlog=${VALIDA}`, `--series=${CASOS.series}`]);
+  assert.equal(r.status, 0, r.salida);
+  assert.match(r.salida, /4 WP/);
+  assert.equal(crudo([`--json=si`, `--backlog=${VALIDA}`]).status, 2, 'una booleana con valor es error');
+});
+
+test('[B3] flag de valor sin valor → exit 2', () => {
+  assert.equal(crudo(['--backlog']).status, 2);
+  assert.equal(crudo(['--backlog', '--json']).status, 2);
+});
+
+test('[M1] regex inválida en --series, --patron-lane o --deps-externas → exit 2 (no exit 1)', () => {
+  const a = crudo(['--backlog', VALIDA, '--series', 'FX-[A-Z][0-9]{2(']);
+  assert.equal(a.status, 2, a.salida);
+  assert.match(a.salida, /expresion regular invalida/);
+  assert.equal(crudo(['--backlog', VALIDA, '--patron-lane', '^(##']).status, 2);
+  assert.equal(crudo(['--backlog', VALIDA, '--deps-externas', '(']).status, 2);
+});
+
+test('conjunto vacío en --prioridades/--ejes → exit 2 (rechazaría todo)', () => {
+  assert.equal(crudo(['--backlog', VALIDA, '--prioridades', '']).status, 2);
+  assert.equal(crudo(['--backlog', VALIDA, '--ejes', ' , ']).status, 2);
+});
+
+test('parsearArgv y configurar lanzan ErrorUso (código 2), no un veredicto', () => {
+  assert.throws(() => parsearArgv(['--noexiste']), ErrorUso);
+  assert.throws(() => configurar({}, ['--umbral-valoracion', 'x']), (e) => e instanceof ErrorUso && e.codigo === 2);
+});
+
+// ===========================================================================
+// 5. [B4] Suelo objetivo y declarado
+// ===========================================================================
+
+test('[B4] el suelo cuenta palabras DISTINTAS: «zzz zzz zzz» no son tres palabras', () => {
+  assert.deepEqual(significativosDistintos('zzz zzz zzz', cfg), ['zzz']);
+  const texto = backlogDe(['| **FX-A01** | P0 | zzz zzz zzz | ok ok | ninguna | I |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 1);
+  assert.equal(r.resumen.porMotivo['brief-insuficiente'], 1);
+  assert.equal(r.resumen.porMotivo['ca-insuficiente'], 1);
+  assert.match(r.defectos[0].detalle, /DISTINTA\(S\)/);
+});
+
+test('[B4] el suelo del CA es objetivo, no juicio: dos palabras distintas bastan', () => {
+  const texto = backlogDe(['| **FX-A01** | P0 | extraer el kit de plantillas del mundo | frases-contrato grepables | ninguna | I |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, JSON.stringify(r.defectos, null, 2));
+  assert.equal(r.resumen.avisos, 0, 'y además no es ornamental: «grepables» es ancla');
+});
+
+test('[B4] los suelos son parámetros del consumidor', () => {
+  const texto = backlogDe(['| **FX-A01** | P0 | extraer el kit de plantillas del mundo | frases-contrato grepables | ninguna | I |']);
+  const exigente = configurar({ series: 'FX-[A-Z][0-9]{2}', minPalabrasCa: 5 });
+  assert.equal(verificarBacklog(texto, exigente).resumen.porMotivo['ca-insuficiente'], 1);
+});
+
+// ===========================================================================
+// 6. El aviso: ancla + objeto, sin que un dígito ancle nada
+// ===========================================================================
 
 test('CA ornamental: la valoración domina («queda elegante»)', () => {
   const a = analizarCA('queda elegante', cfg);
   assert.equal(a.ok, false);
   assert.equal(a.motivo, 'CA-ornamental/valoracion');
-  assert.deepEqual(a.valoraciones, ['queda', 'elegante']);
   assert.match(a.detalle, /queda/);
 });
 
@@ -139,64 +308,114 @@ test('CA ornamental: «mejor estructurado» y «se revisa la calidad» caen por 
   assert.equal(analizarCA('se revisa la calidad', cfg).motivo, 'CA-ornamental/valoracion');
 });
 
-test('CA ornamental: sin ancla de verificación («el modulo queda listo para su uso»)', () => {
-  const a = analizarCA('el modulo queda listo para su uso', cfg);
-  assert.equal(a.motivo, 'CA-ornamental/sin-ancla');
-  assert.deepEqual(a.anclas, []);
+test('CA ornamental: sin ancla («el modulo queda listo para su uso») y sin objeto («el test pasa»)', () => {
+  assert.equal(analizarCA('el modulo queda listo para su uso', cfg).motivo, 'CA-ornamental/sin-ancla');
+  const b = analizarCA('el test pasa', cfg);
+  assert.equal(b.motivo, 'CA-ornamental/sin-objeto');
+  assert.deepEqual(b.contenido, []);
 });
 
-test('CA ornamental: ancla sin objeto («el test pasa» — ¿el test de qué?)', () => {
-  const a = analizarCA('el test pasa', cfg);
-  assert.equal(a.motivo, 'CA-ornamental/sin-objeto');
-  assert.deepEqual(a.contenido, []);
+test('ASIMETRÍA 1 cerrada: un dígito suelto NO ancla nada', () => {
+  assert.equal(analizarCA('el modulo queda listo para su uso en 2 sitios', cfg).motivo, 'CA-ornamental/sin-ancla');
+  assert.equal(analizarCA('queda elegante en 3 sitios', cfg).motivo, 'CA-ornamental/valoracion');
+  // Sí ancla cuando hay medida: comparador, unidad o ancla al lado.
+  assert.equal(analizarCA('ceguera del arbol = 0', cfg).ok, true);
+  assert.equal(analizarCA('el grep del simbolo devuelve 0 hits en el arbol', cfg).ok, true);
+  assert.equal(analizarCA('el probe del adaptador devuelve exit 0', cfg).ok, true);
 });
 
-test('CA verificable: ancla + objeto pasan (ambas mitades presentes)', () => {
+test('ASIMETRÍA 2 cerrada: concatenar no diluye — se analiza por segmentos', () => {
+  const a = analizarCA('queda elegante · el probe de omision deniega el mensaje sin firma', cfg);
+  assert.equal(a.ok, false);
+  assert.equal(a.alcance, 'segmento');
+  assert.match(a.detalle, /segmento «queda elegante»/);
+  const b = analizarCA('el modulo queda listo · grep del simbolo devuelve 1 definicion', cfg);
+  assert.equal(b.ok, false);
+});
+
+test('los fragmentos de medida no se juzgan sueltos («exit 0» tras un segmento bueno)', () => {
+  const a = analizarCA('el probe del consumidor resuelve la plantilla; exit 0', cfg);
+  assert.equal(a.ok, true, JSON.stringify(a));
+});
+
+test('CAs legítimos que antes caían: morfología y negación universal', () => {
   for (const ca of [
-    'el probe del consumidor sintetico resuelve la plantilla con exit 0',
-    'grep del simbolo devuelve 1 definicion en el adaptador',
-    'el script de ceguera imprime `ceguera: 0` en arbol e historial',
-    'la suite del segundo cliente pasa en verde sin tocar al primero',
-    'el gate deniega el mensaje cuando la firma no se aporta',
+    'ningun usuario sin rol puede abrir la sala',
+    'la migracion es idempotente: dos ejecuciones dejan la tabla igual',
+    'no queda ninguna referencia al simbolo antiguo en el arbol',
+    'frases-contrato grepables',
+    'dos builds comparan el manifiesto logico',
+    'push default bloqueado y documentado',
   ]) {
     const a = analizarCA(ca, cfg);
     assert.equal(a.ok, true, `deberia pasar: «${ca}» → ${a.motivo}`);
   }
 });
 
-test('bypass: adornar con una cantidad NO salva un CA valorativo', () => {
-  // El ratio de valoración sigue mandando aunque haya un número suelto.
-  assert.equal(analizarCA('queda elegante en 3 sitios', cfg).motivo, 'CA-ornamental/valoracion');
-  assert.equal(analizarCA('la documentacion queda mas clara para el lector', cfg).motivo, 'CA-ornamental/valoracion');
-  assert.equal(analizarCA('queda elegante; exit 0', cfg).motivo, 'CA-ornamental/valoracion');
-});
-
-test('LÍMITE HONESTO: un CA con comprobación real Y adorno pasa (contiene una comprobación)', () => {
-  // Documentado en reference/backlog-despachable.md §Límites: el linter exige
-  // que HAYA comprobación, no que no haya prosa. Esto es un falso negativo
-  // conocido y deliberado, no un descuido.
-  assert.equal(analizarCA('queda elegante y el build de docs pasa con exit 0', cfg).ok, true);
-});
-
-test('LÍMITE HONESTO: el linter valida la FORMA del CA, no su verdad', () => {
+test('LÍMITE HONESTO: el aviso mira la forma, no la verdad ni el idioma', () => {
   // Nombra un probe que puede no existir: forma correcta, verdad no verificada.
   assert.equal(analizarCA('el probe inventado de la capa fantasma falla si falta el campo', cfg).ok, true);
+  // Comprobación real + adorno: pasa, porque contiene una comprobación.
+  assert.equal(analizarCA('queda elegante y el build de docs pasa con exit 0', cfg).ok, true);
+  // Idioma: el léxico por defecto es castellano (se sustituye con --lexico).
+  assert.equal(analizarCA('no user without a role can open the room', cfg).ok, false);
+  // Precio de cerrar la asimetría del dígito: un CA telegráfico avisa.
+  assert.equal(analizarCA('ceguera 0', cfg).motivo, 'CA-ornamental/sin-ancla');
 });
 
 test('--ca-estricto sube el listón: exige referente fuerte (código, ruta o cantidad)', () => {
-  const suave = configurar();
   const estricto = configurar({ caEstricto: true });
   const ca = 'la suite del segundo cliente pasa en verde sin tocar al primero';
-  assert.equal(analizarCA(ca, suave).ok, true);
+  assert.equal(analizarCA(ca, cfg).ok, true);
   assert.equal(analizarCA(ca, estricto).motivo, 'CA-ornamental/sin-referente');
   assert.equal(analizarCA('`npm test` del cliente sintetico devuelve exit 0', estricto).ok, true);
 });
 
-// --- 4. Ciclos concretos -------------------------------------------------
+// ===========================================================================
+// 7. [M2][M3][M4] Contradicciones, enlaces y conjuntos
+// ===========================================================================
+
+test('[M2] una dep escrita como enlace markdown resuelve (no es dep-inexistente)', () => {
+  const texto = backlogDe([
+    FILA_OK,
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | el probe del adaptador devuelve exit 0 | [FX-A01](#fx-a01) | II |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, JSON.stringify(r.defectos, null, 2));
+  assert.deepEqual(r.wps[1].depsIds, ['FX-A01']);
+});
+
+test('[M3] «ninguna» junto a una dep real es contradicción, no una dep más', () => {
+  const texto = backlogDe([
+    FILA_OK,
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | el probe del adaptador devuelve exit 0 | ninguna, FX-A01 | II |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.resumen.porMotivo['deps-contradictorias'], 1);
+  assert.equal(r.exit, 1);
+});
+
+test('[M4] «ninguno» junto a otros ejes es contradicción', () => {
+  const texto = backlogDe(['| **FX-A01** | P0 | extraer el kit de plantillas del mundo | el probe devuelve exit 0 | ninguna | ninguno, I |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.resumen.porMotivo['ejes-contradictorios'], 1);
+});
+
+test('[M4] la lane se valida contra el conjunto cuando el mundo lo declara', () => {
+  const texto = backlogDe([FILA_OK]);
+  assert.equal(verificarBacklog(texto, cfgFx).exit, 0, 'sin --lanes no se valida el conjunto');
+  const conLanes = configurar({ series: 'FX-[A-Z][0-9]{2}', lanes: ['B · BETA'] });
+  assert.equal(verificarBacklog(texto, conLanes).resumen.porMotivo['lane-desconocida'], 1);
+  const buena = configurar({ series: 'FX-[A-Z][0-9]{2}', lanes: ['A · ALFA', 'B · BETA'] });
+  assert.equal(verificarBacklog(texto, buena).exit, 0);
+});
+
+// ===========================================================================
+// 8. Ciclos concretos
+// ===========================================================================
 
 test('ciclo propio (A → A) se señala como ciclo de 1', () => {
-  const wps = [{ id: 'FX-A01', depsIds: ['FX-A01'] }];
-  assert.deepEqual(detectarCiclos(wps), [['FX-A01', 'FX-A01']]);
+  assert.deepEqual(detectarCiclos([{ id: 'FX-A01', depsIds: ['FX-A01'] }]), [['FX-A01', 'FX-A01']]);
 });
 
 test('un mismo ciclo no se reporta dos veces', () => {
@@ -228,7 +447,9 @@ test('un DAG profundo no inventa ciclos', () => {
   assert.deepEqual(detectarCiclos(wps), []);
 });
 
-// --- 5. Parametrización: nada cableado a un mundo concreto ---------------
+// ===========================================================================
+// 9. Parametrización: nada cableado a un mundo concreto
+// ===========================================================================
 
 test('los conjuntos de prioridades y ejes son del consumidor', () => {
   const texto = `# B
@@ -237,7 +458,7 @@ test('los conjuntos de prioridades y ejes son del consumidor', () => {
 
 | WP | P | BRIEF | CA | deps | ejes |
 | -- | - | ----- | -- | ---- | ---- |
-| **QQ-7** | urgente | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ninguna | forma |
+| **QQ-7** | urgente | extraer el kit de plantillas del mundo | el probe del consumidor devuelve exit 0 | ninguna | forma |
 `;
   const estandar = verificarBacklog(texto, configurar({ series: 'QQ-[0-9]+' }));
   assert.equal(estandar.exit, 1);
@@ -253,24 +474,25 @@ test('los conjuntos de prioridades y ejes son del consumidor', () => {
 });
 
 test('--deps-externas permite dependencias fuera del backlog cuando el mundo lo declara', () => {
-  const texto = `# B
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | EXT-9 | I |
-`;
-  const cerrado = configurar({ series: 'FX-[A-Z][0-9]{2}' });
-  assert.equal(verificarBacklog(texto, cerrado).resumen.porMotivo['dep-inexistente'], 1);
+  const texto = backlogDe(['| **FX-A01** | P0 | extraer el kit de plantillas del mundo | el probe devuelve exit 0 | EXT-9 | I |']);
+  assert.equal(verificarBacklog(texto, cfgFx).resumen.porMotivo['dep-inexistente'], 1);
   const abierto = configurar({ series: 'FX-[A-Z][0-9]{2}', depsExternas: 'EXT-[0-9]+' });
   assert.equal(verificarBacklog(texto, abierto).exit, 0);
 });
 
-test('el léxico ornamental es sustituible por el consumidor', () => {
-  const cfgOtro = configurar({ lexico: { ...configurar().lexico, ornamentales: ['chachi'] } });
-  assert.equal(analizarCA('queda elegante', cfgOtro).motivo, 'CA-ornamental/sin-ancla', 'sin su léxico, cae igual por falta de ancla');
-  assert.equal(analizarCA('chachi chachi', cfgOtro).motivo, 'CA-ornamental/valoracion');
+test('el léxico es sustituible por el consumidor (idioma incluido)', () => {
+  const base = configurar();
+  const otro = configurar({
+    lexico: {
+      ...base.lexico,
+      ornamentales: ['chachi'],
+      ornamentalesLema: [],
+      anclas: [...base.lexico.anclas, 'passes'],
+      anclasLema: [],
+    },
+  });
+  assert.equal(analizarCA('chachi chachi', otro).motivo, 'CA-ornamental/valoracion');
+  assert.equal(analizarCA('the migration probe passes twice', otro).ok, true);
 });
 
 test('alias de columnas: el mundo puede llamar a sus columnas como quiera', () => {
@@ -280,13 +502,14 @@ test('alias de columnas: el mundo puede llamar a sus columnas como quiera', () =
 
 | id | prioridad | encargo | criterio | dependencias | eje |
 | -- | --------- | ------- | -------- | ------------ | --- |
-| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ninguna | I |
+| **FX-A01** | P0 | extraer el kit de plantillas del mundo | el probe del consumidor devuelve exit 0 | ninguna | I |
 `;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
-  assert.equal(r.exit, 0, JSON.stringify(r.defectos, null, 2));
+  assert.equal(verificarBacklog(texto, cfgFx).exit, 0);
 });
 
-// --- 6. Parseo: lo que NO es una fila de WP ------------------------------
+// ===========================================================================
+// 10. Parseo: lo que NO es una fila de WP
+// ===========================================================================
 
 test('las tablas sin columna de WP se ignoran, pero delatan IDs colados', () => {
   const texto = `# B
@@ -299,77 +522,31 @@ test('las tablas sin columna de WP se ignoran, pero delatan IDs colados', () => 
 
 | WP | P | BRIEF | CA | deps | ejes |
 | -- | - | ----- | -- | ---- | ---- |
-| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ninguna | I |
+${FILA_OK}
 `;
-  const { wps, defectos } = parsearBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
+  const { wps, defectos } = parsearBacklog(texto, cfgFx);
   assert.equal(wps.length, 1);
   assert.deepEqual(defectos, [], 'la tabla de metadatos no genera ruido');
 });
 
 test('fila de tabla de WPs sin ID → defecto, no omisión silenciosa', () => {
-  const texto = `# B
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| Total | P0 | fila de totales colada en la tabla | conteo de la tabla | ninguna | I |
-| **FX-A01** | P0 | extraer el kit de plantillas | el probe del consumidor devuelve exit 0 | ninguna | I |
-`;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
+  const texto = backlogDe([
+    '| Total | P0 | fila de totales colada en la tabla | conteo de la tabla del mundo | ninguna | I |',
+    FILA_OK,
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
   assert.equal(r.exit, 1);
   assert.equal(r.resumen.porMotivo['campo-ausente'], 1);
   assert.equal(r.defectos[0].campo, 'WP');
 });
 
-test('lo que el lector NO ve tampoco se despacha: fence y comentario HTML', () => {
-  const texto = `# BACKLOG
-
-\`\`\`
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A01** | P0 | tabla de ejemplo dentro de un fence | el probe devuelve exit 0 sobre la plantilla | ninguna | I |
-\`\`\`
-
-<!--
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A02** | P0 | tabla comentada para que no se vea | el probe devuelve exit 0 sobre la plantilla | ninguna | I |
--->
-`;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
-  assert.equal(r.exit, 3, 'un backlog cuyos WPs solo viven en fences/comentarios no tiene WPs');
-  assert.equal(r.resumen.wps, 0);
-  assert.match(r.defectos.at(-1).detalle, /bloque de codigo o comentario/);
-});
-
 test('celda de WP ilegible (dos IDs, guion unicode) → defecto citado, no omisión', () => {
-  const texto = `# B
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A01/FX-A02** | P0 | dos WPs en una fila para ahorrar | el probe devuelve exit 0 sobre la plantilla | ninguna | I |
-| FX–B01 | P0 | guion largo unicode en el id | el probe devuelve exit 0 sobre la plantilla | ninguna | I |
-`;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
+  const texto = backlogDe([
+    '| **FX-A01/FX-A02** | P0 | dos WPs en una fila para ahorrar | el probe devuelve exit 0 sobre la plantilla | ninguna | I |',
+    '| FX–B01 | P0 | guion largo unicode en el identificador | el probe devuelve exit 0 sobre la plantilla | ninguna | I |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
   assert.equal(r.resumen.porMotivo['id-no-interpretable'], 1);
   assert.equal(r.resumen.porMotivo['campo-ausente'], 1);
   assert.equal(r.exit, 3, '0 WPs de 2 filas: nunca verde');
-});
-
-test('BRIEF de una palabra → brief-insuficiente (el BRIEF también se lintea)', () => {
-  const texto = `# B
-
-## Lane A · ALFA
-
-| WP | P | BRIEF | CA | deps | ejes |
-| -- | - | ----- | -- | ---- | ---- |
-| **FX-A01** | P0 | arreglarlo | el probe del consumidor devuelve exit 0 | ninguna | I |
-`;
-  const r = verificarBacklog(texto, configurar({ series: 'FX-[A-Z][0-9]{2}' }));
-  assert.equal(r.resumen.porMotivo['brief-insuficiente'], 1);
 });
