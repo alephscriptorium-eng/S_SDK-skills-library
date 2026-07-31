@@ -53,7 +53,7 @@ const STOPWORDS = `a al ante bajo cada como con contra cual cuando cuyo de del d
 
 // ANCLAS de verificación: nombran el acto observable que decide (comando,
 // gate, probe, conteo, exit, veredicto, negación universal comprobable).
-const ANCLAS = `pasa pasar pasan supera verde rojo exit exitcode salida stdout stderr comando script gate gates probe probes prueba pruebas test tests suite fixture fixtures caso casos conteo cuenta contador contar recuento build ci run-id checksum hash sha snapshot assert mide medir medida ejecuta npm node bash diff log retorna devuelve aborta abortar bloquea bloquear bloqueado bloqueada bloqueados lock hits ocurrencias dry-run nadie nunca jamas`.split(/\s+/);
+const ANCLAS = `pasa pasar pasan supera superar excede exceder baja bajar sube subir aumenta disminuye desciende crece verde rojo exit exitcode salida stdout stderr comando script gate gates probe probes prueba pruebas test tests suite fixture fixtures caso casos conteo cuenta contador contar recuento build ci run-id checksum hash sha snapshot assert mide medir medida ejecuta npm node bash diff log retorna devuelve aborta abortar bloquea bloquear bloqueado bloqueada bloqueados lock hits ocurrencias dry-run nadie nunca jamas`.split(/\s+/);
 
 // Lemas de ancla (coincidencia por prefijo). Cubren la morfología sin cerrar el
 // léxico en formas exactas: «ejecuciones», «grepables», «verificable» son
@@ -68,7 +68,7 @@ const ORNAMENTALES_LEMA = `elegan mejor limpi pulid pulcr robust coheren clarid 
 // UNIDADES de medida: promueven una cantidad suelta a ancla («0 hits»,
 // «1 definicion»). Sin unidad, comparador ni ancla al lado, un dígito NO ancla
 // nada: si bastara un número, «queda elegante en 2 sitios» sería verificable.
-const UNIDADES = `hits ocurrencias apariciones coincidencias definicion definiciones linea lineas fila filas fichero ficheros veces caso casos wps wp errores defectos avisos consumidor consumidores cliente clientes commits builds segundos ms bytes kb mb`.split(/\s+/);
+const UNIDADES = `hits ocurrencias apariciones coincidencias definicion definiciones linea lineas fila filas fichero ficheros caso casos wps wp errores defectos avisos consumidor consumidores cliente clientes commits builds segundos ms bytes kb mb`.split(/\s+/);
 
 // Valores MARCADORES: la celda existe pero no dice nada.
 const VACIAS = `- -- --- — – ? ?? ??? . .. ... … * _ tbd todo wip pendiente n/a na x xx xxx idem varios ver`.split(/\s+/);
@@ -92,8 +92,12 @@ export const DEFAULTS = {
   ejesNinguno: ['ninguno', 'ninguna', 'none'],
   lanes: [], // vacío = no se valida el conjunto de lanes (solo su presencia)
   patronLane: '^#{1,6}\\s*(?:lane|carril)\\b[\\s·:.\\-]*(.*)$',
-  sinDeps: ['ninguna', 'ninguno', 'sin-deps', 'sin deps', 'none'],
+  sinDeps: ['ninguna', 'ninguno', 'sin-deps', 'sin deps', 'none', 'na'],
+  // Conectores en prosa admitidos dentro de `deps` («FX-A01 y FX-A03»).
+  conectoresDeps: ['y', 'e', 'and', 'mas', 'tambien', 'ademas'],
   depsExternas: '', // regex; '' = ninguna dependencia externa permitida
+  regionInicio: '', // marca de apertura de la región del backlog (opt-in)
+  regionFin: '',
   umbralValoracion: 0.5,
   minPalabrasBrief: 3, // tokens significativos DISTINTOS
   minPalabrasCa: 2, // tokens significativos DISTINTOS
@@ -120,6 +124,7 @@ export const MOTIVOS_AVISO = [
   'CA-ornamental/sin-ancla',
   'CA-ornamental/sin-objeto',
   'CA-ornamental/sin-referente',
+  'BRIEF-ornamental/valoracion',
 ];
 
 /** Error de uso/configuración: siempre exit 2, nunca un veredicto sobre el backlog. */
@@ -143,6 +148,7 @@ function limpiarCelda(s) {
   return String(s || '')
     .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{23E9}-\u{23FA}\u{FE0F}]/gu, ' ')
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // enlace markdown → su texto
+    .replace(/<\/?[a-z][^>]*>/gi, ' ') // etiquetas HTML: `<b>2</b>` no es un comparador
     .replace(/\*\*/g, '')
     .replace(/(^|\s)\*(\S)/g, '$1$2')
     .replace(/`/g, '')
@@ -235,7 +241,9 @@ function analizarFragmento(texto, cfg) {
   const lex = cfg.lexico;
   const toks = tokenizar(texto);
   const clases = toks.map((t) => clasificarToken(t, lex));
-  const hayComparador = /[=≥≤≠<>]\s*\d|\d\s*[=≥≤≠<>]/.test(String(texto));
+  // Sobre el texto ya limpio de etiquetas HTML (d8): `<b>2</b>` no es un
+  // comparador, y tomarlo por tal convertía prosa adornada en «medida».
+  const hayComparador = /[=≥≤≠<>]\s*\d|\d\s*[=≥≤≠<>]/.test(limpiarCelda(texto));
 
   // Promoción de cantidades: una cifra suelta no es una comprobación.
   for (let i = 0; i < clases.length; i++) {
@@ -352,28 +360,82 @@ function extraerId(celda, reSerie) {
   return { id: null, token: forma[1], roto: reSerie.test(forma[1]) };
 }
 
+/** Ancho de indentación con expansión de tabulador (CommonMark: tope de 4). */
+export function anchoIndentacion(linea, tope = 4) {
+  let ancho = 0;
+  for (const c of linea) {
+    if (c === ' ') ancho += 1;
+    else if (c === '\t') ancho += tope - (ancho % tope);
+    else break;
+    if (ancho >= tope) break;
+  }
+  return ancho;
+}
+
+// Bloques HTML que ocultan su contenido (subconjunto de CommonMark):
+// tipo 1 (`<pre>`, `<script>`, `<style>`, `<textarea>`) termina en su cierre;
+// tipo 6 (contenedores conocidos, `<details>`, `<div>`…) termina en línea vacía.
+const HTML_TIPO1 = /^ {0,3}<(pre|script|style|textarea)\b/i;
+const HTML_TIPO6 = /^ {0,3}<\/?(details|summary|div|table|thead|tbody|tr|td|th|section|article|aside|figure|figcaption|form|fieldset|dl|dd|dt|ul|ol|li|blockquote|header|footer|main|nav|p|center|iframe|noscript)\b[^>]*>?\s*$/i;
+
 /**
- * Vela lo que el lector del backlog tampoco ve como tabla: bloques de código
- * (fence o indentados), comentarios HTML y citas. Un WP escondido ahí NO cuenta
- * como despachable, y una tabla de ejemplo dentro de un bloque no salva a un
- * backlog sin WPs reales. Se blanquea la línea para conservar la numeración y
- * se cuenta la CAUSA, para que el diagnóstico no mienta.
+ * Vela lo que el lector del backlog NO ve como tabla del backlog. Implementa la
+ * estructura de bloque de CommonMark para lo que importa, en vez de enumerar
+ * formas de esconder una tabla:
+ *
+ *  - **fence** con su regla real: el cierre es el MISMO carácter, de longitud
+ *    ≥ la apertura y sin nada más en la línea (`~~~` no cierra un fence de
+ *    backticks; un fence de 4 backticks contiene uno de 3 sin cerrarse);
+ *  - **código indentado** con expansión de tabulador (3 espacios + tab = 4);
+ *  - **bloques HTML** tipo 1 y tipo 6 (`<pre>`, `<details>`…);
+ *  - **front-matter** YAML/TOML al principio del fichero;
+ *  - **comentario HTML** y **cita**.
+ *
+ * Se blanquea la línea para conservar la numeración y se cuenta la CAUSA, para
+ * que el diagnóstico no mienta. Quien quiera cerrar la familia entera de
+ * envolturas de una vez usa la **región declarada** (`--region-inicio`).
  */
 function velarNoVisible(lineas, stats) {
-  let enFence = false;
+  let fence = null; // { char, len }
   let enComentario = false;
+  let htmlCierre = null; // regex de cierre para bloque HTML tipo 1
+  let enHtml6 = false;
+  let enFrontMatter = false;
   const oculta = (causa) => {
-    stats.ocultas[causa]++;
+    stats.ocultas[causa] = (stats.ocultas[causa] || 0) + 1;
     stats.lineasOcultas++;
     return '';
   };
-  return lineas.map((l) => {
-    if (/^\s*(?:```|~~~)/.test(l)) {
-      enFence = !enFence;
+  const FENCE = /^ {0,3}(`{3,}|~{3,})(.*)$/;
+
+  return lineas.map((l, i) => {
+    // --- front-matter (solo en la primera línea del fichero) ---
+    if (i === 0 && /^(---|\+\+\+)\s*$/.test(l)) {
+      enFrontMatter = true;
+      return oculta('front-matter');
+    }
+    if (enFrontMatter) {
+      if (/^(---|\+\+\+|\.\.\.)\s*$/.test(l)) enFrontMatter = false;
+      return oculta('front-matter');
+    }
+
+    // --- fence (regla de CommonMark, no toggle ingenuo) ---
+    const m = l.match(FENCE);
+    if (fence) {
+      const cierra = m && m[1][0] === fence.char && m[1].length >= fence.len && m[2].trim() === '';
+      if (cierra) fence = null;
       return oculta('fence');
     }
-    if (enFence) return oculta('fence');
+    if (m) {
+      const marca = m[1];
+      // Un fence de backticks no puede llevar backticks en su info string.
+      if (!(marca[0] === '`' && m[2].includes('`'))) {
+        fence = { char: marca[0], len: marca.length };
+        return oculta('fence');
+      }
+    }
 
+    // --- comentario HTML ---
     let linea = l.replace(/<!--.*?-->/g, '');
     if (enComentario) {
       if (/-->/.test(linea)) {
@@ -390,13 +452,65 @@ function velarNoVisible(lineas, stats) {
       stats.lineasOcultas++;
       return linea.replace(/<!--[\s\S]*$/, '');
     }
-    // Bloque de código INDENTADO (4 espacios o tabulador): markdown no lo
-    // renderiza como tabla. Hermano del fence; sin esto, el mismo contenido
-    // indentado aprobaría como backlog.
-    if (/^(?: {4,}|\t)/.test(linea) && linea.trim()) return oculta('indentado');
-    // Cita: la tabla se ve, pero citada — no es el BACKLOG, es lo que cita.
-    if (/^\s*>/.test(linea)) return oculta('cita');
+
+    // --- bloques HTML ---
+    if (htmlCierre) {
+      if (htmlCierre.test(linea)) htmlCierre = null;
+      return oculta('html');
+    }
+    const t1 = linea.match(HTML_TIPO1);
+    if (t1) {
+      const cierre = new RegExp(`</${t1[1]}\\s*>`, 'i');
+      if (!cierre.test(linea)) htmlCierre = cierre;
+      return oculta('html');
+    }
+    if (enHtml6) {
+      if (!linea.trim()) enHtml6 = false; // línea vacía cierra el bloque tipo 6
+      else return oculta('html');
+    } else if (HTML_TIPO6.test(linea)) {
+      enHtml6 = true;
+      return oculta('html');
+    }
+
+    // --- código indentado (con expansión de tabulador) ---
+    if (linea.trim() && anchoIndentacion(linea) >= 4) return oculta('indentado');
+    // --- cita: la tabla se ve, pero citada; no es lo que el mundo declara ---
+    if (/^ {0,3}>/.test(linea)) return oculta('cita');
     return linea;
+  });
+}
+
+/**
+ * Región declarada (cierre estructural, opt-in). Si el mundo declara marcas,
+ * TODO lo que quede fuera se ignora por construcción y las envolturas dejan de
+ * importar. La marca de inicio ausente es `region-ausente` → exit 3 limpio.
+ */
+function recortarRegion(lineas, cfg, stats, defectos) {
+  if (!cfg.regionInicio) return lineas;
+  const ini = lineas.findIndex((l) => l.includes(cfg.regionInicio));
+  if (ini < 0) {
+    defectos.push({
+      wp: '(backlog)',
+      campo: 'WP',
+      motivo: 'region-ausente',
+      linea: 0,
+      detalle:
+        `el mundo declara la region del backlog con «${cfg.regionInicio}» y el fichero no la contiene: ` +
+        'sin region declarada no hay nada que despachar (cierre estructural, no se adivina).',
+    });
+    stats.regionAusente = true;
+    return lineas.map(() => '');
+  }
+  const desde = ini + 1;
+  const relativo = cfg.regionFin ? lineas.slice(desde).findIndex((l) => l.includes(cfg.regionFin)) : -1;
+  const hasta = relativo >= 0 ? desde + relativo : lineas.length;
+  return lineas.map((l, i) => {
+    if (i >= desde && i < hasta) return l;
+    if (l.trim()) {
+      stats.ocultas['fuera-de-region'] = (stats.ocultas['fuera-de-region'] || 0) + 1;
+      stats.lineasOcultas++;
+    }
+    return '';
   });
 }
 
@@ -409,6 +523,8 @@ export function parsearBacklog(texto, cfg = configurar()) {
   const laneRe = new RegExp(cfg.patronLane, 'i');
   const reSerie = new RegExp(`^(?:${cfg.series})$`);
   const wps = [];
+  // Índice id→WP para que duplicados y deps no sean O(n²) (d11).
+  wps.indice = new Map();
   const defectos = [];
   const avisos = [];
   const stats = {
@@ -418,9 +534,10 @@ export function parsearBacklog(texto, cfg = configurar()) {
     filasVacias: 0,
     lineasLista: 0,
     lineasOcultas: 0,
-    ocultas: { fence: 0, comentario: 0, indentado: 0, cita: 0 },
+    regionAusente: false,
+    ocultas: { fence: 0, comentario: 0, indentado: 0, cita: 0, html: 0, 'front-matter': 0 },
   };
-  const lineas = velarNoVisible(texto.split(/\r?\n/), stats);
+  const lineas = velarNoVisible(recortarRegion(texto.split(/\r?\n/), cfg, stats, defectos), stats);
 
   let lane = null;
   let i = 0;
@@ -438,8 +555,11 @@ export function parsearBacklog(texto, cfg = configurar()) {
       const mapa = resolverColumnas(cabeceras, cfg.alias);
       const filas = [];
       let j = i + 2;
+      // Toda fila posterior al separador de cabecera es fila de DATOS, incluida
+      // la que parece otro separador (`| - | - | - |`): omitirla en silencio
+      // contradiría la doctrina de «fila sin ID → defecto, no omisión» (d6).
       while (j < lineas.length && esFilaTabla(lineas[j])) {
-        if (!esSeparador(lineas[j])) filas.push({ celdas: celdas(lineas[j]), n: j + 1, raw: lineas[j] });
+        filas.push({ celdas: celdas(lineas[j]), n: j + 1, raw: lineas[j] });
         j++;
       }
       if (mapa.wp === undefined) {
@@ -517,13 +637,14 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
     }
     return;
   }
-  if (wps.some((w) => w.id === id)) {
+  const previo = wps.indice.get(id);
+  if (previo) {
     defectos.push({
       wp: id,
       campo: 'WP',
       motivo: 'id-duplicado',
       linea: fila.n,
-      detalle: `el ID «${id}» ya estaba declarado en la linea ${wps.find((w) => w.id === id).linea}`,
+      detalle: `el ID «${id}» ya estaba declarado en la linea ${previo.linea}`,
     });
     return;
   }
@@ -642,6 +763,20 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
           `el BRIEF tiene ${sig.length} palabra(s) significativa(s) DISTINTA(S) [${sig.join(', ')}], ` +
           `minimo ${cfg.minPalabrasBrief}: «${limpiarCelda(wp.brief)}»`,
       });
+    } else {
+      // El BRIEF describe trabajo, no comprobación: no se le exige ancla ni
+      // objeto (sería ruido puro). Sí se avisa cuando la VALORACIÓN domina
+      // («dejarlo todo mas limpio y elegante»), que es el mismo síntoma (d7).
+      const an = analizarFragmento(wp.brief, cfg);
+      if (!an.ok && an.motivo === 'CA-ornamental/valoracion') {
+        avisos.push({
+          wp: id,
+          campo: 'BRIEF',
+          motivo: 'BRIEF-ornamental/valoracion',
+          linea: fila.n,
+          detalle: an.detalle.replace('CA citado', 'BRIEF citado'),
+        });
+      }
     }
   }
 
@@ -667,24 +802,74 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
   // --- deps: se declaran SIEMPRE, incluso para decir «ninguna» ---
   wp.depsIds = [];
   if (wp.deps !== undefined && !esMarcador(wp.deps, cfg.lexico)) {
-    const crudo = limpiarCelda(wp.deps);
-    const tokensDeps = crudo.split(/[\s,;+/·→>]+/).filter(Boolean);
-    const nulos = tokensDeps.filter((t) => cfg.sinDeps.some((x) => norm(x) === norm(t)));
-    const reales = tokensDeps.filter((t) => !cfg.sinDeps.some((x) => norm(x) === norm(t)));
-    if (nulos.length && reales.length) {
+    const { ids, nulos, ilegibles } = leerDeps(wp.deps, cfg, reSerie);
+    if (nulos.length && ids.length) {
       defectos.push({
         wp: id,
         campo: 'deps',
         motivo: 'deps-contradictorias',
         linea: fila.n,
         detalle:
-          `declara «${nulos.join(', ')}» junto a dependencias reales (${reales.join(', ')}): ` +
+          `declara «${nulos.join(', ')}» junto a dependencias reales (${ids.join(', ')}): ` +
           'o no depende de nada, o depende de esas. La contradiccion no se resuelve sola.',
       });
     }
-    if (!cfg.sinDeps.some((x) => norm(x) === norm(crudo))) wp.depsIds = reales;
+    for (const t of ilegibles) {
+      defectos.push({
+        wp: id,
+        campo: 'deps',
+        motivo: 'dep-no-interpretable',
+        linea: fila.n,
+        detalle:
+          `«${t}» no es un ID legible ni el token de «sin dependencias» (${cfg.sinDeps.join(', ')}), ` +
+          `y lleva digitos, asi que no se ignora como prosa. Celda: «${limpiarCelda(wp.deps)}»`,
+      });
+    }
+    wp.depsIds = ids;
   }
   wps.push(wp);
+  if (wps.indice) wps.indice.set(wp.id, wp);
+}
+
+/**
+ * Lee la celda `deps` con la HOLGURA declarada en el contrato (§1): separadores
+ * naturales —espacios, `,` `;` `+` `/` `·` `→` `>` `&`— y **conectores en
+ * prosa** (`y`, `e`, `and`), puntuación final, paréntesis y enlaces markdown.
+ * En una herramienta en castellano, «FX-A01 y FX-A03» es lo que la gente
+ * escribe: rechazarlo sería un gate que su propio autor desactiva.
+ *
+ * Clasificación de cada token, sin adivinar:
+ *  - token de «sin dependencias» (normalizado: `Ninguna.` = `ninguna`) → nulo;
+ *  - token con forma de ID (serie declarada o genérica) → dependencia;
+ *  - prosa sin dígitos (`(WP`, `raiz)`, `arriba`) → se ignora;
+ *  - token CON dígitos que no es un ID legible → `dep-no-interpretable`
+ *    (bloqueante): no se puede ignorar en silencio algo que parece un ID roto.
+ */
+export function leerDeps(celda, cfg, reSerie = new RegExp(`^(?:${cfg.series})$`)) {
+  const crudo = limpiarCelda(celda);
+  const brutos = crudo.split(/[\s,;+/·→>&|]+/).filter(Boolean);
+  const conectores = cfg.conectoresDeps.map(norm);
+  const ids = [];
+  const nulos = [];
+  const ilegibles = [];
+  for (const bruto of brutos) {
+    // Puntuación de prosa alrededor del token: `Ninguna.` `(FX-A01)` `FX-A01,`
+    const t = bruto.replace(/^[¡¿"'`([{<]+/, '').replace(/[.,;:!?"'`)\]}>]+$/, '');
+    if (!t) continue;
+    const n = norm(t);
+    if (conectores.includes(n)) continue;
+    if (cfg.sinDeps.some((x) => norm(x) === n)) {
+      nulos.push(t);
+      continue;
+    }
+    if (reSerie.test(t) || FORMA_ID.test(t)) {
+      ids.push(t);
+      continue;
+    }
+    if (/\d/.test(t)) ilegibles.push(t);
+    // resto: prosa sin dígitos → se ignora (no es una dependencia)
+  }
+  return { ids, nulos, ilegibles };
 }
 
 // ---------------------------------------------------------------------------
@@ -692,7 +877,8 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
 // ---------------------------------------------------------------------------
 
 export function detectarCiclos(wps) {
-  const grafo = new Map(wps.map((w) => [w.id, (w.depsIds || []).filter((d) => wps.some((x) => x.id === d))]));
+  const conocidos = new Set(wps.map((w) => w.id));
+  const grafo = new Map(wps.map((w) => [w.id, (w.depsIds || []).filter((d) => conocidos.has(d))]));
   const ciclos = [];
   const vistos = new Set();
   const estado = new Map(); // 0 = en pila, 1 = cerrado
@@ -836,7 +1022,8 @@ function finalizar(r) {
 const FLAGS_BOOL = ['--ca-estricto', '--json', '--ayuda', '--help', '-h'];
 const FLAGS_VALOR = [
   '--backlog', '--series', '--prioridades', '--ejes', '--ejes-ninguno', '--lanes', '--patron-lane',
-  '--sin-deps', '--deps-externas', '--umbral-valoracion', '--min-palabras-brief', '--min-palabras-ca',
+  '--sin-deps', '--conectores-deps', '--deps-externas', '--region-inicio', '--region-fin',
+  '--umbral-valoracion', '--min-palabras-brief', '--min-palabras-ca',
   '--lexico', '--lexico-modo', '--alias', '--alias-modo',
 ];
 
@@ -898,6 +1085,9 @@ function numeroValido(nombre, bruto, { min, max, entero }) {
 }
 
 function regexValida(nombre, patron, envoltorio = (p) => p) {
+  // Coherencia con los conjuntos (d5): un patrón vacío es tan inservible como
+  // un conjunto vacío, y colarse como «regex válida» sería fail-open silencioso.
+  if (!String(patron).trim()) throw new ErrorUso(`${nombre}: patron vacio (no declara nada; usa un patron o no pases la flag)`);
   try {
     new RegExp(patron);
     new RegExp(envoltorio(patron));
@@ -934,6 +1124,9 @@ export function configurar(over = {}, argv = [], env = {}) {
     })(),
     patronLane: regexValida('--patron-lane', val('--patron-lane', 'BACKLOG_PATRON_LANE', DEFAULTS.patronLane)),
     sinDeps: listaValida('--sin-deps', val('--sin-deps', 'BACKLOG_SIN_DEPS', DEFAULTS.sinDeps.join(','))),
+    conectoresDeps: listaValida('--conectores-deps', val('--conectores-deps', 'BACKLOG_CONECTORES_DEPS', DEFAULTS.conectoresDeps.join(','))),
+    regionInicio: val('--region-inicio', 'BACKLOG_REGION_INICIO', DEFAULTS.regionInicio),
+    regionFin: val('--region-fin', 'BACKLOG_REGION_FIN', DEFAULTS.regionFin),
     depsExternas: (() => {
       const bruto = val('--deps-externas', 'BACKLOG_DEPS_EXTERNAS', DEFAULTS.depsExternas);
       return bruto ? regexValida('--deps-externas', bruto, (p) => `^(?:${p})$`) : '';
@@ -992,7 +1185,10 @@ const AYUDA = `verificar-backlog.mjs — linter de BACKLOG despachable
   --lanes A,B,C             conjunto de lanes admitido (def. vacio = no se valida)
   --patron-lane REGEX       encabezado que abre una lane (grupo 1 = nombre)
   --sin-deps ninguna,none   tokens que declaran «sin dependencias»
+  --conectores-deps y,e     conectores en prosa admitidos dentro de deps
   --deps-externas REGEX     IDs permitidos fuera del backlog (def. ninguno)
+  --region-inicio MARCA     cierre estructural: solo se lintea la region entre
+  --region-fin MARCA        marcas; su ausencia es exit 3 limpio (opt-in)
   --umbral-valoracion 0.5   ratio de valoracion que vuelve ornamental un CA (aviso)
   --min-palabras-brief 3    suelo del BRIEF en palabras DISTINTAS
   --min-palabras-ca 2       suelo del CA en palabras DISTINTAS
@@ -1059,9 +1255,19 @@ const invocado = process.argv[1] ? realpathSync(process.argv[1]) : '';
 const esMain = invocado && realpathSync(fileURLToPath(import.meta.url)) === invocado;
 if (esMain) {
   const argv = process.argv.slice(2);
-  if (argv.includes('--ayuda') || argv.includes('-h') || argv.includes('--help')) {
-    console.log(AYUDA);
-    process.exit(0);
+  const pidenAyuda = argv.filter((a) => ['--ayuda', '-h', '--help'].includes(a));
+  if (pidenAyuda.length) {
+    // La ayuda solo se sirve si es LO ÚNICO que se pide (d4): `--backlog X -h`
+    // salía 0 sin lintear, y un exit 0 sin veredicto es una concesión muda.
+    if (argv.length === pidenAyuda.length) {
+      console.log(AYUDA);
+      process.exit(0);
+    }
+    console.error(
+      `[verificar-backlog] «${pidenAyuda[0]}» no se combina con otras flags: ` +
+        'o se pide la ayuda, o se lintea un backlog. Un exit 0 sin veredicto seria una concesion muda.'
+    );
+    process.exit(2);
   }
   let cfg;
   try {

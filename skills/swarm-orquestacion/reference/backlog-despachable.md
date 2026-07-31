@@ -35,11 +35,26 @@ El formato de **lista** (`- ⬜ **ID · título**`, el que parsea
 sitio por fila para `deps` ni `ejes`. Un backlog en ese formato da 0 WPs y falla
 ruidoso; no se «aprueba por no encontrar nada».
 
-**Solo cuenta lo que el lector ve como tabla del backlog.** Una tabla dentro de
-un fence, de un comentario HTML, de un bloque **indentado** (4 espacios) o de
-una **cita** (`>`) no declara WPs: se cuenta como línea velada y el diagnóstico
-dice la causa. Sin esto, un documento que solo *documenta el formato* aprobaría
-como backlog.
+**Solo cuenta lo que el lector ve como tabla del backlog.** Esto no se resuelve
+enumerando formas de esconder una tabla, sino con la **estructura de bloque de
+CommonMark**, que es un problema acotado y especificado:
+
+| bloque | regla aplicada |
+| ------ | -------------- |
+| fence | cierre con el **mismo carácter**, longitud **≥** la apertura y nada más en la línea; un fence de backticks no admite backticks en su info string (`~~~` no cierra ```` ``` ````, y un fence de 4 contiene uno de 3) |
+| código indentado | ancho ≥ 4 con **expansión de tabulador** (3 espacios + tab = 4) |
+| bloque HTML | tipo 1 (`<pre>`, `<script>`, `<style>`, `<textarea>`) hasta su cierre; tipo 6 (`<details>`, `<div>`, `<table>`…) hasta línea en blanco — igual que CommonMark, así que un `<details>` con línea en blanco **sí** deja ver su tabla |
+| front-matter | `---` / `+++` en la primera línea, hasta su cierre |
+| comentario HTML · cita | velados, con su causa contada |
+
+Cada línea velada se cuenta **por causa** (`fence=`, `indentado=`, `html=`,
+`front-matter=`, `comentario=`, `cita=`) y el diagnóstico las nombra: el mensaje
+no dice «no hay ninguna tabla» cuando lo que hay es una tabla escondida.
+
+**Cierre estructural (opt-in).** Un mundo que quiera acabar con la familia
+entera declara la **región** de su backlog (`--region-inicio` / `--region-fin`):
+todo lo de fuera se ignora por construcción —envolturas incluidas— y la marca
+ausente es `region-ausente` → exit 3 limpio.
 
 **La ausencia se declara.** `deps` sin dependencias se escribe `ninguna`
 (configurable). Una celda en blanco, `—`, `?`, `TBD` o `pendiente` es **campo
@@ -47,6 +62,21 @@ ausente**, no «sin dependencias». Es la regla 21 (hostil-omite) aplicada al
 plan: el default de lo que calla es denegar. Y declarar `ninguna` **junto a** una
 dependencia real (o `ninguno` junto a un eje real) es una **contradicción**: el
 linter no elige por el autor cuál de las dos mitades vale.
+
+**Convención de `deps` (declarada, con holgura).** La celda se lee así:
+
+- **separadores**: espacios, `,` `;` `+` `/` `·` `→` `>` `&` **y conectores en
+  prosa** (`y`, `e`, `and`, configurables con `--conectores-deps`). «`FX-A01 y
+  FX-A03`» son dos dependencias, no un WP llamado «y»: en una herramienta en
+  castellano eso es lo que la gente escribe, y un gate que lo rechaza acaba
+  desactivado;
+- **puntuación de prosa** alrededor de cada token —punto final, paréntesis,
+  comillas, corchetes— se ignora: `Ninguna.` es el token nulo, y
+  `ninguna (WP raiz)` no declara ninguna dependencia;
+- **enlaces markdown** se resuelven a su texto: `[FX-A01](#fx-a01)` = `FX-A01`;
+- **prosa sin dígitos** (`arriba`, `raiz`) se ignora;
+- **token con dígitos que no es un ID legible** → `dep-no-interpretable`
+  (bloqueante): un ID roto no se traga en silencio.
 
 ---
 
@@ -106,11 +136,12 @@ están prohibidas: está prohibido que **dominen** (ratio ≥ `--umbral-valoraci
    con **comparador** (`= 0`), con **unidad de medida** (`0 hits`,
    `1 definicion`) o **pegada a otra ancla** (`exit 0`). Si bastara un número,
    «queda elegante en 2 sitios» sería un CA verificable.
-2. **Concatenar no diluye.** El CA se analiza además **por segmentos** (`·`,
-   `;`, `<br>`, salto de línea): un CA ornamental pegado a uno bueno se cita por
-   su segmento, en vez de esconderse en el ratio del conjunto. Los *fragmentos
-   de medida* (sin valoraciones y con ≤2 palabras significativas, como
-   `exit 0`) no se juzgan sueltos: solo dentro del conjunto.
+2. **Concatenar con los separadores declarados no diluye.** El CA se analiza
+   además **por segmentos**, pero solo por los separadores que el linter parte:
+   `·`, `;`, `<br>` y salto de línea. Con coma, punto, paréntesis, guion o «y
+   además», la dilución **vuelve** — es un límite acotado, no una propiedad
+   general. Los *fragmentos de medida* (sin valoraciones y con ≤2 palabras
+   significativas, como `exit 0`) no se juzgan sueltos: solo dentro del conjunto.
 
 ### Los cuatro motivos
 
@@ -131,6 +162,23 @@ Una lista negra de palabras («prohibido decir elegante») se esquiva con un
 sinónimo y castiga CAs legítimos que mencionan calidad de paso. La regla
 ancla+objeto ataca la **estructura** del enunciado. Aun así **sigue siendo un
 léxico**, con las dos caras del error; por eso avisa en vez de bloquear.
+
+### El aviso es de BARRIDO AMPLIO — ratio medido
+
+No es una cola curada: es un barrido con **falsos positivos esperados**. Medido
+y publicado para que nadie lo lea como veredicto:
+
+| medida | valor |
+| ------ | ----- |
+| avisos por WP en un backlog real de 73 WPs | **35 → 48 %** |
+| de ellos, CAs telegráficos (≤4 palabras distintas) | 26 (**74 %** de los avisos) |
+| CAs legítimos de un juego independiente que avisan | ~5 de 12 (**42 %**) |
+
+Léase así: **casi tres cuartos de los avisos son CAs cortos que el linter no
+sabe juzgar**, no promesas vacías. El aviso sirve para *mirar dónde*, no para
+concluir; por eso no bloquea y su recuento va en el reporte, no en el exit.
+Quien quiera menos ruido sube los suelos o sustituye el léxico; quien quiera más
+severidad, `--ca-estricto`.
 
 ---
 
@@ -164,6 +212,15 @@ El aviso de CA mira la forma del texto. Deja pasar, **por diseño**:
    se analizan: el defecto citado es el que bloquea, no la lista completa.
 9. **Calibración del consumidor.** Un `--series` demasiado permisivo declara
    como propia cualquier serie; los conjuntos los fija el BRIEF, no el linter.
+10. **BRIEF.** Solo se le aplica el suelo y el aviso de **valoración**: no se le
+    exige ancla ni objeto, porque describe trabajo, no comprobación.
+11. **Dilución por separadores no declarados.** Ver §3: la garantía de segmentos
+    cubre `·`, `;`, `<br>` y salto de línea, no la coma ni el punto.
+12. **Tamaño.** El detector de ciclos es recursivo y hay recorridos lineales por
+    fila: a partir de ~20 000 filas la corrida se va a decenas de segundos, y
+    una cadena de dependencias de ~30 000 desborda la pila. Desbordar **no**
+    concede: sale por el manejador con **exit 2** (fail-closed). Backlogs de
+    plan real (cientos de filas) están tres órdenes de magnitud por debajo.
 
 Y **no** deja pasar, por diseño: el vacío y la duda de uso. Fichero vacío, sin
 tablas, tabla sin filas, filas que no producen ningún WP, o WPs que solo viven
@@ -193,13 +250,15 @@ node scripts/verificar-backlog.mjs \
 
 Parámetros (todos con env equivalente): `--backlog`, `--series`,
 `--prioridades`, `--ejes`, `--ejes-ninguno`, `--lanes`, `--patron-lane`,
-`--sin-deps`, `--deps-externas`, `--umbral-valoracion`, `--min-palabras-brief`,
+`--sin-deps`, `--conectores-deps`, `--deps-externas`, `--region-inicio`,
+`--region-fin`, `--umbral-valoracion`, `--min-palabras-brief`,
 `--min-palabras-ca`, `--ca-estricto`, `--lexico` (+`--lexico-modo`), `--alias`
-(+`--alias-modo`), `--json`. Admite también `--flag=valor`. Nada está cableado a
-un mundo concreto: series, prioridades, ejes, lanes, nombres de columna, suelos
-y léxico son del consumidor.
+(+`--alias-modo`), `--json`. Admite también `--flag=valor`; `--ayuda` solo se
+sirve si es lo único que se pide. Nada está cableado a un mundo concreto:
+series, prioridades, ejes, lanes, nombres de columna, suelos, conectores, marcas
+de región y léxico son del consumidor.
 
-Fixtures en cuatro caras (2 válidas, 1 de avisos, 12 inválidas y 6 de
+Fixtures en cuatro caras (5 válidas, 1 de avisos, 12 inválidas y 8 de
 ausencia, con su veredicto y recuento exacto en `casos.json`):
 `../examples/fixture-backlog/`. Suite:
 `node --test scripts/verificar-backlog.test.mjs`.

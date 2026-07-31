@@ -23,6 +23,8 @@ import {
   configurar,
   parsearArgv,
   significativosDistintos,
+  leerDeps,
+  anchoIndentacion,
   ErrorUso,
   CAMPOS,
   MOTIVOS_AVISO,
@@ -63,10 +65,11 @@ const FILA_OK = '| **FX-A01** | P0 | extraer el kit de plantillas a un paquete p
 for (const caso of CASOS.casos) {
   test(`fixture ${caso.cara}: ${caso.fixture} → exit ${caso.exit} (${caso.descripcion})`, () => {
     const ruta = join(FIXTURES, caso.fixture);
-    const { status, salida } = correr(ruta);
+    const extra = caso.args || [];
+    const { status, salida } = correr(ruta, extra);
     assert.equal(status, caso.exit, `exit inesperado.\n${salida}`);
 
-    const { reporte } = correrJson(ruta);
+    const { reporte } = correrJson(ruta, extra);
     assert.equal(reporte.resumen.wps, caso.wps, `WPs parseados inesperados.\n${salida}`);
     assert.deepEqual(reporte.resumen.porMotivo, caso.motivos, `defectos bloqueantes: recuento exacto.\n${salida}`);
     assert.deepEqual(reporte.resumen.porMotivoAviso, caso.avisos, `avisos: recuento exacto.\n${salida}`);
@@ -94,8 +97,8 @@ test('coherencia de la tabla: solo valida/aviso salen en verde; ausencia siempre
     if (c.cara === 'invalida') assert.equal(c.exit, 1, `${c.fixture}`);
     if (c.cara === 'ausencia') assert.equal(c.exit, 3, `${c.fixture}`);
   }
-  assert.ok(CASOS.casos.filter((c) => c.cara === 'valida').length >= 2, 'al menos dos fixtures válidas');
-  assert.ok(CASOS.casos.filter((c) => c.cara === 'ausencia').length >= 4, 'al menos cuatro caras de ausencia');
+  assert.ok(CASOS.casos.filter((c) => c.cara === 'valida').length >= 5, 'al menos cinco fixtures válidas');
+  assert.ok(CASOS.casos.filter((c) => c.cara === 'ausencia').length >= 8, 'al menos ocho caras de ausencia');
 });
 
 // ===========================================================================
@@ -154,6 +157,155 @@ test('[B1] el mismo contenido en fence, comentario, indentado o cita da SIEMPRE 
     assert.equal(r.exit, 3, `envoltura ${causa} concedió`);
     assert.match(r.defectos.at(-1).detalle, new RegExp(`${causa}=`), `el diagnóstico debe nombrar la causa ${causa}`);
   }
+});
+
+// --- [D-A] el fence sigue la regla de CommonMark, no un toggle ------------
+
+const TABLA = `| WP | P | BRIEF | CA | deps | ejes |\n| -- | - | ----- | -- | ---- | ---- |\n${FILA_OK}`;
+
+test('[D-A] `~~~` NO cierra un fence de backticks: la tabla sigue velada', () => {
+  const texto = `# BACKLOG\n\n\`\`\`\ntexto\n~~~\n${TABLA}\n\`\`\`\n`;
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 3, 'con toggle ingenuo esto aprobaba con exit 0');
+  assert.equal(r.resumen.wps, 0);
+});
+
+test('[D-A] un fence de 4 backticks contiene uno de 3 y NO se cierra antes de tiempo', () => {
+  const texto = `# BACKLOG\n\n\`\`\`\`markdown\n\`\`\`\n${TABLA.replace('FX-A01', 'FX-Z99')}\n\`\`\`\n\`\`\`\`\n\n## Lane A · ALFA\n\n${TABLA}\n`;
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, 'el backlog REAL de después no puede quedar velado (falso rechazo)');
+  assert.deepEqual(r.wps.map((w) => w.id), ['FX-A01']);
+});
+
+test('[D-A] el cierre exige mismo carácter, longitud ≥ y nada más en la línea', () => {
+  // `\`\`\` js` no cierra (lleva info string); `\`\`\`\`` sí (longitud ≥ 3).
+  const sinCerrar = `# B\n\n\`\`\`\n${TABLA}\n\`\`\` js\n`;
+  assert.equal(verificarBacklog(sinCerrar, cfgFx).exit, 3);
+  const cierraLargo = `# B\n\n\`\`\`\nejemplo\n\`\`\`\`\n\n## Lane A · ALFA\n\n${TABLA}\n`;
+  assert.equal(verificarBacklog(cierraLargo, cfgFx).exit, 0);
+});
+
+// --- [D-B] la familia entera, por estructura de bloque --------------------
+
+test('[D-B] front-matter, <pre>, <details> y 3 espacios + tabulador → exit 3 con su causa', () => {
+  const envolturas = {
+    'front-matter': `---\ntabla: |\n${TABLA}\n---\n\n# B\n`,
+    html: `# B\n\n<pre>\n${TABLA}\n</pre>\n`,
+    indentado: `# B\n\n${TABLA.split('\n').map((l) => `   \t${l}`).join('\n')}\n`,
+  };
+  for (const [causa, texto] of Object.entries(envolturas)) {
+    const r = verificarBacklog(texto, cfgFx);
+    assert.equal(r.exit, 3, `envoltura ${causa} concedió`);
+    assert.match(r.defectos.at(-1).detalle, new RegExp(`${causa}=`), `causa ${causa} no citada`);
+  }
+});
+
+test('[D-B] la expansión de tabulador sigue CommonMark (3 espacios + tab = 4 columnas)', () => {
+  assert.equal(anchoIndentacion('   \tx'), 4);
+  assert.equal(anchoIndentacion('\tx'), 4);
+  assert.equal(anchoIndentacion('  x'), 2);
+});
+
+test('[D-B] <details> con línea en blanco: la tabla vuelve a ser markdown y SÍ se lintea', () => {
+  const texto = `# B\n\n<details>\n<summary>plegado</summary>\n\n## Lane A · ALFA\n\n${TABLA}\n`;
+  assert.equal(verificarBacklog(texto, cfgFx).exit, 0, 'CommonMark: el bloque HTML tipo 6 acaba en línea vacía');
+});
+
+test('[D-B] región declarada: lo de fuera se ignora por construcción', () => {
+  const cfgReg = configurar({ series: 'FX-[A-Z][0-9]{2}', regionInicio: '<!-- bl:ini -->', regionFin: '<!-- bl:fin -->' });
+  const texto = `# B\n\n## Lane A · ALFA\n\n${TABLA.replace('FX-A01', 'FX-Z99')}\n\n<!-- bl:ini -->\n\n## Lane A · ALFA\n\n${TABLA}\n\n<!-- bl:fin -->\n\n${TABLA.replace('FX-A01', 'FX-Z98')}\n`;
+  const r = verificarBacklog(texto, cfgReg);
+  assert.equal(r.exit, 0);
+  assert.deepEqual(r.wps.map((w) => w.id), ['FX-A01'], 'solo la región declara WPs');
+});
+
+test('[D-B] región declarada ausente → exit 3 limpio, nunca verde', () => {
+  const cfgReg = configurar({ series: 'FX-[A-Z][0-9]{2}', regionInicio: '<!-- bl:ini -->' });
+  const r = verificarBacklog(`# B\n\n## Lane A · ALFA\n\n${TABLA}\n`, cfgReg);
+  assert.equal(r.exit, 3);
+  assert.equal(r.resumen.porMotivo['region-ausente'], 1);
+});
+
+// --- [D-C] deps en prosa: holgura declarada, sin falsos rechazos ----------
+
+test('[D-C] «FX-A01 y FX-A03» son dos dependencias, no un WP llamado «y»', () => {
+  const { ids, nulos, ilegibles } = leerDeps('FX-A01 y FX-A03', cfgFx);
+  assert.deepEqual(ids, ['FX-A01', 'FX-A03']);
+  assert.deepEqual(nulos, []);
+  assert.deepEqual(ilegibles, []);
+});
+
+test('[D-C] «Ninguna.» y «ninguna (WP raiz)» son «sin dependencias», no defectos', () => {
+  for (const celda of ['Ninguna.', 'ninguna (WP raiz)', 'NINGUNA;', '(ninguna)']) {
+    const { ids, nulos, ilegibles } = leerDeps(celda, cfgFx);
+    assert.deepEqual(ids, [], `${celda} no declara dependencias`);
+    assert.equal(nulos.length, 1, `${celda} declara el token nulo`);
+    assert.deepEqual(ilegibles, [], `${celda} no deja ilegibles`);
+  }
+});
+
+test('[D-C] un backlog entero con deps en prosa es despachable', () => {
+  const texto = backlogDe([
+    '| **FX-A01** | P0 | extraer el kit de plantillas a un paquete propio | el probe del consumidor devuelve exit 0 | Ninguna. | I |',
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | grep del simbolo devuelve 1 definicion | ninguna (WP raiz del carril) | II |',
+    '| **FX-A03** | P2 | publicar la cara publica del kit | el script de ceguera imprime ceguera 0 hits | FX-A01 y FX-A02 | ceguera |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, JSON.stringify(r.defectos, null, 2));
+  assert.deepEqual(r.wps[2].depsIds, ['FX-A01', 'FX-A02']);
+});
+
+test('[D-C] la prosa sin dígitos se ignora, pero un ID roto NO se traga', () => {
+  const texto = backlogDe(['| **FX-A01** | P0 | extraer el kit de plantillas | el probe devuelve exit 0 | FXA01 | I |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.resumen.porMotivo['dep-no-interpretable'], 1, 'un token con dígitos que no es ID se caza');
+  assert.match(r.defectos[0].detalle, /FXA01/);
+});
+
+test('[D-C] la contradicción se mantiene con la holgura nueva', () => {
+  const texto = backlogDe([
+    FILA_OK,
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | el probe devuelve exit 0 | ninguna y FX-A01 | II |',
+  ]);
+  assert.equal(verificarBacklog(texto, cfgFx).resumen.porMotivo['deps-contradictorias'], 1);
+});
+
+// --- menores de la devolución --------------------------------------------
+
+test('[d4] --ayuda combinada con otras flags → exit 2 (nunca exit 0 sin veredicto)', () => {
+  const r = crudo(['--backlog', VALIDA, '-h']);
+  assert.equal(r.status, 2, r.salida);
+  assert.match(r.salida, /no se combina/);
+  assert.equal(crudo(['--ayuda']).status, 0, 'la ayuda sola sigue siendo exit 0');
+});
+
+test('[d6] una fila que parece separador es fila de DATOS, no omisión silenciosa', () => {
+  const texto = backlogDe([FILA_OK, '| - | - | - | - | - | - |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 1);
+  assert.equal(r.resumen.porMotivo['campo-ausente'], 1);
+  assert.match(r.defectos[0].detalle, /sin ID/);
+});
+
+test('[d7] el BRIEF también recibe aviso cuando la valoración domina', () => {
+  const texto = backlogDe(['| **FX-A01** | P0 | dejarlo todo mas limpio y elegante | el probe del consumidor devuelve exit 0 | ninguna | I |']);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, 'sigue sin bloquear');
+  assert.equal(r.resumen.porMotivoAviso['BRIEF-ornamental/valoracion'], 1);
+});
+
+test('[d8] las etiquetas HTML no son comparadores', () => {
+  assert.equal(analizarCA('codigo mas legible <b>2</b> veces', cfg).motivo, 'CA-ornamental/sin-ancla');
+});
+
+test('[d5] --series vacío es tan inválido como --prioridades vacío (exit 2)', () => {
+  assert.equal(crudo(['--backlog', VALIDA, '--series', '']).status, 2);
+  assert.equal(crudo(['--backlog', VALIDA, '--patron-lane', '  ']).status, 2);
+});
+
+test('[ruido] los verbos de variación anclan: «no baja del 80%» es verificable', () => {
+  assert.equal(analizarCA('el informe de cobertura no baja del 80% respecto a la rama base', cfg).ok, true);
+  assert.equal(analizarCA('el tiempo de arranque no supera los 2 segundos', cfg).ok, true);
 });
 
 test('[M5] el diagnóstico de ausencia no miente sobre la causa', () => {

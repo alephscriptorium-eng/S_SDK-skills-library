@@ -142,9 +142,10 @@ ejemplo: `examples/`.
     `../vigilancia/reference/ADDENDA-DOS-CARAS.md`.
 23. BACKLOG despachable antes de la ola: cada WP declara `lane`, `WP`,
     `BRIEF`, `CA`, `P`, `deps`, `ejes`; conjuntos declarados, sin
-    contradicciones, deps sin ciclos, suelo por campo; la **ausencia** (fichero
-    vacío, 0 WPs, tabla sin filas, WP solo visible en fence/comentario/bloque
-    indentado/cita) es fallo ruidoso, nunca verde. El gate **bloquea lo
+    contradicciones, deps sin ciclos, suelo por campo; la **ausencia** es fallo ruidoso,
+    nunca verde: fichero vacío, 0 WPs, o WPs que solo viven donde el lector no
+    los ve como tabla (estructura de bloque de CommonMark: fence con su regla
+    real, código indentado, bloques HTML, front-matter, comentario, cita). El gate **bloquea lo
     decidible y avisa de lo opinable**: el CA ornamental (sin ancla ni objeto)
     se cita como aviso y no decide el exit, porque un gate que rechaza CAs
     correctos acaba desactivado —
@@ -207,7 +208,7 @@ convivencia.)
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `reference/backlog-despachable.md` | contrato de BACKLOG despachable (7 campos), qué **bloquea** vs qué **avisa**, qué hace ornamental a un CA y los límites del linter |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
-| `examples/fixture-backlog/` | fixture del BACKLOG en cuatro caras (2 válidas · 1 de avisos · 12 inválidas · 6 de ausencia) con su veredicto exacto en `casos.json` |
+| `examples/fixture-backlog/` | fixture del BACKLOG en cuatro caras (5 válidas · 1 de avisos · 12 inválidas · 8 de ausencia) con su veredicto exacto en `casos.json` |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` + MAPA-RAIZ/REPO/TALLER (#19) |
 | `reference/plantillas/MAPA-*.md.tpl` | mapas de territorio con regla al pie |

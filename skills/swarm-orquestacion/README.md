@@ -58,7 +58,9 @@ repartir. **Bloquea lo decidible**: los siete campos por WP (`lane`, `WP`,
 conjuntos declarados, contradicciones (`ninguna` junto a una dep real), `deps`
 que resuelven sin ciclos y el suelo de BRIEF/CA en palabras distintas.
 **Avisa sin bloquear** del CA ornamental (sin ancla ni objeto): la calidad de un
-CA es juicio, y un gate que rechaza CAs correctos acaba desactivado.
+CA es juicio, y un gate que rechaza CAs correctos acaba desactivado. El aviso es
+de **barrido amplio** (≈48 % de los WPs en un backlog real, tres cuartos de
+ellos CAs telegráficos): sirve para mirar dónde, no para concluir.
 
 ```bash
 node skills/swarm-orquestacion/scripts/verificar-backlog.mjs \
@@ -73,7 +75,7 @@ de uso nunca es un veredicto.
 
 Series, prioridades, ejes, lanes, nombres de columna, patrón de lane, suelos y
 léxico de CA son del consumidor (`--ayuda`). Contrato y límites honestos:
-`reference/backlog-despachable.md`. Fixtures en cuatro caras:
+`reference/backlog-despachable.md`. Fixtures en cuatro caras (26):
 `examples/fixture-backlog/` (`node --test scripts/verificar-backlog.test.mjs`).
 
 ## Ceguera (cara pública)

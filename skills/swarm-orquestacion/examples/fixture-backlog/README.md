@@ -8,7 +8,7 @@ Veredicto esperado de cada fichero: `casos.json` (recuento **exacto** de
 defectos bloqueantes y de avisos + citas obligatorias del mensaje). La suite
 `../../scripts/verificar-backlog.test.mjs` ejecuta esa tabla contra el linter.
 
-Cuatro caras, porque el veredicto tiene cuatro formas: **pasa** (exit 0),
+26 fixtures. Cuatro caras, porque el veredicto tiene cuatro formas: **pasa** (exit 0),
 **pasa con avisos** (exit 0 + CA ornamental citado), **cae por un defecto
 decidible** (exit 1) y **cae por ausencia** (exit 3).
 
@@ -18,6 +18,9 @@ decidible** (exit 1) y **cae por ausencia** (exit 3).
 | ------- | ------------ |
 | `backlog-valido.md` | 4 WPs, 2 lanes, los siete campos, deps sin ciclos, CA con ancla y objeto |
 | `backlog-dep-enlace.md` | deps escritas como enlace markdown resuelven; CA de negación universal («ninguna referencia queda…») es verificable |
+| `backlog-deps-prosa.md` | `deps` en prosa: «FX-A01 y FX-A03», «Ninguna.», paréntesis y punto final |
+| `backlog-fence-anidado.md` | fence de 4 backticks con uno de 3 dentro: el backlog real de después **sí** se lintea |
+| `backlog-region-declarada.md` | región declarada (`--region-inicio`/`--region-fin`): lo de fuera se ignora por construcción |
 
 ## Cara del AVISO (exit 0, pero informa)
 
@@ -55,8 +58,10 @@ decide el despacho. Un gate que rechaza CAs correctos acaba desactivado.
 | `backlog-lista-sin-tabla.md` | formato de lista, no despachable |
 | `backlog-tabla-indentada.md` | tabla en bloque indentado (4 espacios) |
 | `backlog-tabla-en-cita.md` | tabla dentro de una cita `>` |
+| `backlog-fence-tilde.md` | `~~~` no cierra un fence de backticks (regla de CommonMark) |
+| `backlog-envolturas-html.md` | front-matter, `<pre>`, `<details>` y 3 espacios + tabulador |
 
-Ninguno de estos seis es «verde por vacío»: un backlog que lintea a cero jamás
+Ninguno de estos ocho es «verde por vacío»: un backlog que lintea a cero jamás
 es despachable, y el diagnóstico dice la **causa** (`fence=`, `comentario=`,
 `indentado=`, `cita=`) en vez de afirmar que no había ninguna tabla.
 
