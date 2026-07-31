@@ -1,0 +1,155 @@
+{
+  "_": "Tabla de casos de la fixture de BACKLOG despachable. Cada caso declara el veredicto esperado (exit), el recuento EXACTO por motivo y las citas que el mensaje debe contener. La suite (../../scripts/verificar-backlog.test.mjs) la ejecuta contra el linter real.",
+  "series": "FX-[A-Z][0-9]{2}",
+  "prioridades": "P0,P1,P2",
+  "casos": [
+    {
+      "fixture": "backlog-valido.md",
+      "cara": "valida",
+      "descripcion": "cuatro WPs en dos lanes, deps sin ciclos, CA con ancla y objeto",
+      "exit": 0,
+      "wps": 4,
+      "motivos": {},
+      "citas": ["DESPACHABLE"]
+    },
+    {
+      "fixture": "backlog-ca-ornamental.md",
+      "cara": "invalida",
+      "descripcion": "cada fila cae por SU sabor de CA ornamental (valoracion, sin-ancla, sin-objeto)",
+      "exit": 1,
+      "wps": 5,
+      "motivos": {
+        "CA-ornamental/valoracion": 3,
+        "CA-ornamental/sin-ancla": 1,
+        "CA-ornamental/sin-objeto": 1
+      },
+      "citas": ["queda elegante", "mejor estructurado", "se revisa la calidad", "el test pasa", "FX-A01", "FX-A05"]
+    },
+    {
+      "fixture": "backlog-ciclo-corto.md",
+      "cara": "invalida",
+      "descripcion": "ciclo A -> B -> A senalado con el camino concreto",
+      "exit": 1,
+      "wps": 2,
+      "motivos": { "dep-ciclo": 1 },
+      "citas": ["FX-A01 -> FX-A02 -> FX-A01"]
+    },
+    {
+      "fixture": "backlog-ciclo-largo.md",
+      "cara": "invalida",
+      "descripcion": "ciclo A -> B -> C -> A; el cuarto WP cuelga del ciclo sin ciclar",
+      "exit": 1,
+      "wps": 4,
+      "motivos": { "dep-ciclo": 1 },
+      "citas": ["FX-A01 -> FX-A02 -> FX-A03 -> FX-A01"]
+    },
+    {
+      "fixture": "backlog-campo-ausente.md",
+      "cara": "invalida",
+      "descripcion": "celda en blanco, marcador de guion y marcador de interrogante",
+      "exit": 1,
+      "wps": 3,
+      "motivos": { "campo-ausente": 3 },
+      "citas": ["«deps»", "«CA»", "«ejes»", "FX-A01", "FX-A02", "FX-A03"]
+    },
+    {
+      "fixture": "backlog-prioridad-invalida.md",
+      "cara": "invalida",
+      "descripcion": "P3 fuera del conjunto y una prioridad en prosa",
+      "exit": 1,
+      "wps": 2,
+      "motivos": { "prioridad-invalida": 2 },
+      "citas": ["«P3»", "«alta»", "P0, P1, P2"]
+    },
+    {
+      "fixture": "backlog-sin-wps.md",
+      "cara": "ausencia",
+      "descripcion": "prosa y encabezados; ninguna tabla declara columna de WP",
+      "exit": 3,
+      "wps": 0,
+      "motivos": { "sin-wps": 1 },
+      "citas": ["NINGUNA declara columna de WP"]
+    },
+    {
+      "fixture": "backlog-vacio.md",
+      "cara": "ausencia",
+      "descripcion": "fichero vacio: jamas verde",
+      "exit": 3,
+      "wps": 0,
+      "motivos": { "backlog-vacio": 1 },
+      "citas": ["vacio"]
+    },
+    {
+      "fixture": "backlog-tabla-sin-filas.md",
+      "cara": "ausencia",
+      "descripcion": "tablas de WPs con cabecera y separador, sin filas",
+      "exit": 3,
+      "wps": 0,
+      "motivos": { "sin-wps": 1 },
+      "citas": ["SIN filas de datos"]
+    },
+    {
+      "fixture": "backlog-lista-sin-tabla.md",
+      "cara": "ausencia",
+      "descripcion": "backlog en formato de lista: cero filas, cero verde",
+      "exit": 3,
+      "wps": 0,
+      "motivos": { "sin-wps": 1 },
+      "citas": ["NINGUNA tabla", "linea(s) de lista"]
+    },
+    {
+      "fixture": "backlog-serie-no-declarada.md",
+      "cara": "invalida",
+      "descripcion": "filas de serie ajena junto a una declarada: no se omiten en silencio",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "serie-no-declarada": 2 },
+      "citas": ["ZZ-01", "ZZ-02", "no se lintea en silencio"]
+    },
+    {
+      "fixture": "backlog-id-duplicado.md",
+      "cara": "invalida",
+      "descripcion": "mismo ID en dos filas",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "id-duplicado": 1 },
+      "citas": ["FX-A01"]
+    },
+    {
+      "fixture": "backlog-dep-inexistente.md",
+      "cara": "invalida",
+      "descripcion": "dep que no resuelve y sin --deps-externas",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "dep-inexistente": 1 },
+      "citas": ["FX-Z99"]
+    },
+    {
+      "fixture": "backlog-fila-fuera-de-tabla.md",
+      "cara": "invalida",
+      "descripcion": "WP colado en una tabla sin columna de WP (quedaria fuera del lint)",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "fila-fuera-de-tabla-wp": 1 },
+      "citas": ["FX-A02", "SIN columna de WP"]
+    },
+    {
+      "fixture": "backlog-columna-ausente.md",
+      "cara": "invalida",
+      "descripcion": "la tabla no declara deps ni ejes: no se pueden declarar",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "columna-requerida-ausente": 2 },
+      "citas": ["«deps»", "«ejes»"]
+    },
+    {
+      "fixture": "backlog-sin-lane.md",
+      "cara": "invalida",
+      "descripcion": "ni columna lane ni encabezado de lane que cubra la fila",
+      "exit": 1,
+      "wps": 1,
+      "motivos": { "columna-requerida-ausente": 1 },
+      "citas": ["«lane»"]
+    }
+  ]
+}

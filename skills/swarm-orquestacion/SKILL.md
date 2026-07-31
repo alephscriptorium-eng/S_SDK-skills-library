@@ -140,6 +140,11 @@ ejemplo: `examples/`.
 22. Evidencia enmascarada en cara pública: el patrón vetado se cita
     **enmascarado** con **conteo literal** —
     `../vigilancia/reference/ADDENDA-DOS-CARAS.md`.
+23. BACKLOG despachable antes de la ola: cada WP declara `lane`, `WP`,
+    `BRIEF`, `CA`, `P`, `deps`, `ejes`; el CA nombra **ancla y objeto** de una
+    comprobación (no valoración ornamental); deps sin ciclos; y la **ausencia**
+    (fichero vacío, 0 WPs, tabla sin filas) es fallo ruidoso, nunca verde —
+    `reference/backlog-despachable.md` + `scripts/verificar-backlog.mjs`.
 
 ## Método v0.7 (costuras)
 
@@ -196,10 +201,13 @@ convivencia.)
 | `reference/reglas-metodo-v03.md` | 14 reglas + V2 commits gobierno + checklist ola (base de v0.4) |
 | `reference/reglas-metodo-v02.md` | histórico v0.2 (12 reglas; apunta a v0.3) |
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
+| `reference/backlog-despachable.md` | contrato de BACKLOG despachable (7 campos) + qué hace **ornamental** a un CA y límites del linter |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
+| `examples/fixture-backlog/` | fixture de las dos caras del BACKLOG (1 válida + 15 inválidas con su motivo en `casos.json`) |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` + MAPA-RAIZ/REPO/TALLER (#19) |
 | `reference/plantillas/MAPA-*.md.tpl` | mapas de territorio con regla al pie |
 | `scripts/comprobar-ceguera.sh` | grep de ceguera sobre este skill |
 | `scripts/verificar-changelog.mjs` | gate opt-in del CHANGELOG de **gobierno** (WP-id ↔ BACKLOG; `--role gobierno` + rutas); no aplica a CHANGELOG de paquete |
 | `scripts/proyectar-backlog.mjs` | proyección del backlog a issues (export/import; sin sync; gate ceguera) — ver `reference/proyeccion-issues.md` |
+| `scripts/verificar-backlog.mjs` | linter de BACKLOG **despachable**: 7 campos por WP, CA verificable, prioridades/ejes del conjunto declarado, deps sin ciclos; exit 3 si el backlog está vacío o lintea a 0 WPs |

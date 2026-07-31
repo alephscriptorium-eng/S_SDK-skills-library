@@ -50,6 +50,28 @@ node skills/swarm-orquestacion/scripts/verificar-changelog.mjs \
 `--role paquete` se rechaza a propósito. Detalle: `reference/reglas-metodo-v04.md`
 (§ práctica CHANGELOG) y `--help` del script.
 
+## Gate · BACKLOG despachable (antes de la ola)
+
+`scripts/verificar-backlog.mjs` decide si el BACKLOG del mundo se puede
+repartir: los siete campos por WP (`lane`, `WP`, `BRIEF`, `CA`, `P`, `deps`,
+`ejes`), CA **verificable** (ancla + objeto, no valoración ornamental),
+prioridad y ejes dentro del conjunto declarado, y `deps` que resuelven sin
+ciclos.
+
+```bash
+node skills/swarm-orquestacion/scripts/verificar-backlog.mjs \
+  --backlog plan/BACKLOG.md --series 'AA-[0-9]+|BB-[0-9]+' \
+  --prioridades P0,P1,P2
+```
+
+Exit `0` despachable · `1` defectos (citados por WP y campo) · `2` uso/E-S ·
+`3` **ausencia**: fichero vacío o 0 WPs. La ausencia nunca es verde.
+
+Series, prioridades, ejes, nombres de columna, patrón de lane y léxico de CA
+son del consumidor (`--ayuda`). Contrato y límites honestos:
+`reference/backlog-despachable.md`. Fixtures de las dos caras:
+`examples/fixture-backlog/` (`node --test scripts/verificar-backlog.test.mjs`).
+
 ## Ceguera (cara pública)
 
 Antes de publicar o empacar, en la raíz del paquete:
