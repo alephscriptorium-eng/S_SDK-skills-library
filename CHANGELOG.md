@@ -14,6 +14,14 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+### Added
+
+- **`mesa-sincronia`** — skill nuevo (WP-L-C01 ✅, 2026-07-31): protocolo
+  de mesa de sincronía multi-consola §0–§11 parametrizado (17 parámetros
+  + `RAICES_AUDITABLES`), fixture de calibración sintética y prueba de
+  ceguera mecánica (árbol + historial = 0). Minor por DC-22 (regla de
+  método nueva).
+
 ## [0.11.0] — 2026-07-26
 
 Minor (DC-22/DC-29: cambio compatible de contrato de método): parser de
