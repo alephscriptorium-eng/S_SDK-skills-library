@@ -134,6 +134,7 @@ exacto, ceguera 0, dogfood en este WORLD_ROOT.
 | **L-H01** | P0 | Export DRAFT→BACKLOG con marca `BLOQUEA:` y conteo de prioridades | parser acepta series configuradas; cero WPs = fallo ruidoso |
 | **L-H02** | P1 | Convivencia multi-orquestador (referencia) actualizada post-mesa | ceguera |
 | **L-H03** | P1 | Plantilla BRIEF+CA cinco ejes para WPs de skillización | ejemplo L-A01 |
+| **L-H07** | **P0** | **`git stash` prohibido en swarm multi-worktree** — la pila de stash es del **repositorio**, no del worktree: dos workers de carriles distintos se cruzaron la obra en ~30 s (incidente real, 2026-07-31; recuperado íntegro, ramas no contaminadas). La regla y sus alternativas (`git show <base>:<ruta>`, copia en scratchpad, worktree desechable) entran en el skill `swarm-orquestacion`, que es donde los workers leen el método | la regla aparece en el skill publicado · el brief-plantilla la incluye · fixture que documente el modo de fallo |
 | **L-H04** | P2 | Roles plan/ por referencia; cero copia divergente | check |
 | **L-H05** | P2 | Re-plan protocolo tras F2 custodio (descartes) | — |
 | **L-H06** 🔶 | P1 | Linter de BACKLOG despachable (lane/WP/BRIEF/CA/P/deps/ejes). **Ola 3, despachado 2026-07-31** (`wp/lh06-linter-backlog`, worktree `wt/l-h06`) · **contrarrevisión obligatoria** (gate que concede): backlog vacío o sin filas debe caer ruidosamente, nunca verde por vacío | fixture inválida falla por CA ornamental o dependencia circular |
