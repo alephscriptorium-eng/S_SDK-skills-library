@@ -199,7 +199,7 @@ Parámetros (todos con env equivalente): `--backlog`, `--series`,
 un mundo concreto: series, prioridades, ejes, lanes, nombres de columna, suelos
 y léxico son del consumidor.
 
-Fixtures de las dos caras (2 válidas, 1 de avisos, 12 inválidas y 6 de
+Fixtures en cuatro caras (2 válidas, 1 de avisos, 12 inválidas y 6 de
 ausencia, con su veredicto y recuento exacto en `casos.json`):
 `../examples/fixture-backlog/`. Suite:
 `node --test scripts/verificar-backlog.test.mjs`.
