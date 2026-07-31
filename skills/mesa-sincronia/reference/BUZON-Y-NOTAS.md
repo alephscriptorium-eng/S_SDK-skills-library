@@ -156,14 +156,16 @@ Pasos (cada uno cita su fuente):
    sustituir todos los `<…>`; con la mesa recién montada, `Informe` = `-`
    y `Watchers` = `parados` (se declara el estado **real**, §2.1). La
    tabla «Vigente» nace vacía (solo cabecera de tabla).
-3. **Materializar `TIMBRE.md`** desde el bloque-forma del contrato §7:
-   título `# TIMBRE · carril <X>`, recordatorio «campanilla — no buzón»
-   con puntero a §7, el formato `PING …` citado **indentado** (para que
-   no cuente como ping real en `grep -c '^PING '`), y sección `## Pings`
-   vacía al pie. Encoding UTF-8 sin BOM; append siempre.
+3. **Materializar `TIMBRE.md`** desde `plantillas/TIMBRE.md.tpl`
+   (reglas: contrato §7). La plantilla ya trae el formato `PING …` citado
+   **indentado** — así no cuenta como ping real en `grep -c '^PING '` —
+   y la sección `## Pings` vacía al pie. Encoding UTF-8 sin BOM; append
+   siempre.
 4. **Crear `DRAFT.md`** (§9.5): cabecera con dueño y fecha + secciones
-   `## Candidatos` y `## BLOQUEA:` vacías. Vacío es estado válido; lo que
-   no es válido es que falte cuando el custodio pida exportar backlog.
+   `## Candidatos` y `## BLOQUEA:` vacías, y firma. Vacío es estado
+   válido; lo que no es válido es que falte cuando el custodio pida
+   exportar backlog. Forma de referencia:
+   `../examples/fixture-buzones/sur/sincronia/DRAFT.md`.
 5. **Sembrar `notas/archivo/README.md`** con la doctrina de §6.3.
 6. **Primera nota** — presentación del carril desde
    `plantillas/NOTA.md.tpl`: `Tick` = el tick de alta, `REF` = `-`,
