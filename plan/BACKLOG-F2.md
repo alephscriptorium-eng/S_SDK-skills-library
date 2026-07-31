@@ -69,7 +69,7 @@ exacto, ceguera 0, dogfood en este WORLD_ROOT.
 
 | WP | P | BRIEF | CA tentativo |
 | -- | - | ----- | ------------ |
-| **L-C01** | P0 | Portar PROTOCOLO §0–§11 parametrizado (§0) | fixture calibración; 0 nombres/rutas/variables reales en tarball |
+| **L-C01** 🔶 | P0 | Portar PROTOCOLO §0–§11 parametrizado (§0) — **ola 1** (rama `wp/l-c01-protocolo-skill`) | fixture calibración; 0 nombres/rutas/variables reales en tarball |
 | **L-C02** | P0 | Cerco v2: código histórico se porta; storage/peers actuales pueden ser externos; boot local-first | fixture con source deprecated denegada y peer actual permitido |
 | **L-C03** | P0 | Gate genérico de material de identidad fuera de VCS **y** contexto/artefacto de build | falla si clave entra al contexto o imagen; cero vocabulario de carril |
 | **L-C04** | P1 | Federación por tramos (superior no reescribe) | contrato skill + fixture |
