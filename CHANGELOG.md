@@ -21,6 +21,11 @@ paquete» son ejes distintos; la correspondencia se declara en el
   + `RAICES_AUDITABLES`), fixture de calibración sintética y prueba de
   ceguera mecánica (árbol + historial = 0). Minor por DC-22 (regla de
   método nueva).
+- **`mesa-sincronia` · capa operativa** (WP-L-A01 ✅, 2026-07-31):
+  método de buzón-puntero + notas (`reference/BUZON-Y-NOTAS.md`, montaje
+  en 8 pasos), plantillas BUZON/NOTA/TIMBRE, fixture materializada
+  hub+2 mundos y simulación de montaje ejecutada (2 huecos corregidos
+  en el propio skill).
 
 ## [0.11.0] — 2026-07-26
 

@@ -39,7 +39,7 @@ exacto, ceguera 0, dogfood en este WORLD_ROOT.
 
 | WP | P | BRIEF | CA tentativo |
 | -- | - | ----- | ------------ |
-| **L-A01** | P0 | Skill marco-agnóstico de mesa: buzón puntero + notas | fixture hub+2 mundos; un dueño; segundo consumidor fresco; ceguera árbol+historial 0 |
+| **L-A01** ✅ | P0 | Skill de mesa, capa operativa — **integrado en `mesa-sincronia`** (fuente única del §0): `reference/BUZON-Y-NOTAS.md` (montaje §7 en 8 pasos) + plantillas BUZON/NOTA/**TIMBRE**.tpl + fixture materializada Faro/NOR/SUR (13 ficheros, un-dueño visible, compactar mostrado). Simulación de montaje EJECUTADA (carril sintético ESTE): 2 huecos hallados y **corregidos en el skill** (H1 forma del timbre anti-falseo de `base` · H2 DRAFT sin forma). Ceguera árbol+historial 0 con control positivo (re-verificada por orquestador: grep=0). Aceptado 2026-07-31 (rama `wp/l-a01-skill-mesa`) | fixture hub+2 mundos ✓ · un dueño ✓ · segundo consumidor = simulación entregada (agente fresco real → **L-G01** pendiente) · ceguera 0 ✓ |
 | **L-A02** | P0 | Contrato TIMBRE + gate formato/append UTF-8 | probe vacío · encoding · append-only |
 | **L-A03** | P0 | Watcher-timbre param `WATCH_FILE` + fix `grep -c`/log propio | suite casos Z/V/O; lease liveness |
 | **L-A04** | P0 | TICK+HILO+COMPACTO (◆/★/⏳) + verificador de compacto | hilo sintético tick→ping→compacto |
