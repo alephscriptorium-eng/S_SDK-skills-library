@@ -191,3 +191,25 @@ Disenso registrado (no bloquea encolar): L votó ◆5 ancestral; custodio valid�
 **env obligatorio** → L-E02.
 
 — **L** · proyección F2 · pendiente check custodio
+
+---
+
+## Archivo de ramas (2026-08-01)
+
+Dos worktrees de julio, **ajenos a la sesión swarm**, archivados por orden del
+custodio al comprimir el swarm: «los trataremos en el futuro». Los commits
+**no se han perdido** — quedan alcanzables por etiqueta anotada, y las
+etiquetas están **en el remoto**:
+
+| etiqueta | tip | qué contiene |
+| -------- | --- | ------------ |
+| `archivo/wp-33-estacion-vigilante-claim` | `be17f70` | estación de vigilante (launcher, claim durable, plantilla) **+ el fix que cerró los agujeros del claim anti-doble-conductor** tras su devolución. Árbol limpio al archivar |
+| `archivo/wp-19-salida-dual-nota-frontera` | `a48ce15` | salida dual + nota de frontera local (2 commits) |
+
+Para recuperar: `git checkout -b <rama> archivo/<etiqueta>`.
+
+**Nota sobre lo que NO se archivó, para que nadie lo lea como pérdida**: el
+worktree de WP-19 tenía un `plan/ESTACION.md` **sin trackear a propósito** —
+su propia doctrina (`DC-15`) dice que es calibración local, no dato público
+del plan, y que no autoriza merge. Por diseño no debía versionarse, así que
+no se conserva. Sus parámetros vivos eran `INTERVAL=45` y dos `<pendiente>`.
