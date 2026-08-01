@@ -5,11 +5,11 @@
 | agente | worker L-H06 |
 | fecha | 2026-08-01 |
 | rama | `wp/lh06-linter-backlog` (base `main`) |
-| commits | `d8d9705` (skill) · `0eaf98c`+`a5027d4` (reporte) · `b1a36e8` (1ª devolución) · `ff0f60f` (2ª devolución: D-A/D-B/D-C) |
+| commits | `d8d9705` · `0eaf98c` · `a5027d4` · `b1a36e8` (1ª devolución) · `ff0f60f`+`0fc7871` (2ª) · `fc67f74` (3ª: D-A/D-B/D-C/D-D) |
 | eje(s) CA | I (consumidor real: la suite y el dogfood) · ceguera 13/14 (cara pública del skill) · hostil-omite (probar la ausencia) |
 | riesgo de revisión | `independiente` — gate que **concede** |
 | revisor distinto del worker | sí (contrarrevisión adversarial read-only) |
-| estado propuesto | corregido tras la 2ª devolución · listo para contrarrevisión final (D-A, D-B, D-C) |
+| estado propuesto | corregido tras la 3ª devolución · listo para la verificación de cierre del custodio |
 
 ## Qué se hizo
 
@@ -32,9 +32,9 @@ duplicar lógica: distinto propósito, distinto fichero.
 | ruta (relativa a la raíz del repo) | qué es |
 | ---------------------------------- | ------ |
 | `skills/swarm-orquestacion/scripts/verificar-backlog.mjs` | el linter (Node ≥18, sin dependencias) |
-| `skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs` | suite de 91 casos (`node --test`) |
+| `skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs` | suite de 104 casos (`node --test`) |
 | `skills/swarm-orquestacion/reference/backlog-despachable.md` | contrato de los 7 campos + definición de CA ornamental + límites |
-| `skills/swarm-orquestacion/examples/fixture-backlog/` | 26 fixtures en cuatro caras + `casos.json` + README |
+| `skills/swarm-orquestacion/examples/fixture-backlog/` | 28 fixtures en cuatro caras + `casos.json` + README |
 | `skills/swarm-orquestacion/SKILL.md` | regla 23 + 3 filas en Recursos |
 | `skills/swarm-orquestacion/README.md` | sección «Gate · BACKLOG despachable» |
 
@@ -44,8 +44,8 @@ duplicar lógica: distinto propósito, distinto fichero.
 
 | decide el exit | motivos |
 | -------------- | ------- |
-| **sí — bloquea** | `campo-ausente` · `columna-requerida-ausente` · `prioridad-invalida` · `eje-desconocido` · `ejes-contradictorios` · `deps-contradictorias` · `lane-desconocida` · `serie-no-declarada` · `id-duplicado` · `id-no-interpretable` · `fila-fuera-de-tabla-wp` · `dep-inexistente` · `dep-ciclo` · `brief-insuficiente` · `ca-insuficiente` · `backlog-vacio` · `sin-wps` |
-| **no — avisa** | `CA-ornamental/valoracion` · `CA-ornamental/sin-ancla` · `CA-ornamental/sin-objeto` · `CA-ornamental/sin-referente` |
+| **sí — bloquea** | `campo-ausente` · `columna-requerida-ausente` · `prioridad-invalida` · `eje-desconocido` · `ejes-contradictorios` · `deps-contradictorias` · `deps-no-declaradas` · `dep-no-interpretable` · `lane-desconocida` · `serie-no-declarada` · `id-duplicado` · `id-no-interpretable` · `fila-fuera-de-tabla-wp` · `dep-inexistente` · `dep-ciclo` · `brief-insuficiente` · `ca-insuficiente` · `region-ausente` · `region-sin-cierre` · `backlog-vacio` · `sin-wps` |
+| **no — avisa** | `CA-ornamental/valoracion` · `CA-ornamental/sin-ancla` · `CA-ornamental/sin-objeto` · `CA-ornamental/sin-referente` · `BRIEF-ornamental/valoracion` |
 
 Razón escrita en el contrato (`reference/backlog-despachable.md` §2): la calidad
 de un CA es **juicio**, y un gate no puede arrogárselo sin producir falsos
@@ -133,8 +133,8 @@ ratio de ruido del avisador está medido y publicado en el contrato §3.
 ## Fixtures: veredicto esperado vs salida real
 
 Serie sintética `FX-[A-Z]\d{2}`, lanes `ALFA`/`BETA`, cero datos de instancia.
-26 fixtures en **cuatro caras**: 5 válidas (exit 0), 1 de avisos (exit 0 con CA
-ornamental citado), 12 inválidas (exit 1) y 8 de ausencia (exit 3). Cada una cae
+28 fixtures en **cuatro caras**: 5 válidas (exit 0), 1 de avisos (exit 0 con CA
+ornamental citado), 13 inválidas (exit 1) y 9 de ausencia (exit 3). Cada una cae
 por **su** motivo, con recuento exacto de defectos **y** de avisos
 (`casos.json`), no por un error genérico.
 
@@ -142,7 +142,7 @@ por **su** motivo, con recuento exacto de defectos **y** de avisos
 | ------- | ---- | ------------------ | ----------- |
 | `backlog-valido.md` | válida | despachable | `4 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
 | `backlog-dep-enlace.md` | válida | dep en enlace resuelve | `3 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
-| `backlog-deps-prosa.md` | válida | deps en prosa («y», `Ninguna.`, paréntesis) | `4 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
+| `backlog-deps-prosa.md` | válida | deps en prosa («y», `Ninguna.`, «(ambas de la ola 1)») | `7 WP · 0 defecto(s) · 0 aviso(s)` · **exit 0** |
 | `backlog-fence-anidado.md` | válida | fence de 4 con uno de 3 dentro | `2 WP · 0 defecto(s)` · **exit 0** |
 | `backlog-region-declarada.md` | válida | solo se lintea la región declarada | `2 WP · 0 defecto(s)` · **exit 0** |
 | `backlog-ca-ornamental.md` | aviso | 5 avisos, 0 bloqueos | `valoracion=3 · sin-ancla=1 · sin-objeto=1` · **exit 0** |
@@ -152,6 +152,7 @@ por **su** motivo, con recuento exacto de defectos **y** de avisos
 | `backlog-prioridad-invalida.md` | inválida | `prioridad-invalida` ×2 | `prioridad-invalida=2` · exit 1 |
 | `backlog-suelo-minimo.md` | inválida | suelo de BRIEF y de CA | `brief-insuficiente=1 · ca-insuficiente=1` · exit 1 |
 | `backlog-contradicciones.md` | inválida | contradicciones declaradas | `deps-contradictorias=1 · ejes-contradictorios=1` · exit 1 |
+| `backlog-deps-sin-declarar.md` | inválida | prosa que no declara dependencia | `deps-no-declaradas=2` · exit 1 |
 | `backlog-serie-no-declarada.md` | inválida | `serie-no-declarada` ×2 | `serie-no-declarada=2` · exit 1 |
 | `backlog-id-duplicado.md` | inválida | `id-duplicado` | `id-duplicado=1` · exit 1 |
 | `backlog-dep-inexistente.md` | inválida | `dep-inexistente` | `dep-inexistente=1` · exit 1 |
@@ -166,6 +167,7 @@ por **su** motivo, con recuento exacto de defectos **y** de avisos
 | `backlog-tabla-en-cita.md` | ausencia | `sin-wps` (cita) | `sin-wps=1 · cita=3` · **exit 3** |
 | `backlog-fence-tilde.md` | ausencia | `~~~` no cierra backticks | `sin-wps=1 · fence=7` · **exit 3** |
 | `backlog-envolturas-html.md` | ausencia | front-matter · `<pre>` · `<details>` · 3 espacios+tab | `sin-wps=1 · indentado=3 · html=11 · front-matter=7` · **exit 3** |
+| `backlog-details-inline.md` | ausencia | `<details><summary>` y `<div align>` en una línea | `sin-wps=1 · html=10` · **exit 3** |
 
 Salida literal de los casos que sostienen el WP:
 
@@ -203,10 +205,10 @@ EXIT=1
 
 ```
 node --test skills/swarm-orquestacion/scripts/verificar-backlog.test.mjs
-# tests 91 · pass 91 · fail 0
+# tests 104 · pass 104 · fail 0
 
 node --test skills/swarm-orquestacion/scripts/*.test.mjs
-# tests 110 · pass 110 · fail 0    (91 nuevas + 19 previas, todas verdes)
+# tests 123 · pass 123 · fail 0    (104 nuevas + 19 previas, todas verdes)
 ```
 
 
@@ -366,7 +368,7 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 - [x] Eje(s) evidenciado(s): I (suite + dogfood), ceguera 13/14 (árbol +
       historial con control positivo), hostil-omite (13 vectores de ausencia y
       de argumentos).
-- [x] Gates ejecutados de verdad: 91/91 y 110/110 en verde, salida pegada.
+- [x] Gates ejecutados de verdad: 104/104 y 123/123 en verde, salida pegada.
 - [x] Commits convencionales en castellano, un repo por commit.
 - [x] Riesgo y contraevidencia cubiertos: sección «Ataques probados»; dos
       agujeros por auto-ataque y seis vías de la contrarrevisión, todos
@@ -377,7 +379,7 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 
 ## Evidencia de riesgo y contrarrevisión
 
-- `CASOS_ADVERSARIALES`: `[automatizado]` los 26 casos de `casos.json` con
+- `CASOS_ADVERSARIALES`: `[automatizado]` los 28 casos de `casos.json` con
   recuento exacto de defectos **y** de avisos · `[automatizado]` 13 vectores de
   ausencia y de argumentos (las 6 vías de exit 0 de la contrarrevisión, cada una
   con su caso rojo `[B1]`…`[B4]`, `[M1]`…`[M5]`) · `[automatizado]` 3 intentos
@@ -390,13 +392,15 @@ Medida canónica por exit de `grep -c`/`grep -Ec`; ningún `grep | head && echo 
 - `INSTALACION_LIMPIA`: no aplica (sin dependencias nuevas; el script corre con
   el Node del repo, ≥22 declarado en `engines`).
 - `TEST_AUTOMATIZADO_VS_EVIDENCIA_MANUAL`:
-  - Automatizado: `node --test …/verificar-backlog.test.mjs` (91) y la suite
-    completa de `scripts/` (110).
+  - Automatizado: `node --test …/verificar-backlog.test.mjs` (104) y la suite
+    completa de `scripts/` (123).
   - Manual: corridas del CLI fixture por fixture, dogfood y greps de ceguera.
-- `VEREDICTO_REVISOR`: **DEVUELTO** dos veces — 1ª: 6 vías de exit 0 + falsos
-  rechazos de CA (→ `b1a36e8`); 2ª: D-A (fence con toggle ingenuo), D-B (cuatro
-  envolturas más) y D-C (`deps` en prosa rechazada con diagnóstico falso) →
-  `ff0f60f`. ⏳ pendiente de la contrarrevisión final.
+- `VEREDICTO_REVISOR`: **DEVUELTO** tres veces — 1ª: 6 vías de exit 0 + falsos
+  rechazos de CA (→ `b1a36e8`); 2ª: fence con toggle ingenuo, cuatro envolturas
+  más y `deps` en prosa rechazada (→ `ff0f60f`); 3ª: bloque HTML tipo 6 más
+  estrecho que su contrato, omisión silenciosa en `deps`, dígito en prosa que
+  bloqueaba y una flag muerta (→ `fc67f74`). ⏳ pendiente de la verificación de
+  cierre del custodio; no habrá otra contrarrevisión.
 
 ## Dudas / bloqueos
 
@@ -516,10 +520,11 @@ prohibía. Ahora la convención está **declarada** en
 | `[FX-A01](#x); FX-A03.` | dependía del enlace | dos dependencias |
 | `FXA01` | dependencia inventada | **`dep-no-interpretable`** (bloqueante) |
 
-Regla escrita: separadores naturales y conectores en prosa (`y`, `e`, `and`,
-parametrizables), puntuación y paréntesis ignorados, enlaces resueltos, prosa
-sin dígitos ignorada, y **token con dígitos que no es ID legible → defecto**,
-para no tragarse un ID roto en silencio. Fixture nueva `backlog-deps-prosa.md`
+Regla escrita: separadores naturales, puntuación y paréntesis ignorados,
+enlaces resueltos y prosa ignorada. (En la 3ª devolución se corrigieron dos
+cosas de esta misma regla: los conectores no necesitaban lista —se ignoran por
+forma— y la red de «ID roto» disparaba con cualquier dígito. Ver la corrección
+de la 3ª devolución.) Fixture nueva `backlog-deps-prosa.md`
 (cuarta cara válida) + 5 casos rojos `[D-C]`.
 
 **Por qué no lo vi**: ninguna fixture cubría multi-dep salvo con coma, y el
@@ -572,7 +577,7 @@ nombra.
 | **d7** | el BRIEF recibe `BRIEF-ornamental/valoracion`; no se le exige ancla ni objeto (describe trabajo, no comprobación) y así se declara |
 | **d8** | `limpiarCelda` quita etiquetas HTML antes de buscar comparadores: `<b>2</b>` ya no es medida |
 | **d10** | frase acotada en contrato y reporte: la garantía de segmentos cubre `·`, `;`, `<br>` y salto de línea — con coma, punto o «y además» la dilución vuelve |
-| **d11** | fuera los dos recorridos `O(n²)` (índice `id→WP`); el límite de tamaño queda **declarado** en el contrato §4.12 con su umbral (~20 000 filas, cadena de ~30 000 desborda) y su fail-closed (exit 2) |
+| **d11** | fuera los dos recorridos `O(n²)` (índice `id→WP`); el límite de tamaño queda **declarado** en el contrato §4.12 — con umbrales **medidos** en la 3ª vuelta (D-E), no estimados — y su fail-closed (exit 2) |
 
 ### El ruido del avisador — medido, publicado y declarado
 
@@ -608,6 +613,105 @@ mutaciones de hostil-omite, cero cableado, la contabilidad exacta y la ceguera.
 Y queda registrado el hallazgo del revisor a mi favor: `plan/BACKLOG-F2.md`
 aparece en el diff de dos puntos porque lo movió el custodio en `main`;
 `git log main..HEAD` sobre ese fichero está vacío.
+
+
+## Corrección de la tercera devolución (D-A · D-B · D-C · D-D)
+
+Commit: `fc67f74`, misma rama, sin reescribir historia. Suite **104 propias /
+123 con las previas**, verde. Fixtures: **28 en cuatro caras** (5 válidas, 1 de
+avisos, 13 inválidas, 9 de ausencia).
+
+### D-A · el bloque HTML tipo 6 era más estrecho que su contrato
+
+`HTML_TIPO6` exigía que la etiqueta ocupara **toda** la línea; CommonMark solo
+exige que la línea **empiece** por ella. No era una novena envoltura: era una de
+las ocho declaradas, implementada más estrecha que lo que el contrato dice —y
+`<details><summary>…</summary>` en una línea es la forma común de plegar en
+markdown, así que el agujero era ancho y además se colaba **dentro** de la
+región declarada.
+
+Ahora la regex es la de la especificación: `<` (o `</`), nombre de etiqueta
+conocido, y detrás espacio, `>`, `/>` o fin de línea. Casos rojos `[D-A3]`:
+`<details><summary>…`, `<div align="center">Texto` y `<p>Texto` → **exit 3** con
+`html=`; el mismo agujero **dentro de la región declarada** → exit 3; y sigue
+valiendo lo contrario: `<details>` + línea en blanco → la tabla se ve y **se
+lintea** (exit 0). Fixture `backlog-details-inline.md`.
+
+### D-B · omisión silenciosa de una dependencia
+
+`deps: las dos anteriores` daba `depsIds: []`, cero defectos, **exit 0**. Es
+decidible sin opinar y contradecía mi propia doctrina — y era literalmente lo
+que dije que evitaba. Nuevo motivo bloqueante **`deps-no-declaradas`**: celda con
+contenido de la que no sale **ni** un id, **ni** el token nulo, **ni** algo con
+forma de ID roto. Fixture `backlog-deps-sin-declarar.md` + casos rojos `[D-B3]`
+en las dos direcciones (lo que no declara cae; `ninguna`, `FX-A01` y
+`ninguna (WP raiz)` siguen pasando).
+
+### D-C · un dígito en prosa bloqueaba el backlog
+
+Mi red `dep-no-interpretable` disparaba con **cualquier** dígito, así que
+`FX-A01, FX-A03 (ambas de la ola 1)` moría con «"1" no es un ID legible». Tres
+falsos rechazos de veinte celdas realistas, y encima incoherente con mi propia
+fixture. La forma que quería cazar es `FXA01`: **mezcla de letras y dígitos**.
+Esa es ahora la regla; un número suelto es prosa, como una palabra suelta.
+
+| celda | antes | ahora |
+| ----- | ----- | ----- |
+| `FX-A01, FX-A03 (ambas de la ola 1)` | exit 1 | dos dependencias |
+| `ninguna (raiz de la ola 2)` | exit 1 | token nulo |
+| `FX-A01 (ver seccion 3)` | exit 1 | una dependencia |
+| `FXA01` · `FX_A01` | defecto | **defecto** (sin cambio) |
+
+`backlog-deps-prosa.md` crece a 7 WPs con las tres celdas realistas dentro.
+
+### D-D · la flag muerta: retirada, no maquillada
+
+Tenías razón: borrar la lista dejaba la suite verde porque los conectores no
+llevan dígitos y la regla de forma ya se los comía. De las dos salidas honestas
+elijo **retirar**: fuera `--conectores-deps`, fuera su entrada en `DEFAULTS`, en
+la ayuda y en el contrato. La frase nueva dice la verdad: *los conectores no se
+declaran en ninguna lista; se ignoran por su **forma**, igual que cualquier otra
+palabra*. El caso rojo `[D-D3]` lo demuestra uniendo dos deps con `y`, `e`,
+`and`, `junto con`, `ademas de` y un conector inventado (`zzz`) — todos
+funcionan — y comprobando que la flag retirada da **exit 2**. Y renombré los
+tests para que digan lo que prueban.
+
+### Menores
+
+**D-E — el umbral estaba mal; ahora está medido.** Lo que decía («~30 000, tres
+órdenes de magnitud») era estimación, no medida. Medido en esta máquina:
+
+| caso | resultado |
+| ---- | --------- |
+| 20 000 filas planas | ~2 s · exit normal |
+| 40 000 filas planas | ~3,4 s · exit normal |
+| cadena **profunda** (cada WP depende del siguiente) de 4 000 | pasa |
+| cadena **profunda** de 5 000 | **desborda → exit 2** |
+| cadena inversa de 50 000 | pasa (el DFS no se hunde) |
+
+Lo que manda es la **profundidad**, no el número de filas. Un plan real queda
+**un orden de magnitud** por debajo. Caso rojo `[D-E]` con cadena profunda de
+6 000 exigiendo exit 2.
+
+**D-F — las flags nuevas ya se validan como las viejas**: `--region-inicio ''` →
+exit 2 (antes desactivaba la región en silencio); `--region-fin` sin
+`--region-inicio` → exit 2; `--lexico-modo` / `--alias-modo` se validan siempre y
+sin su fichero → exit 2; y la marca de fin declarada pero **ausente** ya no
+extiende hasta EOF en silencio: `region-sin-cierre`, bloqueante.
+
+**D-G y las cinco restantes**, anotadas en el contrato §4 como **límite
+declarado**, no como defecto: tabla indentada dentro de un ítem de lista
+(falso rechazo ruidoso), HTML tipo 7, encabezados crudos, tabla que no
+interrumpe párrafo en GFM, thematic break inicial y marca de región citada
+dentro de un fence. Quien quiera cerrarlas de golpe: región declarada.
+
+### Lo que no toqué
+
+La regla de fence completa (nueve esquinas), las seis vías de exit 0 anteriores,
+la familia de ciclos, los exit 2 de E/S y de config, ninguna excepción tragada
+hacia 0, BOM/CRLF, el suelo por palabras distintas, la ceguera y `casos.json`
+(que sigue siendo la pieza que hace barata la auditoría: ahora **28/28**).
+Sigue sin tocarse ningún BACKLOG, ni CI, ni `package.json`.
 
 
 ---
