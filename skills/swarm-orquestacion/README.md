@@ -75,7 +75,7 @@ de uso nunca es un veredicto.
 
 Series, prioridades, ejes, lanes, nombres de columna, patrón de lane, suelos y
 léxico de CA son del consumidor (`--ayuda`). Contrato y límites honestos:
-`reference/backlog-despachable.md`. Fixtures en cuatro caras (26):
+`reference/backlog-despachable.md`. Fixtures en cuatro caras (28):
 `examples/fixture-backlog/` (`node --test scripts/verificar-backlog.test.mjs`).
 
 ## Ceguera (cara pública)

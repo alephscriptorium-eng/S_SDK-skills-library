@@ -8,7 +8,7 @@ Veredicto esperado de cada fichero: `casos.json` (recuento **exacto** de
 defectos bloqueantes y de avisos + citas obligatorias del mensaje). La suite
 `../../scripts/verificar-backlog.test.mjs` ejecuta esa tabla contra el linter.
 
-26 fixtures. Cuatro caras, porque el veredicto tiene cuatro formas: **pasa** (exit 0),
+28 fixtures. Cuatro caras, porque el veredicto tiene cuatro formas: **pasa** (exit 0),
 **pasa con avisos** (exit 0 + CA ornamental citado), **cae por un defecto
 decidible** (exit 1) y **cae por ausencia** (exit 3).
 
@@ -18,7 +18,7 @@ decidible** (exit 1) y **cae por ausencia** (exit 3).
 | ------- | ------------ |
 | `backlog-valido.md` | 4 WPs, 2 lanes, los siete campos, deps sin ciclos, CA con ancla y objeto |
 | `backlog-dep-enlace.md` | deps escritas como enlace markdown resuelven; CA de negación universal («ninguna referencia queda…») es verificable |
-| `backlog-deps-prosa.md` | `deps` en prosa: «FX-A01 y FX-A03», «Ninguna.», paréntesis y punto final |
+| `backlog-deps-prosa.md` | `deps` en prosa: «FX-A01 y FX-A03», «Ninguna.», «(ambas de la ola 1)», enlaces |
 | `backlog-fence-anidado.md` | fence de 4 backticks con uno de 3 dentro: el backlog real de después **sí** se lintea |
 | `backlog-region-declarada.md` | región declarada (`--region-inicio`/`--region-fin`): lo de fuera se ignora por construcción |
 
@@ -41,6 +41,7 @@ decide el despacho. Un gate que rechaza CAs correctos acaba desactivado.
 | `backlog-prioridad-invalida.md` | `prioridad-invalida` (`P3`, `alta`) |
 | `backlog-suelo-minimo.md` | `brief-insuficiente` + `ca-insuficiente` (palabras repetidas) |
 | `backlog-contradicciones.md` | `deps-contradictorias` + `ejes-contradictorios` |
+| `backlog-deps-sin-declarar.md` | `deps-no-declaradas`: prosa que no dice de qué depende |
 | `backlog-serie-no-declarada.md` | `serie-no-declarada` (filas ajenas no se omiten) |
 | `backlog-id-duplicado.md` | `id-duplicado` |
 | `backlog-dep-inexistente.md` | `dep-inexistente` |
@@ -60,8 +61,9 @@ decide el despacho. Un gate que rechaza CAs correctos acaba desactivado.
 | `backlog-tabla-en-cita.md` | tabla dentro de una cita `>` |
 | `backlog-fence-tilde.md` | `~~~` no cierra un fence de backticks (regla de CommonMark) |
 | `backlog-envolturas-html.md` | front-matter, `<pre>`, `<details>` y 3 espacios + tabulador |
+| `backlog-details-inline.md` | `<details><summary>` y `<div align>` que abren y siguen en la misma línea |
 
-Ninguno de estos ocho es «verde por vacío»: un backlog que lintea a cero jamás
+Ninguno de estos nueve es «verde por vacío»: un backlog que lintea a cero jamás
 es despachable, y el diagnóstico dice la **causa** (`fence=`, `comentario=`,
 `indentado=`, `cita=`) en vez de afirmar que no había ninguna tabla.
 

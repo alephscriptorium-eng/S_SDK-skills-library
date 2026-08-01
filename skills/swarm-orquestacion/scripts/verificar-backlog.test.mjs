@@ -270,6 +270,128 @@ test('[D-C] la contradicción se mantiene con la holgura nueva', () => {
   assert.equal(verificarBacklog(texto, cfgFx).resumen.porMotivo['deps-contradictorias'], 1);
 });
 
+// --- 3ª devolución: D-A tipo 6, D-B omisión, D-C dígito en prosa ----------
+
+test('[D-A3] bloque HTML tipo 6: basta con que la línea EMPIECE por la etiqueta', () => {
+  const casos = {
+    'details inline': `<details><summary>Backlog v1 (obsoleto)</summary>\n${TABLA}\n</details>`,
+    'div con texto': `<div align="center">Texto\n${TABLA}\n</div>`,
+    'p con texto': `<p>Texto de intro\n${TABLA}`,
+  };
+  for (const [nombre, cuerpo] of Object.entries(casos)) {
+    const r = verificarBacklog(`# BACKLOG\n\n${cuerpo}\n`, cfgFx);
+    assert.equal(r.exit, 3, `${nombre} concedió (markdown NO renderiza esa tabla)`);
+    assert.match(r.defectos.at(-1).detalle, /html=/);
+  }
+});
+
+test('[D-A3] la etiqueta inline tampoco se cuela DENTRO de la región declarada', () => {
+  const cfgReg = configurar({ series: 'FX-[A-Z][0-9]{2}', regionInicio: '<!-- bl:ini -->' });
+  const texto = `# B\n\n<!-- bl:ini -->\n\n<details><summary>plegado</summary>\n${TABLA}\n</details>\n`;
+  assert.equal(verificarBacklog(texto, cfgReg).exit, 3, 'el cierre estructural no tapa una envoltura mal implementada');
+});
+
+test('[D-A3] y sigue valiendo lo contrario: línea en blanco reabre markdown', () => {
+  const texto = `# B\n\n<details><summary>plegado</summary>\n\n## Lane A · ALFA\n\n${TABLA}\n`;
+  assert.equal(verificarBacklog(texto, cfgFx).exit, 0, 'CommonMark: el tipo 6 acaba en línea vacía');
+});
+
+test('[D-B3] `deps` que no declara nada → defecto, nunca omisión silenciosa', () => {
+  for (const celda of ['las dos anteriores', 'las mismas del WP anterior', 'segun la ola']) {
+    const texto = backlogDe([`| **FX-A01** | P0 | extraer el kit de plantillas del mundo | el probe devuelve exit 0 | ${celda} | I |`]);
+    const r = verificarBacklog(texto, cfgFx);
+    assert.equal(r.resumen.porMotivo['deps-no-declaradas'], 1, `«${celda}» pasó en silencio`);
+    assert.equal(r.exit, 1);
+  }
+});
+
+test('[D-B3] pero declarar de verdad sigue pasando', () => {
+  for (const celda of ['ninguna', 'FX-A01', 'ninguna (WP raiz)', 'FX-A01 y FX-A01']) {
+    const texto = backlogDe([
+      FILA_OK,
+      `| **FX-A02** | P0 | cablear el kit en el adaptador | el probe devuelve exit 0 | ${celda} | I |`,
+    ]);
+    const r = verificarBacklog(texto, cfgFx);
+    assert.equal(r.resumen.porMotivo['deps-no-declaradas'], undefined, `«${celda}» no declara nada?`);
+  }
+});
+
+test('[D-C3] un número en prosa NO es un ID roto: «(ambas de la ola 1)» pasa', () => {
+  const realistas = [
+    'FX-A01, FX-A03 (ambas de la ola 1)',
+    'ninguna (raiz de la ola 2)',
+    'FX-A01 (ver seccion 3)',
+    'FX-A01 y FX-A03 (ola 1)',
+  ];
+  for (const celda of realistas) {
+    const { ilegibles } = leerDeps(celda, cfgFx);
+    assert.deepEqual(ilegibles, [], `«${celda}» rechazada por un número suelto`);
+  }
+  // La forma que SÍ se caza es el ID roto: letras y dígitos mezclados.
+  assert.deepEqual(leerDeps('FXA01', cfgFx).ilegibles, ['FXA01']);
+  assert.deepEqual(leerDeps('FX_A01', cfgFx).ilegibles, ['FX_A01']);
+});
+
+test('[D-C3] el backlog realista con paréntesis y números es despachable', () => {
+  const texto = backlogDe([
+    '| **FX-A01** | P0 | extraer el kit de plantillas a un paquete propio | el probe del consumidor devuelve exit 0 | ninguna (raiz de la ola 2) | I |',
+    '| **FX-A02** | P1 | cablear el kit en el adaptador de entrada | grep del simbolo devuelve 1 definicion | FX-A01 (ver seccion 3) | II |',
+  ]);
+  const r = verificarBacklog(texto, cfgFx);
+  assert.equal(r.exit, 0, JSON.stringify(r.defectos, null, 2));
+  assert.deepEqual(r.wps[1].depsIds, ['FX-A01']);
+});
+
+test('[D-D3] la prosa se ignora por FORMA, no por una lista de conectores', () => {
+  // No hay flag de conectores: `y`, `e`, `and`, `ambas`… se ignoran porque no
+  // tienen forma de ID, no porque estén declarados. Un conector inventado
+  // funciona igual, y por eso la lista habría sido código muerto.
+  for (const union of ['y', 'e', 'and', 'junto con', 'ademas de', 'zzz']) {
+    const { ids } = leerDeps(`FX-A01 ${union} FX-A03`, cfgFx);
+    assert.deepEqual(ids, ['FX-A01', 'FX-A03'], `unión «${union}»`);
+  }
+  assert.throws(() => configurar({}, ['--conectores-deps', 'y']), ErrorUso, 'la flag muerta se retiró, no se finge');
+});
+
+test('[D-F] las flags de región se validan como las demás', () => {
+  assert.throws(() => configurar({}, ['--region-inicio', '']), ErrorUso);
+  assert.throws(() => configurar({}, ['--region-inicio', '   ']), ErrorUso);
+  assert.throws(() => configurar({}, ['--region-fin', '<!-- fin -->']), ErrorUso, '--region-fin sin --region-inicio');
+  assert.throws(() => configurar({}, ['--lexico-modo', 'perro']), ErrorUso);
+  assert.throws(() => configurar({}, ['--lexico-modo', 'extender']), ErrorUso, 'modo sin fichero');
+  assert.throws(() => configurar({}, ['--alias-modo', 'reemplazar']), ErrorUso, 'modo sin fichero');
+  assert.equal(crudo(['--backlog', VALIDA, '--region-inicio', '']).status, 2);
+});
+
+test('[D-F] marca de fin declarada pero ausente → defecto, no extensión muda hasta EOF', () => {
+  const cfgReg = configurar({ series: 'FX-[A-Z][0-9]{2}', regionInicio: '<!-- ini -->', regionFin: '<!-- fin -->' });
+  const texto = `# B\n\n<!-- ini -->\n\n## Lane A · ALFA\n\n${TABLA}\n`;
+  const r = verificarBacklog(texto, cfgReg);
+  assert.equal(r.resumen.porMotivo['region-sin-cierre'], 1);
+  assert.equal(r.exit, 1);
+});
+
+test('[D-E] el límite de tamaño declarado es real: cadena profunda → exit 2 fail-closed', () => {
+  // Cadena PROFUNDA (cada WP depende del SIGUIENTE): el DFS recorre entera.
+  const n = 6000;
+  const filas = [];
+  for (let i = 1; i <= n; i++) {
+    const id = `FX-${String(i).padStart(6, '0')}`;
+    const dep = i < n ? `FX-${String(i + 1).padStart(6, '0')}` : 'ninguna';
+    filas.push(`| **${id}** | P0 | extraer el kit numero ${i} del mundo | el probe del consumidor devuelve exit 0 | ${dep} | I |`);
+  }
+  const dir = mkdtempSync(join(tmpdir(), 'lint-carga-'));
+  try {
+    const f = join(dir, 'BACKLOG.md');
+    writeFileSync(f, backlogDe(filas));
+    const r = crudo(['--backlog', f, '--series', 'FX-[0-9]{6}']);
+    assert.equal(r.status, 2, 'desbordar la pila NO puede conceder');
+    assert.match(r.salida, /fallo interno/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 // --- menores de la devolución --------------------------------------------
 
 test('[d4] --ayuda combinada con otras flags → exit 2 (nunca exit 0 sin veredicto)', () => {

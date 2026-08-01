@@ -208,7 +208,7 @@ convivencia.)
 | `reference/plantilla-reporte.md` | plantilla de reporte de WP |
 | `reference/backlog-despachable.md` | contrato de BACKLOG despachable (7 campos), qué **bloquea** vs qué **avisa**, qué hace ornamental a un CA y los límites del linter |
 | `examples/mundo-nuevo-plan/` | esqueleto mínimo de `plan/` |
-| `examples/fixture-backlog/` | fixture del BACKLOG en cuatro caras (5 válidas · 1 de avisos · 12 inválidas · 8 de ausencia) con su veredicto exacto en `casos.json` |
+| `examples/fixture-backlog/` | fixture del BACKLOG en cuatro caras (5 válidas · 1 de avisos · 13 inválidas · 9 de ausencia) con su veredicto exacto en `casos.json` |
 | `examples/simulacion-montaje.md` | simulación documentada (CA de montaje) |
 | `scripts/montar-plan.sh` | genera `plan/` + MAPA-RAIZ/REPO/TALLER (#19) |
 | `reference/plantillas/MAPA-*.md.tpl` | mapas de territorio con regla al pie |

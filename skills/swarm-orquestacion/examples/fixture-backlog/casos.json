@@ -31,9 +31,9 @@
     {
       "fixture": "backlog-deps-prosa.md",
       "cara": "valida",
-      "descripcion": "deps en prosa: «FX-A01 y FX-A03», «Ninguna.», parentesis y enlace",
+      "descripcion": "deps en prosa: «FX-A01 y FX-A03», «Ninguna.», parentesis con numeros de ola y enlace",
       "exit": 0,
-      "wps": 4,
+      "wps": 7,
       "motivos": {},
       "avisos": {},
       "citas": [
@@ -187,6 +187,21 @@
         "La contradiccion no se resuelve sola",
         "FX-A02",
         "FX-A03"
+      ]
+    },
+    {
+      "fixture": "backlog-deps-sin-declarar.md",
+      "cara": "invalida",
+      "descripcion": "la celda deps es prosa que no declara ni dependencia ni token nulo",
+      "exit": 1,
+      "wps": 3,
+      "motivos": {
+        "deps-no-declaradas": 2
+      },
+      "avisos": {},
+      "citas": [
+        "no declara ninguna dependencia",
+        "las dos anteriores"
       ]
     },
     {
@@ -391,6 +406,20 @@
         "front-matter=",
         "html=",
         "indentado="
+      ]
+    },
+    {
+      "fixture": "backlog-details-inline.md",
+      "cara": "ausencia",
+      "descripcion": "<details><summary> y <div align> que abren y siguen en la misma linea (CommonMark tipo 6)",
+      "exit": 3,
+      "wps": 0,
+      "motivos": {
+        "sin-wps": 1
+      },
+      "avisos": {},
+      "citas": [
+        "html=10"
       ]
     }
   ],

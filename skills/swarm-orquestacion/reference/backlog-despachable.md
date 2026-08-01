@@ -43,7 +43,7 @@ CommonMark**, que es un problema acotado y especificado:
 | ------ | -------------- |
 | fence | cierre con el **mismo carácter**, longitud **≥** la apertura y nada más en la línea; un fence de backticks no admite backticks en su info string (`~~~` no cierra ```` ``` ````, y un fence de 4 contiene uno de 3) |
 | código indentado | ancho ≥ 4 con **expansión de tabulador** (3 espacios + tab = 4) |
-| bloque HTML | tipo 1 (`<pre>`, `<script>`, `<style>`, `<textarea>`) hasta su cierre; tipo 6 (`<details>`, `<div>`, `<table>`…) hasta línea en blanco — igual que CommonMark, así que un `<details>` con línea en blanco **sí** deja ver su tabla |
+| bloque HTML | tipo 1 (`<pre>`, `<script>`, `<style>`, `<textarea>`) hasta su cierre; tipo 6 (`<details>`, `<div>`, `<table>`…) hasta línea en blanco. Como en CommonMark, basta con que la línea **empiece** por la etiqueta —`<details><summary>…</summary>` en una línea también abre bloque— y un `<details>` seguido de línea en blanco **sí** deja ver su tabla |
 | front-matter | `---` / `+++` en la primera línea, hasta su cierre |
 | comentario HTML · cita | velados, con su causa contada |
 
@@ -65,18 +65,24 @@ linter no elige por el autor cuál de las dos mitades vale.
 
 **Convención de `deps` (declarada, con holgura).** La celda se lee así:
 
-- **separadores**: espacios, `,` `;` `+` `/` `·` `→` `>` `&` **y conectores en
-  prosa** (`y`, `e`, `and`, configurables con `--conectores-deps`). «`FX-A01 y
+- **separadores**: espacios, `,` `;` `+` `/` `·` `→` `>` `&`. «`FX-A01 y
   FX-A03`» son dos dependencias, no un WP llamado «y»: en una herramienta en
   castellano eso es lo que la gente escribe, y un gate que lo rechaza acaba
-  desactivado;
+  desactivado. Los conectores **no se declaran en ninguna lista**: se ignoran
+  por su **forma** (no tienen forma de ID), igual que cualquier otra palabra;
 - **puntuación de prosa** alrededor de cada token —punto final, paréntesis,
   comillas, corchetes— se ignora: `Ninguna.` es el token nulo, y
   `ninguna (WP raiz)` no declara ninguna dependencia;
 - **enlaces markdown** se resuelven a su texto: `[FX-A01](#fx-a01)` = `FX-A01`;
-- **prosa sin dígitos** (`arriba`, `raiz`) se ignora;
-- **token con dígitos que no es un ID legible** → `dep-no-interpretable`
-  (bloqueante): un ID roto no se traga en silencio.
+- **prosa**: palabras (`ambas`, `raiz`, `y`) **y números sueltos** (`ola 1`,
+  `seccion 3`) se ignoran — un número no puede confundirse con un ID roto;
+- **token que mezcla letras y dígitos** sin ser un ID legible (`FXA01`,
+  `FX_A01`) → `dep-no-interpretable` (bloqueante): esa sí es la forma de un ID
+  roto, y no se traga en silencio;
+- **celda con contenido de la que no sale nada** —ni id, ni token nulo, ni
+  forma de ID roto: «las dos anteriores»— → `deps-no-declaradas` (bloqueante).
+  La holgura no puede convertirse en **omisión silenciosa**: la ausencia se
+  declara.
 
 ---
 
@@ -86,7 +92,7 @@ linter no elige por el autor cuál de las dos mitades vale.
 
 | decide el exit | motivos |
 | -------------- | ------- |
-| **sí — bloquea** | `campo-ausente` · `columna-requerida-ausente` · `prioridad-invalida` · `eje-desconocido` · `ejes-contradictorios` · `deps-contradictorias` · `lane-desconocida` · `serie-no-declarada` · `id-duplicado` · `id-no-interpretable` · `fila-fuera-de-tabla-wp` · `dep-inexistente` · `dep-ciclo` · `brief-insuficiente` · `ca-insuficiente` · `backlog-vacio` · `sin-wps` |
+| **sí — bloquea** | `campo-ausente` · `columna-requerida-ausente` · `prioridad-invalida` · `eje-desconocido` · `ejes-contradictorios` · `deps-contradictorias` · `deps-no-declaradas` · `dep-no-interpretable` · `lane-desconocida` · `serie-no-declarada` · `id-duplicado` · `id-no-interpretable` · `fila-fuera-de-tabla-wp` · `dep-inexistente` · `dep-ciclo` · `brief-insuficiente` · `ca-insuficiente` · `region-ausente` · `region-sin-cierre` · `backlog-vacio` · `sin-wps` |
 | **no — avisa** | `CA-ornamental/valoracion` · `CA-ornamental/sin-ancla` · `CA-ornamental/sin-objeto` · `CA-ornamental/sin-referente` |
 
 **Por qué el CA ornamental no bloquea.** La calidad de un CA es **juicio**, y un
@@ -216,11 +222,33 @@ El aviso de CA mira la forma del texto. Deja pasar, **por diseño**:
     exige ancla ni objeto, porque describe trabajo, no comprobación.
 11. **Dilución por separadores no declarados.** Ver §3: la garantía de segmentos
     cubre `·`, `;`, `<br>` y salto de línea, no la coma ni el punto.
-12. **Tamaño.** El detector de ciclos es recursivo y hay recorridos lineales por
-    fila: a partir de ~20 000 filas la corrida se va a decenas de segundos, y
-    una cadena de dependencias de ~30 000 desborda la pila. Desbordar **no**
-    concede: sale por el manejador con **exit 2** (fail-closed). Backlogs de
-    plan real (cientos de filas) están tres órdenes de magnitud por debajo.
+12. **Tamaño (medido, no estimado).** El detector de ciclos es recursivo, así
+    que el límite depende de la **profundidad** del grafo, no del número de
+    filas:
+
+    | caso | resultado |
+    | ---- | --------- |
+    | 20 000 filas planas | ~2 s · exit normal |
+    | 40 000 filas planas | ~3,4 s · exit normal |
+    | cadena **profunda** (cada WP depende del siguiente) de 4 000 | pasa |
+    | cadena **profunda** de 5 000 | **desborda la pila → exit 2** |
+    | cadena inversa (cada WP depende del anterior) de 50 000 | pasa: el DFS no se hunde |
+
+    Desbordar **no** concede: sale por el manejador con **exit 2**
+    (fail-closed), y hay caso rojo que lo fija. Un plan real (cientos de filas)
+    queda **un orden de magnitud** por debajo del umbral de cadena profunda —
+    no tres, como decía la versión anterior de esta línea.
+13. **Tabla indentada dentro de un ítem de lista.** Una tabla escrita como
+    continuación de un ítem (4 espacios) se vela como código indentado: es la
+    regla de CommonMark aplicada sin contexto de lista. Falla ruidoso y nombra
+    la causa (`indentado=`), pero es un **falso rechazo declarado**: saca la
+    tabla del ítem o usa la región declarada.
+14. **Envolturas que quedan fuera, como límite y no como defecto**: bloque HTML
+    tipo 7 (etiqueta arbitraria sola en su línea), encabezados HTML crudos, la
+    regla GFM de que una tabla no interrumpe un párrafo, un *thematic break*
+    inicial confundible con front-matter, y una marca de región citada dentro
+    de un fence. Ninguna concede en falso por sí sola en los casos probados;
+    quien quiera cerrarlas todas de golpe usa la **región declarada**.
 
 Y **no** deja pasar, por diseño: el vacío y la duda de uso. Fichero vacío, sin
 tablas, tabla sin filas, filas que no producen ningún WP, o WPs que solo viven
@@ -250,15 +278,15 @@ node scripts/verificar-backlog.mjs \
 
 Parámetros (todos con env equivalente): `--backlog`, `--series`,
 `--prioridades`, `--ejes`, `--ejes-ninguno`, `--lanes`, `--patron-lane`,
-`--sin-deps`, `--conectores-deps`, `--deps-externas`, `--region-inicio`,
+`--sin-deps`, `--deps-externas`, `--region-inicio`,
 `--region-fin`, `--umbral-valoracion`, `--min-palabras-brief`,
 `--min-palabras-ca`, `--ca-estricto`, `--lexico` (+`--lexico-modo`), `--alias`
 (+`--alias-modo`), `--json`. Admite también `--flag=valor`; `--ayuda` solo se
 sirve si es lo único que se pide. Nada está cableado a un mundo concreto:
-series, prioridades, ejes, lanes, nombres de columna, suelos, conectores, marcas
-de región y léxico son del consumidor.
+series, prioridades, ejes, lanes, nombres de columna, suelos, marcas de región
+y léxico son del consumidor.
 
-Fixtures en cuatro caras (5 válidas, 1 de avisos, 12 inválidas y 8 de
+Fixtures en cuatro caras (5 válidas, 1 de avisos, 13 inválidas y 9 de
 ausencia, con su veredicto y recuento exacto en `casos.json`):
 `../examples/fixture-backlog/`. Suite:
 `node --test scripts/verificar-backlog.test.mjs`.

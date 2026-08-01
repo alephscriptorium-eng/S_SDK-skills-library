@@ -93,8 +93,6 @@ export const DEFAULTS = {
   lanes: [], // vacío = no se valida el conjunto de lanes (solo su presencia)
   patronLane: '^#{1,6}\\s*(?:lane|carril)\\b[\\s·:.\\-]*(.*)$',
   sinDeps: ['ninguna', 'ninguno', 'sin-deps', 'sin deps', 'none', 'na'],
-  // Conectores en prosa admitidos dentro de `deps` («FX-A01 y FX-A03»).
-  conectoresDeps: ['y', 'e', 'and', 'mas', 'tambien', 'ademas'],
   depsExternas: '', // regex; '' = ninguna dependencia externa permitida
   regionInicio: '', // marca de apertura de la región del backlog (opt-in)
   regionFin: '',
@@ -375,8 +373,11 @@ export function anchoIndentacion(linea, tope = 4) {
 // Bloques HTML que ocultan su contenido (subconjunto de CommonMark):
 // tipo 1 (`<pre>`, `<script>`, `<style>`, `<textarea>`) termina en su cierre;
 // tipo 6 (contenedores conocidos, `<details>`, `<div>`…) termina en línea vacía.
+// CommonMark solo exige que la línea EMPIECE por la etiqueta: exigir que la
+// ocupe entera dejaba pasar `<details><summary>…</summary>` en una línea, que
+// es la forma común de plegar en markdown.
 const HTML_TIPO1 = /^ {0,3}<(pre|script|style|textarea)\b/i;
-const HTML_TIPO6 = /^ {0,3}<\/?(details|summary|div|table|thead|tbody|tr|td|th|section|article|aside|figure|figcaption|form|fieldset|dl|dd|dt|ul|ol|li|blockquote|header|footer|main|nav|p|center|iframe|noscript)\b[^>]*>?\s*$/i;
+const HTML_TIPO6 = /^ {0,3}<\/?(details|summary|div|table|thead|tbody|tr|td|th|section|article|aside|figure|figcaption|form|fieldset|dl|dd|dt|ul|ol|li|blockquote|header|footer|main|nav|p|center|iframe|noscript)(?:\s|\/?>|$)/i;
 
 /**
  * Vela lo que el lector del backlog NO ve como tabla del backlog. Implementa la
@@ -503,6 +504,20 @@ function recortarRegion(lineas, cfg, stats, defectos) {
   }
   const desde = ini + 1;
   const relativo = cfg.regionFin ? lineas.slice(desde).findIndex((l) => l.includes(cfg.regionFin)) : -1;
+  if (cfg.regionFin && relativo < 0) {
+    // La región queda abierta hasta EOF: extenderla en silencio convertiría un
+    // fichero truncado en un backlog «entero» (D-F).
+    defectos.push({
+      wp: '(backlog)',
+      campo: 'WP',
+      motivo: 'region-sin-cierre',
+      linea: ini + 1,
+      detalle:
+        `la region abre en la linea ${ini + 1} con «${cfg.regionInicio}» pero su marca de cierre ` +
+        `«${cfg.regionFin}» no aparece: la region queda abierta hasta el final del fichero. ` +
+        'Cierrala o no declares marca de fin.',
+    });
+  }
   const hasta = relativo >= 0 ? desde + relativo : lineas.length;
   return lineas.map((l, i) => {
     if (i >= desde && i < hasta) return l;
@@ -821,8 +836,23 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
         motivo: 'dep-no-interpretable',
         linea: fila.n,
         detalle:
-          `«${t}» no es un ID legible ni el token de «sin dependencias» (${cfg.sinDeps.join(', ')}), ` +
-          `y lleva digitos, asi que no se ignora como prosa. Celda: «${limpiarCelda(wp.deps)}»`,
+          `«${t}» mezcla letras y digitos sin ser un ID legible ni el token de «sin dependencias» ` +
+          `(${cfg.sinDeps.join(', ')}): tiene forma de ID roto y no se ignora como prosa. ` +
+          `Celda: «${limpiarCelda(wp.deps)}»`,
+      });
+    }
+    // La celda tiene contenido pero no declara NADA: ni un id, ni el token de
+    // «sin dependencias», ni algo con forma de ID roto. «las dos anteriores» no
+    // es una declaración: la ausencia se declara, no se deduce.
+    if (!ids.length && !nulos.length && !ilegibles.length) {
+      defectos.push({
+        wp: id,
+        campo: 'deps',
+        motivo: 'deps-no-declaradas',
+        linea: fila.n,
+        detalle:
+          `la celda «${limpiarCelda(wp.deps)}» no declara ninguna dependencia ni el token de ` +
+          `«sin dependencias» (${cfg.sinDeps.join(', ')}): la prosa sola no dice de que depende el WP.`,
       });
     }
     wp.depsIds = ids;
@@ -833,22 +863,26 @@ function procesarFila(fila, mapa, laneHeading, cfg, reSerie, wps, defectos, avis
 
 /**
  * Lee la celda `deps` con la HOLGURA declarada en el contrato (§1): separadores
- * naturales —espacios, `,` `;` `+` `/` `·` `→` `>` `&`— y **conectores en
- * prosa** (`y`, `e`, `and`), puntuación final, paréntesis y enlaces markdown.
- * En una herramienta en castellano, «FX-A01 y FX-A03» es lo que la gente
- * escribe: rechazarlo sería un gate que su propio autor desactiva.
+ * naturales —espacios, `,` `;` `+` `/` `·` `→` `>` `&`—, puntuación de prosa,
+ * paréntesis y enlaces markdown. En una herramienta en castellano,
+ * «FX-A01 y FX-A03 (ambas de la ola 1)» es lo que la gente escribe: rechazarlo
+ * sería un gate que su propio autor desactiva.
  *
  * Clasificación de cada token, sin adivinar:
  *  - token de «sin dependencias» (normalizado: `Ninguna.` = `ninguna`) → nulo;
  *  - token con forma de ID (serie declarada o genérica) → dependencia;
- *  - prosa sin dígitos (`(WP`, `raiz)`, `arriba`) → se ignora;
- *  - token CON dígitos que no es un ID legible → `dep-no-interpretable`
- *    (bloqueante): no se puede ignorar en silencio algo que parece un ID roto.
+ *  - **prosa** —palabras (`y`, `ambas`, `raiz`) y números sueltos (`1`, `3`)—
+ *    → se ignora: un número no puede confundirse con un ID roto;
+ *  - token que MEZCLA letras y dígitos sin ser un ID legible (`FXA01`,
+ *    `FX_A01`) → `dep-no-interpretable` (bloqueante): esa sí es la forma de un
+ *    ID roto, y no se traga en silencio.
+ *
+ * Si de una celda con contenido no sale **nada** de lo anterior, quien llama
+ * emite `deps-no-declaradas`: «las dos anteriores» no declara dependencias.
  */
 export function leerDeps(celda, cfg, reSerie = new RegExp(`^(?:${cfg.series})$`)) {
   const crudo = limpiarCelda(celda);
   const brutos = crudo.split(/[\s,;+/·→>&|]+/).filter(Boolean);
-  const conectores = cfg.conectoresDeps.map(norm);
   const ids = [];
   const nulos = [];
   const ilegibles = [];
@@ -857,7 +891,6 @@ export function leerDeps(celda, cfg, reSerie = new RegExp(`^(?:${cfg.series})$`)
     const t = bruto.replace(/^[¡¿"'`([{<]+/, '').replace(/[.,;:!?"'`)\]}>]+$/, '');
     if (!t) continue;
     const n = norm(t);
-    if (conectores.includes(n)) continue;
     if (cfg.sinDeps.some((x) => norm(x) === n)) {
       nulos.push(t);
       continue;
@@ -866,8 +899,9 @@ export function leerDeps(celda, cfg, reSerie = new RegExp(`^(?:${cfg.series})$`)
       ids.push(t);
       continue;
     }
-    if (/\d/.test(t)) ilegibles.push(t);
-    // resto: prosa sin dígitos → se ignora (no es una dependencia)
+    // Forma de ID ROTO = mezcla de letras y dígitos. Un número suelto es prosa
+    // («ola 1», «seccion 3»), y una palabra suelta también («ambas», «y»).
+    if (/[A-Za-z]/.test(t) && /\d/.test(t)) ilegibles.push(t);
   }
   return { ids, nulos, ilegibles };
 }
@@ -1022,7 +1056,7 @@ function finalizar(r) {
 const FLAGS_BOOL = ['--ca-estricto', '--json', '--ayuda', '--help', '-h'];
 const FLAGS_VALOR = [
   '--backlog', '--series', '--prioridades', '--ejes', '--ejes-ninguno', '--lanes', '--patron-lane',
-  '--sin-deps', '--conectores-deps', '--deps-externas', '--region-inicio', '--region-fin',
+  '--sin-deps', '--deps-externas', '--region-inicio', '--region-fin',
   '--umbral-valoracion', '--min-palabras-brief', '--min-palabras-ca',
   '--lexico', '--lexico-modo', '--alias', '--alias-modo',
 ];
@@ -1097,6 +1131,18 @@ function regexValida(nombre, patron, envoltorio = (p) => p) {
   return patron;
 }
 
+/**
+ * Marca de región: si se pasa la flag, tiene que decir algo. Una marca vacía
+ * desactivaría el cierre estructural **en silencio**, que es justo lo que el
+ * cierre viene a evitar (D-F).
+ */
+function marcaValida(nombre, bruto, declarado) {
+  if (!declarado) return '';
+  const v = String(bruto === undefined || bruto === null ? '' : bruto);
+  if (!v.trim()) throw new ErrorUso(`${nombre}: marca vacia (no delimita nada; usa una marca o no pases la flag)`);
+  return v.trim();
+}
+
 function listaValida(nombre, bruto) {
   const l = String(bruto).split(/[,;]/).map((x) => x.trim()).filter(Boolean);
   if (!l.length) throw new ErrorUso(`${nombre}: conjunto vacio (un conjunto vacio rechazaria todo)`);
@@ -1124,9 +1170,16 @@ export function configurar(over = {}, argv = [], env = {}) {
     })(),
     patronLane: regexValida('--patron-lane', val('--patron-lane', 'BACKLOG_PATRON_LANE', DEFAULTS.patronLane)),
     sinDeps: listaValida('--sin-deps', val('--sin-deps', 'BACKLOG_SIN_DEPS', DEFAULTS.sinDeps.join(','))),
-    conectoresDeps: listaValida('--conectores-deps', val('--conectores-deps', 'BACKLOG_CONECTORES_DEPS', DEFAULTS.conectoresDeps.join(','))),
-    regionInicio: val('--region-inicio', 'BACKLOG_REGION_INICIO', DEFAULTS.regionInicio),
-    regionFin: val('--region-fin', 'BACKLOG_REGION_FIN', DEFAULTS.regionFin),
+    regionInicio: marcaValida(
+      '--region-inicio',
+      val('--region-inicio', 'BACKLOG_REGION_INICIO', DEFAULTS.regionInicio),
+      op['--region-inicio'] !== undefined || env.BACKLOG_REGION_INICIO !== undefined
+    ),
+    regionFin: marcaValida(
+      '--region-fin',
+      val('--region-fin', 'BACKLOG_REGION_FIN', DEFAULTS.regionFin),
+      op['--region-fin'] !== undefined || env.BACKLOG_REGION_FIN !== undefined
+    ),
     depsExternas: (() => {
       const bruto = val('--deps-externas', 'BACKLOG_DEPS_EXTERNAS', DEFAULTS.depsExternas);
       return bruto ? regexValida('--deps-externas', bruto, (p) => `^(?:${p})$`) : '';
@@ -1139,6 +1192,28 @@ export function configurar(over = {}, argv = [], env = {}) {
     lexico: { ...DEFAULTS.lexico },
     json: op['--json'] === true,
   };
+
+  // Coherencia de las flags de región (D-F): una marca de fin sin marca de
+  // inicio no delimita nada, y quedarse callado sería fail-open.
+  if (cfg.regionFin && !cfg.regionInicio) {
+    throw new ErrorUso('--region-fin sin --region-inicio: una marca de cierre no delimita ninguna region.');
+  }
+  // Los modos se validan SIEMPRE que se pasan, no solo si además se pasa el
+  // fichero: `--lexico-modo perro` sin `--lexico` salía exit 0 en silencio.
+  for (const [flag, valor] of [
+    ['--lexico-modo', op['--lexico-modo']],
+    ['--alias-modo', op['--alias-modo']],
+  ]) {
+    if (valor !== undefined && !['extender', 'reemplazar'].includes(valor)) {
+      throw new ErrorUso(`${flag}: «${valor}» (usa extender|reemplazar)`);
+    }
+  }
+  if (op['--lexico-modo'] !== undefined && !val('--lexico', 'BACKLOG_LEXICO', '')) {
+    throw new ErrorUso('--lexico-modo sin --lexico: no hay lexico que extender ni reemplazar.');
+  }
+  if (op['--alias-modo'] !== undefined && !val('--alias', 'BACKLOG_ALIAS', '')) {
+    throw new ErrorUso('--alias-modo sin --alias: no hay alias que extender ni reemplazar.');
+  }
 
   // Léxico y alias sustituibles por fichero JSON del consumidor.
   const rutaLexico = val('--lexico', 'BACKLOG_LEXICO', '');
@@ -1185,7 +1260,6 @@ const AYUDA = `verificar-backlog.mjs — linter de BACKLOG despachable
   --lanes A,B,C             conjunto de lanes admitido (def. vacio = no se valida)
   --patron-lane REGEX       encabezado que abre una lane (grupo 1 = nombre)
   --sin-deps ninguna,none   tokens que declaran «sin dependencias»
-  --conectores-deps y,e     conectores en prosa admitidos dentro de deps
   --deps-externas REGEX     IDs permitidos fuera del backlog (def. ninguno)
   --region-inicio MARCA     cierre estructural: solo se lintea la region entre
   --region-fin MARCA        marcas; su ausencia es exit 3 limpio (opt-in)
