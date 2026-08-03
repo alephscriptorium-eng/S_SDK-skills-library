@@ -14,6 +14,12 @@ paquete» son ejes distintos; la correspondencia se declara en el
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-08-03
+
+Minor (DC-22: regla de método nueva — skill `mesa-sincronia` entra al
+paquete). Corte solicitado por el PO al detectarse como gap de vendor
+desde `h-sdk`: el 0.11.0 se publicó antes de que los WP de mesa cerraran.
+
 ### Added
 
 - **`mesa-sincronia`** — skill nuevo (WP-L-C01 ✅, 2026-07-31): protocolo
