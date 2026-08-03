@@ -11,3 +11,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# artefactos de ejecucion de la estacion-timbre (el watcher canonico esta
+# trackeado en scriptorium/.claude/skills/vigilancia/scripts/watcher.sh)
+vigilancia/timbre/
