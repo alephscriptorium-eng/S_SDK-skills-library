@@ -33,6 +33,21 @@ desde `h-sdk`: el 0.11.0 se publicó antes de que los WP de mesa cerraran.
   hub+2 mundos y simulación de montaje ejecutada (2 huecos corregidos
   en el propio skill).
 
+### Added — arrastre 0.11.0→0.12.0 (cerrados de facto, actas de backlog pendientes)
+
+Los tres WP siguientes tienen rama fusionada en `main` y reporte en
+`plan/REPORTES/`, pero su fila de backlog quedó en 🔶 despachado — deuda
+contable destapada por este corte; se copia del reporte, no se inventa:
+
+- **WP-31 · contador y coberturas ONCE/liveness** (`estacion-viva/scripts`):
+  el contador cuenta solo directorios con `SKILL.md`; contrato ONCE +
+  liveness con prueba propia (`probar-contrato-once-liveness.sh`).
+- **WP-32 · perfiles de boot y degradaciones de fundación** (`estacion-viva`
+  docs): contrato de boot, degradaciones y layout consumidor.
+- **WP-34 · higiene de release: versión de README** — gate con fixtures
+  rojo/verde y fallo ruidoso. ⚠ contrarrevisión independiente
+  `⏳ sin verificar` según su propio reporte.
+
 ## [0.11.0] — 2026-07-26
 
 Minor (DC-22/DC-29: cambio compatible de contrato de método): parser de
